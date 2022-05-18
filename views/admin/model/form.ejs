@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include('../partial/head') -%>
+</head>
+<body class="hold-transition sidebar-mini layout-fixed layout-navbar-fixed layout-footer-fixed">
+<div class="wrapper">
+    <%- include('../partial/topbar'); -%>
+    <%- include('../partial/sidebar'); -%>
+
+    <!-- Content Wrapper. Contains page content -->
+    <div class="content-wrapper">
+        <!-- Content Header (Page header) -->
+        <section class="content-header">
+            <div class="container-fluid">
+                <div class="row mb-2">
+                    <div class="col-sm-6">
+                        <h1><%= title %></h1>
+                    </div>
+                    <div class="col-sm-6">
+                        <ol class="breadcrumb float-sm-right">
+                            <li class="breadcrumb-item"><a href="#">Home</a></li>
+                            <li class="breadcrumb-item active"><span><%= title %></span></li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <section class="content">
+            <div class="container-fluid">
+                <form method="post" id="formModel">
+                    <div class="row">
+                        <div class="col-6">
+                            <div class="card mb-4">
+                                <div class="card-body">
+                                    <div class="form-group">
+                                        <label for="sel1">Kind</label>
+                                        <select class="form-control" name="kind">
+                                            <option hidden selected disabled></option>
+                                            <option value="Car"<% if (dataModel.kind === 'Car' ){ %><%= 'selected' %><% } %>>Car</option>
+                                            <option value="Motorcycle" <% if (dataModel.kind === 'Motorcycle' ){ %><%= 'selected' %><% } %>>Motorcycle</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Make</label>
+                                        <select class="form-control" name="makeId">
+                                            <option hidden selected disabled></option>
+                                            <% for (var i = 0; i < listMake.length; i++) { %>
+                                            <option value="<%= listMake[i]._id %>" <% if (listMake[i]._id.equals(dataModel.makeId)){ %> <%='selected'%> <% } %>><%= listMake[i].name %></option>
+                                                <% } %>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Type</label>
+                                        <select class="form-control" name="typeId">
+                                            <option hidden selected disabled></option>
+                                            <% for (var j = 0; j < listType.length; j++) { %>
+                                            <option value="<%= listType[j].id %>" <% if (listType[j]._id.equals(dataModel.typeId)){ %> <%='selected'%> <% } %>><%= listType[j].name %></option>
+                                                <% } %>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="card mb-4">
+                                <div class="card-body">
+                                    <div class="form-group">
+                                        <label> Name</label>
+                                        <input type="text" class="form-control" name="name" value="<%= dataModel.name %>" >
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Values</label>
+                                        <input type="number" class="form-control"
+                                               name="value" value="<%= dataModel.value %>">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Year</label>
+                                        <input type="number" class="form-control" name="year" value="<%= dataModel.year %>">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <button class="btn btn-primary btn-block" type="submit">Submit</button>
+                        <div class="modal fade" id="DeleteModel<%= dataModel.id %>" tabindex="-1" role="dialog" aria-labelledby="deleteCar"
+                             aria-hidden="true">
+                            <div class="modal-dialog" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-body">
+                                        <p>Are you sure you want to delete <b><%= dataModel.kind %> <%= dataModel.name %></b></p>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-outline-primary" data-dismiss="modal">Cancel</button>
+                                        <a href="/admin/model/delete/<%= dataModel.id %>" class="btn btn-primary">Delete</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <% if ( dataModel.id) { %>
+                            <a type="button" class="btn mt-3 btn-block btn-danger" data-toggle="modal"
+                               data-target="#DeleteModel<%= dataModel.id %>">Delete</a>
+                        <% } %>
+                    </div>
+                </form>
+            </div>
+        </section>
+    </div>
+    <%- include('../partial/footer'); -%>
+</div>
+<%- include('../partial/scripts'); -%>
+<script src="/admin/plugins/moment/moment.min.js"></script>
+<script src="/admin/plugins/inputmask/jquery.inputmask.min.js"></script>
+<script src="/admin/plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.1/jquery.validate.min.js"></script>
+
+<script>
+    $(function () {
+        $('#formModel').validate({
+            rules: {
+                kind: {
+                    required: true,
+                },
+                makeId: {
+                    required: true,
+                },
+                typeId: {
+                    required: true,
+                },
+                name: {
+                    required: true,
+                    maxlength: 255,
+                },
+                value: {
+                    required: Number,
+                },
+                year: {
+                    required: Number,
+                    max: new Date().getFullYear(),
+                },
+            },
+            messages: {
+                kind: {
+                    required: 'Please enter kind',
+                },
+                makeId: {
+                    required: 'Please enter a make',
+                },
+                typeId: {
+                    required: 'Please enter type',
+                },
+                name: {
+                    required: 'Please enter a name',
+                    maxlength: 'Kind name is limited to 255 characters'
+                },
+                value: {
+                    required: 'Please enter value',
+                },
+                year: {
+                    required: 'Please enter a year',
+                    maxlength: 'Please enter the year less than the current year ',
+                },
+            },
+            errorClass: 'errorMsg',
+            errorPlacement: function (error, element) {
+                error.appendTo(element.parents('.form-group'));
+            }
+        });
+    })
+</script>
+
+</body>
+</html>

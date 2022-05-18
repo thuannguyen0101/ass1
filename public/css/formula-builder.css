@@ -1,0 +1,82 @@
+.rules-group-container {
+    position: relative;
+    width: 100%;
+    margin: 4px 0;
+    padding: 10px 10px 6px;
+    border-radius: 5px;
+    border: 1px solid #dcc896;
+    background: rgba(250, 240, 210, .5);
+}
+
+.rules-list {
+    padding-left: 15px;
+    margin: 0;
+}
+
+.rule-container {
+    position: relative;
+    margin: 4px 0;
+    border-radius: 5px;
+    padding: 5px;
+    border: 1px solid #eee;
+    background: white;
+}
+
+.rule-filter-container, .rule-operator-container, .rule-value-container {
+    display: inline-block;
+    margin-right: 5px;
+}
+
+.rules-list > ::after, .rules-list > ::before {
+    content: '';
+    position: absolute;
+    left: -10px;
+    width: 10px;
+    height: calc(50% + 4px);
+    border-color: #ccc;
+    border-style: solid;
+}
+
+.rules-list > ::before {
+    top: -4px;
+    border-width: 0 0 2px 2px;
+}
+
+.rules-list > ::after {
+    top: 50%;
+    border-width: 0 0 0 2px;
+}
+
+.rules-list > :last-child::after {
+    content: none;
+}
+
+.rules-list > :first-child:before {
+    top: -12px;
+    height: calc(50% + 14px);
+}
+
+.rules-list > :last-child::before {
+    border-radius: 0 0 0 4px;
+}
+
+.rules-group-header {
+    margin-bottom: 11px;
+}
+
+.rules-group-header input[name$='-logic'] {
+    border: 0;
+    clip: rect(0 0 0 0);
+    height: 1px;
+    margin: -1px;
+    overflow: hidden;
+    padding: 0;
+    position: absolute;
+    width: 1px;
+    white-space: nowrap;
+}
+
+label.btn.btn-xs.btn-primary.disabled {
+    background: #757575;
+    border-color: #202020;
+}

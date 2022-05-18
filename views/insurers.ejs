@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<%- include('partial/head'); -%>
+<body>
+<%- include('partial/header'); -%>
+
+<!-- Banner -->
+<section class="banner plum-bg">
+    <div class="container h-100 d-flex align-items-center">
+        <div class="banner-text">
+            <h1>Insurers</h1>
+            <div class="banner-text-content">
+                The best insurers, all in one place.
+            </div>
+        </div>
+        <div class="banner-img-container">
+            <div class="banner-img">
+                <img class="banner-img-photo" src="../images/handshake.jpg" style="object-position: center;">
+                <img class="logo-z" src="../images/logo-z.svg">
+            </div>
+            <div class="half-circle"></div>
+        </div>
+    </div>
+</section>
+
+<!-- Insurer info -->
+<section class="logo-list">
+    <div class="container">
+        <div class="col-12">
+            <ul class="nav nav-pills">
+                <li class="nav-item">
+                    <a class="nav-link active" data-toggle="pill" href="#all-insurers">All insurers</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-toggle="pill" href="#cars"><i class="fas fa-fw mr-2 fa-car"></i>Cars</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-toggle="pill" href="#motorcycles"><i
+                                class="fas fa-fw mr-2 fa-motorcycle"></i>Motorcycles</a>
+                </li>
+            </ul>
+
+            <!-- Tab panes -->
+            <div class="tab-content">
+                <div class="tab-pane container active" id="all-insurers">
+                    <div class="row text-center">
+                        <% for (var i = 0; i < listInsurer.length; i++) { %>
+                            <div class="col-6 col-sm-4 col-md-3 col-xl-2">
+                                <a href="/insurer/<%= listInsurer[i].slug %>">
+                                    <img src="<%= listInsurer[i].logo %>"></a>
+                            </div>
+                        <% } %>
+                    </div>
+                </div>
+                <div class="tab-pane container fade" id="cars">
+                    <div class="row text-center">
+                        <% for (var i = 0; i < listCarInsurer.length; i++) { %>
+                            <div class="col-6 col-sm-4 col-md-3 col-xl-2">
+                                <a href="/insurer/<%= listCarInsurer[i].slug %>">
+                                    <img src="<%= listCarInsurer[i].logo %>">
+                                </a>
+                            </div>
+                        <% } %>
+                    </div>
+                </div>
+                <div class="tab-pane container fade" id="motorcycles">
+                    <div class="row text-center">
+                        <% for (var i = 0; i < listMotorcycleInsurer.length; i++) { %>
+                        <div class="col-6 col-sm-4 col-md-3 col-xl-2">
+                            <a href="/insurer/<%= listMotorcycleInsurer[i].slug %>">
+                                <img src="<%= listMotorcycleInsurer[i].logo %>">
+                            </a>
+                        </div>
+                        <% } %>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="plum-bg py-5">
+    <div class="container text-center">
+        <h3>
+            Don't know which insurer to choose?<br>Find out which plan fits you the most.
+        </h3>
+        <a type="button" href="/quote" class="btn btn-primary px-4 py-3 mt-4 mx-1">Get a quote
+            <i class="ml-2 fa fa-chevron-right text-white"></i>
+        </a>
+    </div>
+</section>
+
+<%- include('partial/footer'); -%>
+</body>
+</html>

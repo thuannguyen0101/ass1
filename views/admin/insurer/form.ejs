@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include('../partial/head') -%>
+    <link rel="stylesheet" href="/admin/plugins/daterangepicker/daterangepicker.css">
+    <!-- summernote -->
+    <link rel="stylesheet" href="/admin/plugins/summernote/summernote-bs4.css">
+</head>
+<body class="hold-transition sidebar-mini layout-fixed layout-navbar-fixed layout-footer-fixed">
+<div class="wrapper">
+    <%- include('../partial/topbar'); -%>
+    <%- include('../partial/sidebar'); -%>
+
+    <!-- Content Wrapper. Contains page content -->
+    <div class="content-wrapper">
+        <!-- Content Header (Page header) -->
+        <section class="content-header">
+            <div class="container-fluid">
+                <div class="row mb-2">
+                    <div class="col-sm-6">
+                        <h1><%= title %></h1>
+                    </div>
+                    <div class="col-sm-6">
+                        <ol class="breadcrumb float-sm-right">
+                            <li class="breadcrumb-item"><a href="#">Home</a></li>
+                            <li class="breadcrumb-item active"><span><%= title %></span></li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <section class="content">
+            <div class="container-fluid">
+                <form method="post" id="formInsurer">
+                    <div class="row">
+                        <div class="col-6">
+                            <div class="card mb-4">
+                                <div class="card-body">
+                                    <div class="form-group">
+                                        <label for="exampleInputEmail1">Insurer Name</label>
+                                        <input type="text" class="form-control" name="name"
+                                               value="<%= dataInsurer.name %>">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="exampleInputEmail1">Slug</label>
+                                        <input type="text" class="form-control" name="slug"
+                                               value="<%= dataInsurer.slug %>">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="exampleInputEmail1">Slogan</label>
+                                        <input type="text" class="form-control" name="slogan"
+                                               value="<%= dataInsurer.slogan %>">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Founded At</label>
+                                        <div class="input-group date" id="reservationdate" data-target-input="nearest">
+                                            <input type="text" class="form-control datetimepicker-input"
+                                                   name="foundedAt"
+                                                   data-target="#reservationdate">
+                                            <div class="input-group-append" data-target="#reservationdate"
+                                                 data-toggle="datetimepicker">
+                                                <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="exampleInputPassword1">Headquarter</label>
+                                        <input type="text" class="form-control" name="headquarter"
+                                               value="<%= dataInsurer.headquarter %>">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="exampleInputPassword1">Description</label>
+                                        <textarea name="description" class="textarea" placeholder="Place some text here"
+                                                  style="width: 100%; height: 200px; font-size: 14px; line-height: 18px; border: 1px solid #dddddd; padding: 10px;"><%= dataInsurer.description %></textarea>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="card mb-4">
+                                <div class="card-body">
+                                    <div class="form-group">
+                                        <label for="year">Logo</label>
+                                        <div class="form-group d-flex flex-column align-items-center">
+                                            <button type="button" class="btn btn-primary btn-block" id="upload-logo"><i
+                                                        class="fas fa-image"></i> Upload Logo
+                                            </button>
+                                            <img id="preview-logo" style="width: 200px" class="mt-4"
+                                                 src="<%= dataInsurer.logo %>">
+                                            <input type="url" name="logo" class="d-none" id="input-logo"
+                                            <% if (dataInsurer.logo) { %>
+                                                   value="<%= dataInsurer.logo %>"
+                                                    <% } %>
+                                            >
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card mb-4">
+                                <div class="card-body">
+                                    <div class="form-group">
+                                        <label for="year">Photo</label>
+                                        <div class="form-group d-flex flex-column align-items-center">
+                                            <button type="button" class="btn btn-primary btn-block" id="upload-photo"><i
+                                                        class="fas fa-image"></i> Upload Photo
+                                            </button>
+                                            <img id="preview-photo" style="width: 200px" class="mt-4"
+                                                 src="<%= dataInsurer.photo %>">
+                                            <input type="url" name="photo" class="d-none" id="input-photo"
+                                            <% if (dataInsurer.photo) { %>
+                                                   value="<%= dataInsurer.photo %>"
+                                                    <% } %>
+                                            >
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card mb-4">
+                                <div class="card-body">
+                                    <div class="form-group">
+                                        <label>Color</label>
+                                        <div class="input-group my-colorpicker2">
+                                            <input type="text" class="form-control" name="color"
+                                                   value="<%= dataInsurer.color %>">
+
+                                            <div class="input-group-append">
+                                                <span class="input-group-text"><i class="fas fa-square"></i></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <button type="submit" class="btn btn-block btn-primary">Submit</button>
+                    </div>
+                </form>
+            </div>
+        </section>
+    </div>
+    <%- include('../partial/footer'); -%>
+</div>
+
+<%- include('../partial/scripts'); -%>
+<script src="/admin/plugins/moment/moment.min.js"></script>
+<script src="/admin/plugins/inputmask/jquery.inputmask.min.js"></script>
+<script src="/admin/plugins/daterangepicker/daterangepicker.js"></script>
+<script src="/admin/plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js"></script>
+<script src="https://widget.cloudinary.com/v2.0/global/all.js"type="text/javascript"></script>
+<script src="/admin/plugins/summernote/summernote-bs4.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.1/jquery.validate.min.js"></script>
+<script>
+    $(function () {
+        $('.textarea').summernote();
+        $('#reservationdate').datetimepicker({
+            format: 'L',
+            defaultDate: '<%= dataInsurer.foundedAt %>',
+            maxDate: new Date()
+        });
+        $('.my-colorpicker2').colorpicker()
+
+        $('.my-colorpicker2').on('colorpickerChange', function (event) {
+            $('.my-colorpicker2 .fa-square').css('color', event.color.toString());
+        })
+
+        $("input[data-bootstrap-switch]").each(function () {
+            $(this).bootstrapSwitch('state', $(this).prop('checked'));
+        })
+    });
+
+    $(document).ready(function () {
+        const inputLogo = $('#input-logo');
+        const inputPhoto = $('#input-photo');
+        cloudinary.setCloudName('quando213');
+
+        $('#upload-logo').click(function () {
+            cloudinary.openUploadWidget({
+                    uploadPreset: 'gatgatexpress',
+                    sources: ['local', 'url', 'image_search', 'google_drive'],
+                    multiple: false,
+                    tags: ['browser_upload', 'insurer', 'insurer-logo'],
+                    resourceType: 'image',
+                    cropping: true,
+                    thumbnails: false,
+                    autoMinimize: true
+                }, (error, result) => {
+                    if (!error && result && result.event === "success") {
+                        $('#preview-logo').attr('src', result.info.url);
+                        inputLogo.val(result.info.url);
+                    }
+                }
+            )
+        });
+        $('#upload-photo').click(function () {
+            cloudinary.openUploadWidget({
+                    uploadPreset: 'gatgatexpress',
+                    sources: ['local', 'url', 'image_search', 'google_drive'],
+                    multiple: false,
+                    tags: ['browser_upload', 'insurer', 'insurer-photo'],
+                    resourceType: 'image',
+                    cropping: true,
+                    croppingAspectRatio: 1,
+                    thumbnails: false,
+                    autoMinimize: true
+                }, (error, result) => {
+                    if (!error && result && result.event === "success") {
+                        $('#preview-photo').attr('src', result.info.url);
+                        inputPhoto.val(result.info.url);
+                    } else {
+                        if (error && error.statusText) {
+                            alert(error.statusText);
+                        }
+                    }
+                }
+            )
+        })
+    });
+</script>
+
+<script>
+    $(function () {
+        $('#formInsurer').validate({
+            rules: {
+                name: {
+                    required: true,
+                    maxlength: 255,
+                },
+                slug: {
+                    required: true,
+                    maxlength: 255,
+                },
+                slogan: {
+                    required: true,
+                    maxlength: 255,
+                },
+                foundedAt: {
+                    required: Number,
+                },
+                headquarter: {
+                    required: true,
+                    maxlength: 255,
+                },
+                description: {
+                    required: true,
+                    maxlength: 255,
+                },
+                logo: {
+                    required: true,
+                },
+                photo: {
+                    required: true,
+                },
+                color: {
+                    required: true,
+                }
+            },
+            messages: {
+                name: {
+                    required: 'Please enter name',
+                    maxlength: 'Name is limited to 255 characters',
+                },
+                slug: {
+                    required: 'Please enter a slug',
+                    maxlength: 'Slug name is limited to 255 characters',
+                },
+                slogan: {
+                    required: 'Please enter slogan',
+                    maxlength: 'Slogan is limited to 255 characters',
+                },
+                foundedAt: {
+                    required: 'Please enter a foundedAt',
+                    maxlength: 'FoundedAt name is limited to 255 characters',
+                },
+                headquarter: {
+                    required: 'Please enter a headquarter',
+                    maxlength: 'Headquarter name is limited to 255 characters',
+                },
+                logo: {
+                    required: 'Please upload logo ',
+                },
+                photo: {
+                    required: 'Please upload photos ',
+                },
+                color: {
+                    required: 'Please upload color ',
+                }
+            },
+            errorClass: 'errorMsg',
+            errorPlacement: function (error, element) {
+                error.appendTo(element.parents('.form-group'));
+            }
+        });
+    })
+</script>
+</body>
+</html>

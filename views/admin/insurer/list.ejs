@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="awesomplete.css" />
+    <script src="awesomplete.js" async></script>
+    <%- include('../partial/head') -%>
+</head>
+<body class="hold-transition sidebar-mini layout-fixed layout-navbar-fixed layout-footer-fixed">
+<div class="wrapper">
+    <%- include('../partial/topbar'); -%>
+    <%- include('../partial/sidebar'); -%>
+
+    <!-- Content Wrapper. Contains page content -->
+    <div class="content-wrapper">
+        <!-- Content Header (Page header) -->
+        <section class="content-header">
+            <div class="container-fluid">
+                <div class="row mb-2">
+                    <div class="col-sm-6 d-flex align-items-center">
+                        <h1 class="mr-2"><%= title %></h1>
+                        <a href="/admin/insurer/create" class="btn btn-primary mt-1">Create New Insurer</a>
+                    </div>
+                    <div class="col-sm-6">
+                        <ol class="breadcrumb float-sm-right">
+                            <li class="breadcrumb-item"><a href="#">Home</a></li>
+                            <li class="breadcrumb-item active"><%= title %></li>
+                        </ol>
+                    </div>
+                </div>
+            </div><!-- /.container-fluid -->
+        </section>
+
+        <section class="content">
+            <div class="container-fluid">
+                <% if (message) { %>
+                    <div class="alert alert-success alert-dismissible fade show">
+                        <button type="button" class="close" data-dismiss="alert">&times;</button>
+                        <strong>Success!</strong> <%- (message) %>
+                    </div>
+                <% } %>
+                <div class="row">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-header">
+                                <form name="filterForm">
+                                    <div class="form-inline float-left align-items-end">
+                                        <div class="form-group mx-1">
+                                            <label class="small font-weight-normal">Entries per page&nbsp;&nbsp;</label>
+                                            <select class="form-control form-control-sm" id="limit" name="limit">
+                                                <option selected hidden disabled>Show entries</option>
+                                                <option value="25" <%= limit === 25 ? 'selected' : '' %>>25</option>
+                                                <option value="50" <%= limit === 50 ? 'selected' : '' %>>50</option>
+                                                <option value="100" <%= limit === 100 ? 'selected' : '' %>>100</option>
+                                            </select>
+                                        </div>
+                                        <div class="form-group mx-1">
+                                            <select class="form-control form-control-sm" name="sort">
+                                                <option value="newest" <%= sort === 'newest' ? 'selected' : '' %>>Newest first</option>
+                                                <option value="oldest" <%= sort === 'oldest' ? 'selected' : '' %>>Oldest first</option>
+                                                <option value="nameAsc" <%= sort === 'nameAsc' ? 'selected' : '' %>>Name, A-Z</option>
+                                                <option value="nameDesc" <%= sort === 'nameDesc' ? 'selected' : '' %>>Name, Z-A</option>
+                                            </select>
+                                        </div>
+                                        <div class="form-group mx-2">
+                                            <a href="/admin/insurer/list" class="btn btn-sm btn-secondary">&times; Clear
+                                                Filter</a>
+                                        </div>
+                                    </div>
+                                    <div class="form-inline float-right">
+                                        <div class="form-group input-group input-group-sm ml-md-2">
+                                            <input type="text" name="keyword" class="form-control form-control-sm"
+                                                   placeholder="Search" value="<%= keyword %>">
+                                            <div class="input-group-append">
+                                                <button type="submit" class="btn btn-default">
+                                                    <i class="fas fa-search"></i>
+                                                </button>
+                                            </div>
+                                            <input type="hidden" name="page" value="<%= page %>">
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                            <!-- /.card-header -->
+                            <div class="card-body table-responsive p-0">
+                                <table class="table table-hover text-nowrap" id>
+                                    <thead>
+                                    <tr>
+                                        <th>Insurer name</th>
+                                        <th>Logo</th>
+                                        <th>Headquarter</th>
+                                        <th>Action</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <% for (var i = 0; i < listInsurer.length; i++) { %>
+                                        <tr>
+                                            <td><%= listInsurer[i].name %></td>
+                                            <td><img src="<%= listInsurer[i].logo %>"
+                                                     style="width: 150px; height: 80px; object-fit: contain"></td>
+                                            <td><%= listInsurer[i].headquarter %></td>
+                                            <td>
+                                                <a type="button" class="btn btn-sm btn-success" href="/insurer/<%= listInsurer[i].slug %>" target="_blank">View</a>
+                                                <a href="/admin/insurer/update/<%= listInsurer[i].id %>"
+                                                   class="btn btn-sm btn-primary">Update</a>
+                                                <a type="button" class="btn btn-sm btn-danger" data-toggle="modal"
+                                                   data-target="#DeleteUser<%= listInsurer[i].id %>">Delete</a>
+                                            </td>
+                                        </tr>
+                                        <div class="modal fade" id="DeleteUser<%= listInsurer[i].id %>" tabindex="-1"
+                                             role="dialog" aria-labelledby="deleteUser"
+                                             aria-hidden="true">
+                                            <div class="modal-dialog" role="document">
+                                                <div class="modal-content">
+                                                    <div class="modal-body">
+                                                        <p>Are you sure you want to delete
+                                                            <b><%= listInsurer[i].name %></b></p>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-outline-primary"
+                                                                data-dismiss="modal">Cancel
+                                                        </button>
+                                                        <a href="/admin/insurer/delete/<%= listInsurer[i].id %>"
+                                                           class="btn btn-primary">Delete</a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    <% } %>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <!-- /.card-body -->
+                        </div>
+                        <!-- /.card -->
+                    </div>
+                </div>
+                <div class="row <%= listInsurer.length != 0 ? '' : 'd-none' %>">
+                    <div class="col-12 col-md-6 ">
+                        <div class="mt-2 <%= page > totalPages ? 'd-none' : '' %>">Showing <%= pagingCounter %>
+                            to <%= Math.min((pagingCounter + limit) - 1, userCount) %> of <%= userCount %> entries
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-6">
+                        <nav aria-label="Page navigation example ">
+                            <ul class="pagination float-right">
+                                <li class="paginate_button page-item  <%= page === 1 ? 'd-none' : '' %>"
+                                    id="first"><a class="page-link"><i class="fa fa-angle-double-left"
+                                                                       aria-hidden="true"></i></a></li>
+                                <li class="paginate_button page-item  <%= page === 1 ? 'd-none' : '' %>"
+                                    id="prev"><a class="page-link">Prev</a></li>
+                                <li class="paginate_button page-item  disabled"><a
+                                            class="page-link"><%= page %></a></li>
+                                <li class="paginate_button page-item  <%= page === totalPages ? 'd-none' : '' %>"
+                                    id="next"><a class="page-link">Next</a></li>
+                                <li class="paginate_button page-item  <%= page === totalPages ? 'd-none' : '' %>"
+                                    id="last"><a class="page-link page-item "><i class="fa fa-angle-double-right"
+                                                                                 aria-hidden="true"></i></a></li>
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+    <%- include('../partial/footer'); -%>
+</div>
+<%- include('../partial/scripts'); -%>
+<script>
+    let nameValue = document.getElementById("selectSearch");
+    let name = document.getElementById('btn');
+    if ('name') {
+        name.onclick = function () {
+            location.href = `${window.location.href.split('?')[0]}?name=${nameValue.value}`;
+        }
+    }
+</script>
+<script>
+    const formSearch = document.forms['filterForm'];
+    const keywordInput = document.querySelector('input[name="keyword"]');
+    const pageInput = document.querySelector('input[name="page"]');
+    const limitInput = document.querySelector('select[name="limit"]');
+    const selectSort = document.querySelector('select[name="sort"]');
+    if (selectSort) {
+        selectSort.onchange = function () {
+            formSearch.submit();
+        }
+    }
+    if (limitInput) {
+        limitInput.onchange = function () {
+            formSearch.submit();
+        }
+    }
+    keywordInput.onkeypress = function (event) {
+        if (event.key == 'Enter') {
+            formSearch.submit();
+        }
+    }
+
+    $('#first').click(() => {
+        pageInput.value = 1;
+        formSearch.submit();
+    })
+    $('#prev').click(() => {
+        pageInput.value = parseInt(pageInput.value) - 1;
+        formSearch.submit();
+    })
+    $('#next').click(() => {
+        pageInput.value = parseInt(pageInput.value) + 1;
+        formSearch.submit();
+    })
+    $('#last').click(() => {
+        pageInput.value = parseInt( <%= totalPages %> );
+        formSearch.submit();
+    })
+</script>
+</body>
+</html>

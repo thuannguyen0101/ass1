@@ -1,0 +1,762 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include('../partial/head') -%>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jQuery-QueryBuilder/dist/css/query-builder.default.min.css">
+<!--    <link rel="stylesheet" href="/css/formula-builder.css">-->
+    <style>
+        /*.query-builder label {*/
+        /*    margin: 0;*/
+        /*}*/
+
+        /*.query-builder .hide {*/
+        /*    display: none;*/
+        /*}*/
+
+        /*.query-builder .pull-right {*/
+        /*    float: right;*/
+        /*}*/
+
+        /*.query-builder .rules-group-container {*/
+        /*    width: 100%;*/
+        /*}*/
+
+        input[name="color"] {
+            display: none;
+        }
+
+        input[name="color"]:checked + label span {
+            transform: scale(1.25);
+            border: 2px solid;
+        }
+
+        input[name="color"] + label {
+            display: inline-block;
+            width: 25px;
+            height: 25px;
+            margin-right: 10px;
+            cursor: pointer;
+        }
+
+        input[name="color"] + label:hover span {
+            transform: scale(1.25);
+        }
+
+        input[name="color"] + label span {
+            display: block;
+            width: 100%;
+            height: 100%;
+            transition: transform .2s ease-in-out;
+        }
+    </style>
+</head>
+<body class="hold-transition sidebar-mini layout-fixed layout-navbar-fixed layout-footer-fixed">
+<div class="wrapper">
+    <%- include('../partial/topbar'); -%>
+    <%- include('../partial/sidebar'); -%>
+
+    <!-- Content Wrapper. Contains page content -->
+    <div class="content-wrapper">
+        <!-- Content Header (Page header) -->
+        <section class="content-header">
+            <div class="container-fluid">
+                <div class="row mb-2">
+                    <div class="col-sm-6">
+                        <h1><%= title %></h1>
+                    </div>
+                    <div class="col-sm-6">
+                        <ol class="breadcrumb float-sm-right">
+                            <li class="breadcrumb-item"><a href="#">Home</a></li>
+                            <li class="breadcrumb-item active"><span><%= title %></span></li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <section class="content">
+            <div class="container-fluid">
+                <form method="post" id="formPlan">
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="card card-secondary mb-4">
+                                <div class="card-header"> information</div>
+                                <div class="card-body">
+                                    <div class="form-group row">
+                                        <div class="col-12 col-md-6 validate">
+                                            <label>Insurer</label>
+                                            <select class="form-control" name="insurerId">
+                                                <option value="" hidden selected disabled></option>
+                                                <% for (let i = 0; i < listInsurer.length; i++) { %>
+                                                    <option value="<%= listInsurer[i]._id %>"
+                                                    <% if (listInsurer[i]._id.equals(dataPlan.insurerId)){ %>
+                                                        <%= 'selected' %>
+                                                            <% } %>
+                                                    ><%= listInsurer[i].name %></option>
+                                                <% } %>
+                                            </select>
+                                        </div>
+                                        <div class="col-12 col-md-6 validate">
+                                            <label>Vehicle Kind</label>
+                                            <select class="form-control" name="kind">
+                                                <option value="Car"
+                                                <% if (dataPlan.kind === 'Car'){ %><%= 'selected' %>
+                                                        <% } %>
+                                                > Car
+                                                </option>
+                                                <option value="Motorcycle"
+                                                <% if (dataPlan.kind === 'Motorcycle'){ %><%= 'selected' %>
+                                                        <% } %>
+                                                >Motorcycle
+                                                </option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="form-group validate">
+                                        <label>Plan Name</label>
+                                        <input type="text" class="form-control" name="name"
+                                               value="<%= dataPlan.name %>">
+                                    </div>
+                                    <div class="form-group validate">
+                                        <label>Color</label>
+                                        <div class="input-group">
+                                            <input type="radio" id="lightblue" name="color" value="#91bfe3" />
+                                            <label for="lightblue"><span style="background-color: #91bfe3"></span></label>
+
+                                            <input type="radio" id="sandstone" name="color" value="#dad2bd" />
+                                            <label for="sandstone"><span style="background-color: #dad2bd"></span></label>
+
+                                            <input type="radio" id="dove" name="color" value="#dde4e3" />
+                                            <label for="dove"><span style="background-color: #dde4e3"></span></label>
+
+                                            <input type="radio" id="brandwhite" name="color" value="#eef0f1" />
+                                            <label for="brandwhite"><span style="background-color: #eef0f1"></span></label>
+
+                                            <input type="radio" id="moss" name="color" value="#77a984" />
+                                            <label for="moss"><span style="background-color: #77a984"></span></label>
+
+                                            <input type="radio" id="teal" name="color" value="#19bab6" />
+                                            <label for="teal"><span style="background-color: #19bab6"></span></label>
+
+                                            <input type="radio" id="mint" name="color" value="#a6e9ab" />
+                                            <label for="mint"><span style="background-color: #a6e9ab"></span></label>
+
+                                            <input type="radio" id="lime" name="color" value="#e1ee92" />
+                                            <label for="lime"><span style="background-color: #e1ee92"></span></label>
+
+                                            <input type="radio" id="lemon" name="color" value="#fff773" />
+                                            <label for="lemon"><span style="background-color: #fff773"></span></label>
+
+                                            <input type="radio" id="peach" name="color" value="#ff7569" />
+                                            <label for="peach"><span style="background-color: #ff7569"></span></label>
+
+                                            <input type="radio" id="candy" name="color" value="#e18eba" />
+                                            <label for="candy"><span style="background-color: #e18eba"></span></label>
+
+                                            <input type="radio" id="powderpink" name="color" value="#ffc5ea" />
+                                            <label for="powderpink"><span style="background-color: #ffc5ea"></span></label>
+
+                                            <input type="radio" id="lilac" name="color" value="#6d6bcf" />
+                                            <label for="lilac"><span style="background-color: #6d6bcf"></span></label>
+
+                                            <input type="radio" id="azure" name="color" value="#4870c6" />
+                                            <label for="azure"><span style="background-color: #4870c6"></span></label>
+
+                                            <input type="radio" id="gold" name="color" value="#d2ca91" />
+                                            <label for="gold"><span style="background-color: #d2ca91"></span></label>
+
+                                            <input type="radio" id="silver" name="color" value="#d3d9d9" />
+                                            <label for="silver"><span style="background-color: #d3d9d9"></span></label>
+
+                                            <input type="radio" id="bronze" name="color" value="#d97645" />
+                                            <label for="bronze"><span style="background-color: #d97645"></span></label>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="exampleInputPassword1">Description</label>
+                                        <textarea name="description" class="textarea" placeholder="Place some text here"
+                                                  style="width: 100%; height: 200px; font-size: 14px; line-height: 18px; border: 1px solid #dddddd; padding: 10px;"><%= dataPlan.description %></textarea>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-6">
+                            <div class="card card-danger mb-4">
+                                <div class="card-header">Compulsory third party's liability insurance</div>
+                                <div class="card-body">
+                                    <div class="form-group">
+                                        <label>Bodily Injury Liability</label>
+                                        <div class="form-group row validate">
+                                            <label class="col-sm-4 col-form-label font-weight-normal">Claim Limits
+                                                Value</label>
+                                            <div class="col-sm-8">
+                                                <input type="number" class="form-control"
+                                                       name="liabilityBodyClaimLimitValue"
+                                                       value="<%= (dataPlan.mainCoverages) ? dataPlan.mainCoverages.liabilityBody.claimLimitValue : '' %>">
+                                            </div>
+                                        </div>
+                                        <div class="form-group row validate">
+                                            <label class="col-sm-4 col-form-label font-weight-normal">Formula <a href="/admin/plan/instruction" target="_blank"><i class="fas fa-info-circle"></i></a></label>
+                                            <div class="col-sm-8">
+                                                <input type="text" class="form-control input-formula" name="liabilityBodyFormula"
+                                                       value="<%= (dataPlan.mainCoverages) ? dataPlan.mainCoverages.liabilityBody.formula : '' %>">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group mt-4">
+                                        <label>Property Damage Liability</label>
+                                        <div class="form-group row validate">
+                                            <label class="col-sm-4 col-form-label font-weight-normal">Claim Limits
+                                                Value</label>
+                                            <div class="col-sm-8">
+                                                <input type="number" class="form-control"
+                                                       name="liabilityPropertyClaimLimitValue"
+                                                       value="<%= (dataPlan.mainCoverages) ? dataPlan.mainCoverages.liabilityProperty.claimLimitValue : '' %>">
+                                            </div>
+                                        </div>
+                                        <div class="form-group row validate">
+                                            <label class="col-sm-4 col-form-label font-weight-normal">Formula <a href="/admin/plan/instruction" target="_blank"><i class="fas fa-info-circle"></i></a></label>
+                                            <div class="col-sm-8">
+                                                <input type="text" class="form-control input-formula" name="liabilityPropertyFormula"
+                                                       value="<%= (dataPlan.mainCoverages) ? dataPlan.mainCoverages.liabilityProperty.formula : '' %>">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card card-success mb-4">
+                                <div class="card-header">Personal accident insurance for driver and passengers</div>
+                                <div class="card-body">
+                                    <div class="form-group">
+                                        <label>Medical Payments</label>
+                                        <div class="form-group row validate">
+                                            <label class="col-sm-4 col-form-label font-weight-normal">Claim Limits
+                                                Value</label>
+                                            <div class="col-sm-8">
+                                                <input type="number" class="form-control"
+                                                       name="personalMedicalClaimLimitValue"
+                                                       value="<%= (dataPlan.mainCoverages) ? dataPlan.mainCoverages.personalMedical.claimLimitValue : '' %>">
+                                            </div>
+                                        </div>
+                                        <div class="form-group row validate">
+                                            <label class="col-sm-4 col-form-label font-weight-normal">Formula <a href="/admin/plan/instruction" target="_blank"><i class="fas fa-info-circle"></i></a></label>
+                                            <div class="col-sm-8">
+                                                <input type="text" class="form-control input-formula" name="personalMedicalFormula"
+                                                       value="<%= (dataPlan.mainCoverages) ? dataPlan.mainCoverages.personalMedical.formula : '' %>">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group mt-4">
+                                        <label>Uninsured Motorist Bodily Injury</label>
+                                        <div class="form-group row validate">
+                                            <label class="col-sm-4 col-form-label font-weight-normal">Claim Limits
+                                                Value</label>
+                                            <div class="col-sm-8">
+                                                <input type="number" class="form-control"
+                                                       name="personalBodyClaimLimitValue"
+                                                       value="<%= (dataPlan.mainCoverages) ? dataPlan.mainCoverages.personalBody.claimLimitValue : '' %>">
+                                            </div>
+                                        </div>
+                                        <div class="form-group row validate">
+                                            <label class="col-sm-4 col-form-label font-weight-normal">Formula <a href="/admin/plan/instruction" target="_blank"><i class="fas fa-info-circle"></i></a></label>
+                                            <div class="col-sm-8">
+                                                <input type="text" class="form-control input-formula" name="personalBodyFormula"
+                                                       value="<%= (dataPlan.mainCoverages) ? dataPlan.mainCoverages.personalBody.formula : '' %>">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group mt-4">
+                                        <label>Uninsured Motorist Property Damage</label>
+                                        <div class="form-group row validate">
+                                            <label class="col-sm-4 col-form-label font-weight-normal">Claim Limits
+                                                Value</label>
+                                            <div class="col-sm-8">
+                                                <input type="number" class="form-control"
+                                                       name="personalPropertyClaimLimitValue"
+                                                       value="<%= (dataPlan.mainCoverages) ? dataPlan.mainCoverages.personalProperty.claimLimitValue : '' %>">
+                                            </div>
+                                        </div>
+                                        <div class="form-group row validate">
+                                            <label class="col-sm-4 col-form-label font-weight-normal">Formula <a href="/admin/plan/instruction" target="_blank"><i class="fas fa-info-circle"></i></a></label>
+                                            <div class="col-sm-8">
+                                                <input type="text" class="form-control input-formula" name="personalPropertyFormula"
+                                                       value="<%= (dataPlan.mainCoverages) ? dataPlan.mainCoverages.personalProperty.formula : '' %>">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group mt-4 car-only">
+                                        <label>Identity Theft</label>
+                                        <div class="form-group row validate">
+                                            <label class="col-sm-4 col-form-label font-weight-normal">Claim Limits
+                                                Value</label>
+                                            <div class="col-sm-8">
+                                                <input type="number" class="form-control"
+                                                       name="personalIdentityTheftClaimLimitValue"
+                                                       value="<%= (dataPlan.carCoverages) && (dataPlan.carCoverages.personalIdentityTheft) ? dataPlan.carCoverages.personalIdentityTheft.claimLimitValue : '' %>">
+                                            </div>
+                                        </div>
+                                        <div class="form-group row validate">
+                                            <label class="col-sm-4 col-form-label font-weight-normal">Formula <a href="/admin/plan/instruction" target="_blank"><i class="fas fa-info-circle"></i></a></label>
+                                            <div class="col-sm-8">
+                                                <input type="text" class="form-control input-formula"
+                                                       name="personalIdentityTheftFormula"
+                                                       value="<%= (dataPlan.carCoverages) && (dataPlan.carCoverages.personalIdentityTheft) ? dataPlan.carCoverages.personalIdentityTheft.formula : '' %>">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="card card-warning mb-4">
+                                <div class="card-header">Vehicle physical damage insurance</div>
+                                <div class="card-body">
+                                    <div class="form-group">
+                                        <label>Collision</label>
+                                        <div class="form-group row validate">
+                                            <label class="col-sm-4 col-form-label font-weight-normal">Claim Limits
+                                                Text</label>
+                                            <div class="col-sm-8">
+                                                <input type="text" class="form-control"
+                                                       name="vehicleCollisionClaimLimitText"
+                                                       value="Full cash value of the vehicle">
+                                            </div>
+                                        </div>
+                                        <div class="form-group row validate">
+                                            <label class="col-sm-4 col-form-label font-weight-normal">Deductible</label>
+                                            <div class="col-sm-8">
+                                                <input type="number" class="form-control"
+                                                       name="vehicleCollisionDeductible"
+                                                       value="<%= (dataPlan.mainCoverages) ? dataPlan.mainCoverages.vehicleCollision.deductible : '' %>">
+                                            </div>
+                                        </div>
+                                        <div class="form-group row validate">
+                                            <label class="col-sm-4 col-form-label font-weight-normal">Formula <a href="/admin/plan/instruction" target="_blank"><i class="fas fa-info-circle"></i></a></label>
+                                            <div class="col-sm-8">
+                                                <input type="text" class="form-control input-formula" name="vehicleCollisionFormula"
+                                                       value="<%= (dataPlan.mainCoverages) ? dataPlan.mainCoverages.vehicleCollision.formula : '' %>">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group mt-4">
+                                        <label>Comprehensive</label>
+                                        <div class="form-group row validate">
+                                            <label class="col-sm-4 col-form-label font-weight-normal">Claim Limits
+                                                Text</label>
+                                            <div class="col-sm-8">
+                                                <input type="text" class="form-control"
+                                                       name="vehicleComprehensiveClaimLimitText"
+                                                       value="Full cash value of the vehicle">
+                                            </div>
+                                        </div>
+                                        <div class="form-group row validate">
+                                            <label class="col-sm-4 col-form-label font-weight-normal">Deductible</label>
+                                            <div class="col-sm-8">
+                                                <input type="number" class="form-control"
+                                                       name="vehicleComprehensiveDeductible"
+                                                       value="<%= (dataPlan.mainCoverages) ? dataPlan.mainCoverages.vehicleComprehensive.deductible : '' %>">
+                                            </div>
+                                        </div>
+                                        <div class="form-group row validate">
+                                            <label class="col-sm-4 col-form-label font-weight-normal">Formula <a href="/admin/plan/instruction" target="_blank"><i class="fas fa-info-circle"></i></a></label>
+                                            <div class="col-sm-8">
+                                                <input type="text" class="form-control input-formula"
+                                                       name="vehicleComprehensiveFormula"
+                                                       value="<%= (dataPlan.mainCoverages) ? dataPlan.mainCoverages.vehicleComprehensive.formula : '' %>">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group mt-4">
+                                        <label>Rental Reimbursement</label>
+                                        <div class="form-group row validate">
+                                            <label class="col-sm-4 col-form-label font-weight-normal">Claim Limits
+                                                Value</label>
+                                            <div class="col-sm-8">
+                                                <input type="number" class="form-control"
+                                                       name="vehicleRentalReimbursementClaimLimitValue"
+                                                       value="<%= (dataPlan.mainCoverages) ? dataPlan.mainCoverages.vehicleRentalReimbursement.claimLimitValue : '' %>">
+                                            </div>
+                                        </div>
+                                        <div class="form-group row validate">
+                                            <label class="col-sm-4 col-form-label font-weight-normal">Formula <a href="/admin/plan/instruction" target="_blank"><i class="fas fa-info-circle"></i></a></label>
+                                            <div class="col-sm-8">
+                                                <input type="text" class="form-control input-formula"
+                                                       name="vehicleRentalReimbursementFormula"
+                                                       value="<%= (dataPlan.mainCoverages) ? dataPlan.mainCoverages.vehicleRentalReimbursement.formula : '' %>">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group mt-4">
+                                        <label>Enhanced Towing Coverage</label>
+                                        <div class="form-group row validate">
+                                            <label class="col-sm-4 col-form-label font-weight-normal">Claim Limits
+                                                Value</label>
+                                            <div class="col-sm-8">
+                                                <input type="number" class="form-control"
+                                                       name="vehicleTowingClaimLimitValue"
+                                                       value="<%= (dataPlan.mainCoverages) ? dataPlan.mainCoverages.vehicleTowing.claimLimitValue : '' %>">
+                                            </div>
+                                        </div>
+                                        <div class="form-group row validate">
+                                            <label class="col-sm-4 col-form-label font-weight-normal">Formula <a href="/admin/plan/instruction" target="_blank"><i class="fas fa-info-circle"></i></a></label>
+                                            <div class="col-sm-8">
+                                                <input type="text" class="form-control input-formula" name="vehicleTowingFormula"
+                                                       value="<%= (dataPlan.mainCoverages) ? dataPlan.mainCoverages.vehicleTowing.formula : '' %>">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group mt-4 car-only">
+                                        <label>Sound System</label>
+                                        <div class="form-group row validate">
+                                            <label class="col-sm-4 col-form-label font-weight-normal">Claim Limits
+                                                Value</label>
+                                            <div class="col-sm-8">
+                                                <input type="number" class="form-control"
+                                                       name="vehicleSoundSystemClaimLimitValue"
+                                                       value="<%= (dataPlan.carCoverages) && (dataPlan.carCoverages.vehicleSoundSystem) ? dataPlan.carCoverages.vehicleSoundSystem.claimLimitValue : '' %>">
+                                            </div>
+                                        </div>
+                                        <div class="form-group row validate">
+                                            <label class="col-sm-4 col-form-label font-weight-normal">Formula <a href="/admin/plan/instruction" target="_blank"><i class="fas fa-info-circle"></i></a></label>
+                                            <div class="col-sm-8">
+                                                <input type="text" class="form-control input-formula" name="vehicleSoundSystemFormula"
+                                                       value="<%= (dataPlan.carCoverages) && (dataPlan.carCoverages.vehicleSoundSystem) ? dataPlan.carCoverages.vehicleSoundSystem.formula : '' %>">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <button type="submit" class="btn btn-block btn-primary">Submit</button>
+                    </div>
+                </form>
+            </div>
+        </section>
+    </div>
+    <%- include('../partial/footer'); -%>
+</div>
+
+<!-- Condition Modal -->
+<div class="modal fade" id="condition-modal">
+    <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Formula</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div id="formula-builder"></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-success import-formula">Import</button>
+                <button type="button" class="btn btn-warning reset-formula">Reset</button>
+                <button type="button" class="btn btn-primary save-formula">Save</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<%- include('../partial/scripts'); -%>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.1/jquery.validate.min.js"></script>
+<script src="/javascripts/jquery.a-tools-1.5.2.min.js"></script>
+<script src="/javascripts/jquery.asuggest.js"></script>
+<script>
+    // Autocomplete for formula inputs
+    const suggests = ['gender', 'age', 'educationLevel', 'employmentStatus', 'hasIncident', 'incidentCount', 'vehicleValue', 'isNew', 'annualMileage'];
+    $('.input-formula').asuggest(suggests);
+
+    // Default value for color field
+    <% if (dataPlan.color) { %>
+    $('input[name="color"][value="<%= dataPlan.color %>"]').prop('checked', true);
+    <% } %>
+</script>
+<!--<script src="https://cdn.jsdelivr.net/npm/jQuery-QueryBuilder/dist/js/query-builder.standalone.min.js"></script>-->
+<!--<script>-->
+<!--    var rules_ = {-->
+<!--        condition: 'AND',-->
+<!--        rules: [{-->
+<!--            id: 'price',-->
+<!--            operator: 'less',-->
+<!--            value: 10.25-->
+<!--        }, {-->
+<!--            condition: 'OR',-->
+<!--            rules: [{-->
+<!--                id: 'category',-->
+<!--                operator: 'equal',-->
+<!--                value: 2-->
+<!--            }, {-->
+<!--                id: 'category',-->
+<!--                operator: 'equal',-->
+<!--                value: 1-->
+<!--            }]-->
+<!--        }]-->
+<!--    };-->
+
+<!--    $('#formula-builder').queryBuilder({-->
+<!--        filters: [{-->
+<!--            id: 'name',-->
+<!--            label: 'Name',-->
+<!--            type: 'string'-->
+<!--        }, {-->
+<!--            id: 'category',-->
+<!--            label: 'Category',-->
+<!--            type: 'integer',-->
+<!--            input: 'select',-->
+<!--            values: {-->
+<!--                1: 'Books',-->
+<!--                2: 'Movies',-->
+<!--                3: 'Music',-->
+<!--                4: 'Tools',-->
+<!--                5: 'Goodies',-->
+<!--                6: 'Clothes'-->
+<!--            },-->
+<!--            operators: ['equal', 'not_equal', 'in', 'not_in', 'is_null', 'is_not_null']-->
+<!--        }, {-->
+<!--            id: 'in_stock',-->
+<!--            label: 'In stock',-->
+<!--            type: 'integer',-->
+<!--            input: 'radio',-->
+<!--            values: {-->
+<!--                1: 'Yes',-->
+<!--                0: 'No'-->
+<!--            },-->
+<!--            operators: ['equal']-->
+<!--        }, {-->
+<!--            id: 'price',-->
+<!--            label: 'Price',-->
+<!--            type: 'double',-->
+<!--            validation: {-->
+<!--                min: 0,-->
+<!--                step: 0.01-->
+<!--            }-->
+<!--        }, {-->
+<!--            id: 'id',-->
+<!--            label: 'Identifier',-->
+<!--            type: 'string',-->
+<!--            placeholder: '____-____-____',-->
+<!--            operators: ['equal', 'not_equal'],-->
+<!--            validation: {-->
+<!--                format: /^.{4}-.{4}-.{4}$/-->
+<!--            }-->
+<!--        }],-->
+
+<!--        icons: {-->
+<!--            add_group: 'fas fa-plus-square',-->
+<!--            add_rule: 'fas fa-plus-circle',-->
+<!--            remove_group: 'fas fa-minus-square',-->
+<!--            remove_rule: 'fas fa-minus-circle',-->
+<!--            error: 'fas fa-exclamation-triangle'-->
+<!--        },-->
+
+<!--        rules: rules_-->
+<!--    });-->
+
+<!--    $('.reset-formula').on('click', function() {-->
+<!--        $('#formula-builder').queryBuilder('reset');-->
+<!--    });-->
+
+<!--    $('.import-formula').on('click', function() {-->
+<!--        $('#formula-builder').queryBuilder('setRules', rules_);-->
+<!--    });-->
+
+<!--    $('.save-formula').on('click', function() {-->
+<!--        let result = $('#formula-builder').queryBuilder('getRules');-->
+
+<!--        if (!$.isEmptyObject(result)) {-->
+<!--            console.log(result);-->
+<!--            console.log(JSON.stringify(result, null, 2));-->
+<!--        }-->
+<!--    });-->
+<!--</script>-->
+<script>
+    hideShowCarOnlyInputs = () => {
+        if ($('select[name="kind"]').val() === 'Car') {
+            $('.car-only').show();
+            $('.motorcycle-only').hide().find('input').val('');
+        } else {
+            $('.car-only').hide().find('input').val('');
+            $('.motorcycle-only').show();
+        }
+    }
+    hideShowCarOnlyInputs();
+
+    $(function () {
+        $('select[name="kind"]').change(function () {
+            hideShowCarOnlyInputs();
+        })
+    });
+
+    $(function () {
+        $('#formPlan').validate({
+            rules: {
+                insurerId: {
+                    required: true,
+                },
+                kind: {
+                    required: true,
+                },
+                name: {
+                    required: true,
+                },
+                liabilityBodyClaimLimitValue: {
+                    required: true,
+                },
+                liabilityBodyFormula: {
+                    required: true,
+                },
+                liabilityPropertyClaimLimitValue: {
+                    required: true,
+                },
+                liabilityPropertyFormula: {
+                    required: true,
+                },
+                personalMedicalClaimLimitValue: {
+                    required: true,
+                },
+                personalMedicalFormula: {
+                    required: true,
+                },
+                personalBodyClaimLimitValue: {
+                    required: true,
+                },
+                personalBodyFormula: {
+                    required: true,
+                },
+                personalPropertyClaimLimitValue: {
+                    required: true,
+                },
+                personalPropertyFormula: {
+                    required: true,
+                },
+                personalIdentityTheftClaimLimitValue: {
+                    required: true,
+                },
+                personalIdentityTheftFormula: {
+                    required: true,
+                },
+                vehicleCollisionDeductible: {
+                    required: true,
+                },
+                vehicleCollisionFormula: {
+                    required: true,
+                },
+                vehicleComprehensiveClaimLimitText: {
+                    required: true,
+                },
+                vehicleComprehensiveDeductible: {
+                    required: true,
+                },
+                vehicleTowingClaimLimitValue: {
+                    required: true,
+                },
+                vehicleTowingFormula: {
+                    required: true,
+                },
+                vehicleSoundSystemClaimLimitValue: {
+                    required: true,
+                },
+                vehicleSoundSystemFormula: {
+                    required: true,
+                },
+                vehicleRentalReimbursementClaimLimitValue: {
+                    required: true,
+                },
+                vehicleRentalReimbursementFormula: {
+                    required: true
+                },
+
+            },
+            messages: {
+                insurerId: {
+                    required: 'Please select an insurer',
+                },
+                kind: {
+                    required: 'Please select a vehicle kind (Car or Motorcycle)',
+                },
+                name: {
+                    required: 'Please enter a name',
+                },
+                liabilityBodyClaimLimitValue: {
+                    required: 'Please enter your complete information in the box above',
+                },
+                liabilityBodyFormula: {
+                    required: 'Please enter your complete information in the box above',
+                },
+                liabilityPropertyClaimLimitValue: {
+                    required: 'Please enter your complete information in the box above',
+                },
+                liabilityPropertyFormula: {
+                    required: 'Please enter your complete information in the box above',
+                },
+                personalMedicalClaimLimitValue: {
+                    required: 'Please enter your complete information in the box above',
+                },
+                personalMedicalFormula: {
+                    required: 'Please enter your complete information in the box above',
+                },
+                personalBodyClaimLimitValue: {
+                    required: 'Please enter your complete information in the box above',
+                },
+                personalBodyFormula: {
+                    required: 'Please enter your complete information in the box above',
+                },
+                personalPropertyClaimLimitValue: {
+                    required: 'Please enter your complete information in the box above',
+                },
+                personalPropertyFormula: {
+                    required: 'Please enter your complete information in the box above',
+                },
+                personalIdentityTheftClaimLimitValue: {
+                    required: 'Please enter your complete information in the box above',
+                },
+                personalIdentityTheftFormula: {
+                    required: 'Please enter your complete information in the box above',
+                },
+                vehicleCollisionDeductible: {
+                    required: 'Please enter your complete information in the box above',
+                },
+                vehicleCollisionFormula: {
+                    required: 'Please enter your complete information in the box above',
+                },
+                vehicleComprehensiveClaimLimitText: {
+                    required: 'Please enter your complete information in the box above',
+                },
+                vehicleComprehensiveDeductible: {
+                    required: 'Please enter your complete information in the box above',
+                },
+                vehicleTowingClaimLimitValue: {
+                    required: 'Please enter your complete information in the box above',
+                },
+                vehicleTowingFormula: {
+                    required: 'Please enter your complete information in the box above',
+                },
+                vehicleSoundSystemClaimLimitValue: {
+                    required: 'Please enter your complete information in the box above',
+                },
+                vehicleSoundSystemFormula: {
+                    required: 'Please enter your complete information in the box above',
+                },
+                vehicleRentalReimbursementClaimLimitValue: {
+                    required: 'Please enter your complete information in the box above',
+                },
+                vehicleRentalReimbursementFormula: {
+                    required: 'Please enter your complete information in the box above',
+                },
+
+
+            },
+            errormessage: 'errorMsg',
+            errorPlacement: function (error, element) {
+                error.appendTo(element.parents('.validate'));
+            }
+        });
+    })
+</script>
+<!--<script>$("#condition-modal").modal()</script>-->
+</body>
+</html>

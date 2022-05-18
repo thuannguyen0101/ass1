@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include('../partial/head') -%>
+</head>
+<body class="hold-transition sidebar-mini layout-fixed layout-navbar-fixed layout-footer-fixed">
+<div class="wrapper">
+    <%- include('../partial/topbar'); -%>
+    <%- include('../partial/sidebar'); -%>
+
+    <!-- Content Wrapper. Contains page content -->
+    <div class="content-wrapper">
+        <!-- Content Header (Page header) -->
+        <section class="content-header">
+            <div class="container-fluid">
+                <% if (message) { %>
+                    <div class="alert alert-success alert-dismissible fade show">
+                        <button type="button" class="close" data-dismiss="alert">&times;</button>
+                        <strong>Success!</strong> <%- (message) %>
+                    </div>
+                <% } %>
+                <div class="row mb-2">
+                    <div class="col-sm-6 d-flex align-items-center">
+                        <h1><%= title %></h1>
+                    </div>
+                    <div class="col-sm-6">
+                        <ol class="breadcrumb float-sm-right">
+                            <li class="breadcrumb-item"><a href="#">Home</a></li>
+                            <li class="breadcrumb-item active"><%= title %></li>
+                        </ol>
+                    </div>
+                </div>
+            </div><!-- /.container-fluid -->
+        </section>
+        <section class="content">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-header">
+                                <form name="filterForm">
+                                    <div class="form-inline float-left align-items-end">
+                                        <div class="form-group mx-1">
+                                            <label class="small font-weight-normal">Entries per page&nbsp;&nbsp;</label>
+                                            <select class="form-control form-control-sm" id="limit" name="limit">
+                                                <option selected hidden disabled>Show entries</option>
+                                                <option value="25" <%= limit === 25 ? 'selected' : '' %>>25</option>
+                                                <option value="50" <%= limit === 50 ? 'selected' : '' %>>50</option>
+                                                <option value="100" <%= limit === 100 ? 'selected' : '' %>>100</option>
+                                            </select>
+                                        </div>
+                                        <div class="form-group mx-1">
+                                            <select class="form-control form-control-sm" name="sort">
+                                                <option value="newest" <%= sort === 'newest' ? 'selected' : '' %>>Newest first</option>
+                                                <option value="oldest" <%= sort === 'oldest' ? 'selected' : '' %>>Oldest first</option>
+                                                <option value="lowest" <%= sort === 'lowest' ? 'selected' : '' %>>Total, lowest first</option>
+                                                <option value="highest" <%= sort === 'highest' ? 'selected' : '' %>>Total, highest first</option>
+                                            </select>
+                                        </div>
+                                        <div class="form-group mx-1">
+                                            <select class="form-control form-control-sm" name="insurer">
+                                                <option value="0" selected>All insurers</option>
+                                                <% for (var i = 0; i < listInsurer.length; i++) { %>
+                                                <option value="<%= listInsurer[i]._id %>" <%= insurer && listInsurer[i]._id.toString() === insurer.toString() ? 'selected' : '' %>><%= listInsurer[i].name%></option>
+                                                    <% } %>
+                                            </select>
+                                        </div>
+                                        <div class="form-group mx-1">
+                                            <select class="form-control form-control-sm" name="paymentMethod">
+                                                <option value="0" selected>All payment methods</option>
+                                                <option value="Paypal" <%= paymentMethod === 'Paypal' ? 'selected' : '' %>>Paypal</option>
+                                                <option value="Bank Transfer" <%= paymentMethod === 'Bank Transfer' ? 'selected' : '' %>>Bank Transfer</option>
+                                                <option value="Cash" <%= paymentMethod === 'lowest' ? 'Cash' : '' %>>Cash</option>
+                                            </select>
+                                        </div>
+                                        <div class="form-group mx-1">
+                                            <select class="form-control form-control-sm" name="status">
+                                                <option value="0" selected>All status</option>
+                                                <option value="Created" <%= status === 'Created' ? 'selected' : '' %>>Created</option>
+                                                <option value="Confirmed" <%= status === 'Confirmed' ? 'selected' : '' %>>Confirmed </option>
+                                                <option value="Paid" <%= status === 'Paid' ? 'selected' : '' %>>Paid</option>
+                                                <option value="Shipped" <%= status === 'Shipped' ? 'selected' : '' %>>Shipped</option>
+                                                <option value="Canceled" <%= status === 'Canceled' ? 'selected' : '' %>>Canceled</option>
+                                                <option value="Deleted" <%= status === 'Deleted' ? 'selected' : '' %>>Deleted</option>
+                                            </select>
+                                        </div>
+                                        <div class="form-group mx-2">
+                                            <a href="/admin/order/list" class="btn btn-sm btn-secondary">&times; Clear
+                                                Filter</a>
+                                        </div>
+                                    </div>
+                                    <div class="form-inline float-right">
+                                        <div class="form-group input-group input-group-sm ml-md-2">
+                                            <input type="text" name="keyword" class="form-control form-control-sm"
+                                                   placeholder="Search" value="<%= keyword %>">
+                                            <div class="input-group-append">
+                                                <button type="submit" class="btn btn-default">
+                                                    <i class="fas fa-search"></i>
+                                                </button>
+                                            </div>
+                                            <input type="hidden" name="page" value="<%= page %>">
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                            <!-- /.card-header -->
+                            <% if(listOrder.length > 0) { %>
+                            <div class="card-body table-responsive p-0">
+                                <table class="table table-hover text-nowrap">
+                                    <thead>
+                                    <tr>
+                                        <th>Order#</th>
+                                        <th>Customer Name</th>
+                                        <th>Vehicle Kind</th>
+                                        <th>Insurer</th>
+                                        <th>Plan</th>
+                                        <th>Total</th>
+                                        <th>Status</th>
+                                        <th>Date</th>
+                                        <th>Action</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <% for (var i = 0; i < listOrder.length; i++) { %>
+                                        <div class="modal fade" id="DeleteOrder<%= listOrder[i].id %>" tabindex="-1"
+                                             role="dialog" aria-labelledby="deleteCar"
+                                             aria-hidden="true">
+                                            <div class="modal-dialog" role="document">
+                                                <div class="modal-content">
+                                                    <div class="modal-body">
+                                                        <p>Are you sure you want to delete
+                                                            <b><%= listOrder[i].orderNumber %> </b>
+                                                        </p>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-outline-primary"
+                                                                data-dismiss="modal">Cancel
+                                                        </button>
+                                                        <a href="/admin/order/delete/<%= listOrder[i].id %>"
+                                                           class="btn btn-primary">Delete</a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <tr>
+                                            <td><%= listOrder[i].orderNumber %></td>
+                                            <td><%= listOrder[i].userId.firstName %> <%= listOrder[i].userId.lastName %></td>
+                                            <td><%= listOrder[i].plan.kind %></td>
+                                            <td><%= listOrder[i].plan.insurerId.name %></td>
+                                            <td><%= listOrder[i].plan.name %></td>
+                                            <td class="text-right"><%= listOrder[i].plan.planPrice.toLocaleString('en-US', {
+                                                    style: 'currency',
+                                                    currency: 'USD',
+                                                    minimumFractionDigits: 2
+                                                }) %></td>
+                                            <td><button type="button"
+                                                        class="btn btn-sm btn-status"><%= listOrder[i].status %></button></td>
+                                            <td><%= listOrder[i].createdAt.toLocaleDateString('en-US') %></td>
+                                            <td>
+                                                <a href="/admin/order/update/<%= listOrder[i].id %>"
+                                                   class="btn btn-sm btn-primary">Update</a>
+                                            </td>
+                                        </tr>
+                                    <% } %>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <% } else { %>
+                                <div class="mt-3 mb-3 container text-center">
+                                    No result.
+                                </div>
+                            <% } %>
+                            <!-- /.card-body -->
+                        </div>
+                        <!-- /.card -->
+                    </div>
+                </div>
+                <div class="row <%= listInsurer.length != 0 ? '' : 'd-none' %>">
+                    <div class="col-12 col-md-6 ">
+                        <div class="mt-2 <%= page > totalPages ? 'd-none' : '' %>">Showing <%= pagingCounter %>
+                            to <%= Math.min((pagingCounter + limit) - 1, count) %> of <%= count %> entries
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-6">
+                        <nav aria-label="Page navigation example ">
+                            <ul class="pagination float-right">
+                                <li class="paginate_button page-item  <%= page === 1 ? 'd-none' : '' %>"
+                                    id="first"><a class="page-link"><i class="fa fa-angle-double-left"
+                                                                       aria-hidden="true"></i></a></li>
+                                <li class="paginate_button page-item  <%= page === 1 ? 'd-none' : '' %>"
+                                    id="prev"><a class="page-link">Prev</a></li>
+                                <li class="paginate_button page-item  disabled"><a
+                                            class="page-link"><%= page %></a></li>
+                                <li class="paginate_button page-item  <%= page === totalPages ? 'd-none' : '' %>"
+                                    id="next"><a class="page-link">Next</a></li>
+                                <li class="paginate_button page-item  <%= page === totalPages ? 'd-none' : '' %>"
+                                    id="last"><a class="page-link page-item "><i class="fa fa-angle-double-right"
+                                                                                 aria-hidden="true"></i></a></li>
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+    <%- include('../partial/footer'); -%>
+</div>
+<%- include('../partial/scripts'); -%>
+<script>
+    const formSearch = document.forms['filterForm'];
+    const keywordInput = document.querySelector('input[name="keyword"]');
+    const pageInput = document.querySelector('input[name="page"]');
+    const limitInput = document.querySelector('select[name="limit"]');
+    const selectSort = document.querySelector('select[name="sort"]');
+    const Status = document.querySelector('select[name="status"]');
+    const Insurer = document.querySelector('select[name="insurer"]');
+    const PaymentMethod = document.querySelector('select[name="paymentMethod"]');
+    if (selectSort) {
+        selectSort.onchange = function () {
+            formSearch.submit();
+        }
+    }
+    if (PaymentMethod) {
+        PaymentMethod.onchange = function () {
+            formSearch.submit();
+        }
+    }
+    if (Status) {
+        Status.onchange = function () {
+            formSearch.submit();
+        }
+    }
+    if (Insurer) {
+        Insurer.onchange = function () {
+            formSearch.submit();
+        }
+    }
+    if (limitInput) {
+        limitInput.onchange = function () {
+            formSearch.submit();
+        }
+    }
+    keywordInput.onkeypress = function (event) {
+        if (event.key == 'Enter') {
+            formSearch.submit();
+        }
+    }
+
+    $('#first').click(() => {
+        pageInput.value = 1;
+        formSearch.submit();
+    })
+    $('#prev').click(() => {
+        pageInput.value = parseInt(pageInput.value) - 1;
+        formSearch.submit();
+    })
+    $('#next').click(() => {
+        pageInput.value = parseInt(pageInput.value) + 1;
+        formSearch.submit();
+    })
+    $('#last').click(() => {
+        pageInput.value = parseInt( <%= totalPages %> );
+        formSearch.submit();
+    })
+</script>
+</body>
+</html>

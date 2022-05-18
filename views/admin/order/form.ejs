@@ -1,0 +1,934 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include('../partial/head') -%>
+    <style>
+        /*    Progress steps */
+        .progressbar {
+            width: 100%;
+            display: flex;
+            flex-wrap: nowrap;
+            justify-content: space-around;
+            text-align: center;
+        }
+
+        .progressbar > div {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            flex: 1;
+        }
+
+        .progressbar > div:not(:first-child):before {
+            content: '';
+            border: 1px dashed #e7e7e7;
+            position: absolute;
+            top: 55%;
+            right: 50%;
+            width: 100%;
+        }
+
+        .progressbar > div.active:before {
+            border: 1px solid #676767;
+        }
+
+        .progressbar .circle {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            border: 3px solid;
+            margin: 10px;
+            background-color: white;
+            z-index: 2;
+            position: relative;
+        }
+
+        .progressbar .active .circle:after {
+            content: "✓";
+            position: absolute;
+            font-weight: bold;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+
+        }
+
+        .progressbar > div:not(.active) .circle {
+            border: 1px solid;
+        }
+
+        .progressbar .btn-status-warning {
+            color: #ffc107;
+            border-color: #ffc107;
+        }
+
+        .progressbar .btn-status-info {
+            color: #17a2b8;
+            border-color: #17a2b8;
+        }
+
+        .progressbar .btn-status-danger {
+            color: #dc3545;
+            border-color: #dc3545;
+        }
+
+        .progressbar .btn-status-success {
+            color: #28a745;
+            border-color: #28a745;
+        }
+
+        .progressbar .active .btn-status-warning {
+            color: #1f2d3d;
+            background-color: #ffc107;
+            border-color: #ffc107;
+            box-shadow: none;
+        }
+
+        .progressbar .active .btn-status-info {
+            color: #fff;
+            background-color: #17a2b8;
+            border-color: #17a2b8;
+            box-shadow: none;
+        }
+
+        .progressbar .active .btn-status-danger {
+            color: #fff;
+            background-color: #dc3545;
+            border-color: #dc3545;
+            box-shadow: none;
+        }
+
+        .progressbar .active .btn-status-success {
+            color: #fff;
+            background-color: #28a745;
+            border-color: #28a745;
+            box-shadow: none;
+        }
+
+        .progressbar.canceled {
+            filter: grayscale(100%) opacity(50%);
+        }
+    </style>
+</head>
+<% formatMoney = value => value.toLocaleString('en-US', {
+    style: 'currency',
+    currency: 'USD',
+    minimumFractionDigits: 2
+}) %>
+<body class="hold-transition sidebar-mini layout-fixed layout-navbar-fixed layout-footer-fixed">
+<div class="wrapper">
+    <%- include('../partial/topbar'); -%>
+    <%- include('../partial/sidebar'); -%>
+
+    <!-- Content Wrapper. Contains page content -->
+    <div class="content-wrapper">
+        <!-- Content Header (Page header) -->
+        <section class="content-header">
+            <div class="container-fluid">
+                <div class="row mb-2">
+                    <div class="col-sm-6">
+                        <h1><%= title %></h1>
+                    </div>
+                    <div class="col-sm-6">
+                        <ol class="breadcrumb float-sm-right">
+                            <li class="breadcrumb-item"><a href="#">Home</a></li>
+                            <li class="breadcrumb-item active"><span><%= title %></span></li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <section class="content">
+            <div class="container-fluid">
+                <form method="post" id="formModel">
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="card card-secondary mb-4">
+                                <div class="card-header">Order Summary</div>
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-12 col-md-6">
+                                            <table class="table table-sm table-borderless">
+                                                <tbody>
+                                                <tr>
+                                                    <th>Order Number:</th>
+                                                    <td><%= dataOrder.orderNumber %></td>
+                                                </tr>
+                                                <tr>
+                                                    <th>Customer:</th>
+                                                    <td><a href="/admin/user/update/<%= dataOrder.userId._id %>"
+                                                           target="_blank"><%= dataOrder.userId.firstName + ' ' + dataOrder.userId.lastName %></a>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <th>Created At:</th>
+                                                    <td><%= dataOrder.createdAt.toLocaleString('en-gb') %></td>
+                                                </tr>
+                                                <tr>
+                                                    <th>Updated At:</th>
+                                                    <td><%= dataOrder.updatedAt.toLocaleString('en-gb') %></td>
+                                                </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                        <div class="col-12 col-md-6">
+                                            <table class="table table-sm table-borderless">
+                                                <tbody>
+                                                <tr>
+                                                    <th>Insurer:</th>
+                                                    <td><%= dataOrder.plan.insurerId.name %></td>
+                                                </tr>
+                                                <tr>
+                                                    <th>Plan:</th>
+                                                    <td><%= dataOrder.plan.name %></td>
+                                                </tr>
+                                                <tr>
+                                                    <th>Order Total:</th>
+                                                    <td><%= dataOrder.plan.planPrice.toLocaleString('en-US', {
+                                                            style: 'currency',
+                                                            currency: 'USD',
+                                                            minimumFractionDigits: 0
+                                                        }) %></td>
+                                                </tr>
+                                                <% if (dataOrder.paidAt && dataOrder.paymentMethod) { %>
+                                                    <tr>
+                                                        <th>Payment Method:</th>
+                                                        <td><%= dataOrder.paymentMethod %></td>
+                                                    </tr>
+                                                <% } %>
+                                                <% if (dataOrder.shippingAddress && dataOrder.shippingAddress.wardId) { %>
+                                                    <tr>
+                                                        <th>Shipping Address:</th>
+                                                        <td><%= dataOrder.shippingAddress.street %>
+                                                            <br><%= dataOrder.shippingAddress.wardId.pathWithType %>
+                                                        </td>
+                                                    </tr>
+                                                <% } %>
+                                                <tr>
+                                                    <th>Status:</th>
+                                                    <td>
+                                                        <button type="button"
+                                                                class="btn btn-sm btn-status"><%= dataOrder.status %></button>
+                                                    </td>
+                                                </tr>
+                                                <% if (dataOrder.canceledAt && dataOrder.cancelReason) { %>
+                                                    <tr>
+                                                        <th>Cancel Reason:</th>
+                                                        <td><%= dataOrder.cancelReason %></td>
+                                                    </tr>
+                                                <% } %>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-12">
+                                            <div class="progressbar <%= dataOrder.status === 'Canceled' ? 'canceled' : '' %>">
+                                                <div class="<%= dataOrder.createdAt ? 'active' : '' %>">
+                                                    <div class="btn btn-sm btn-status-warning">Created</div>
+                                                    <div class="circle border-warning"></div>
+                                                    <div class="small"><%= dataOrder.createdAt ? dataOrder.createdAt.toLocaleString('en-gb') : '' %></div>
+                                                </div>
+                                                <div class="<%= dataOrder.confirmedAt ? 'active' : '' %>">
+                                                    <div class="btn btn-sm btn-status-info">Confirmed</div>
+                                                    <div class="circle border-info"></div>
+                                                    <div class="small"><%= dataOrder.confirmedAt ? dataOrder.confirmedAt.toLocaleString('en-gb') : '' %></div>
+                                                </div>
+                                                <div class="<%= dataOrder.paidAt ? 'active' : '' %>">
+                                                    <div class="btn btn-sm btn-status-danger">Paid</div>
+                                                    <div class="circle border-danger" data-action="paid"></div>
+                                                    <div class="small"><%= dataOrder.paidAt ? dataOrder.paidAt.toLocaleString('en-gb') : '' %></div>
+                                                </div>
+                                                <div class="<%= dataOrder.shippedAt ? 'active' : '' %>">
+                                                    <div class="btn btn-sm btn-status-success">Shipped</div>
+                                                    <div class="circle border-success" data-action="shipped"></div>
+                                                    <div class="small"><%= dataOrder.shippedAt ? dataOrder.shippedAt.toLocaleString('en-gb') : '' %></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="card card-secondary card-tabs">
+                                <div class="card-header p-0 pt-1">
+                                    <ul class="nav nav-tabs" id="custom-tabs-one-tab" role="tablist">
+                                        <li class="nav-item">
+                                            <a class="nav-link active" id="custom-tabs-one-order-tab" data-toggle="pill"
+                                               href="#custom-tabs-one-order" role="tab"
+                                               aria-controls="custom-tabs-one-home" aria-selected="true">Order
+                                                Details</a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a class="nav-link" id="custom-tabs-one-customer-tab" data-toggle="pill"
+                                               href="#custom-tabs-one-customer" role="tab"
+                                               aria-controls="custom-tabs-one-profile"
+                                               aria-selected="false">Customer</a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a class="nav-link" id="custom-tabs-one-vehicle-tab" data-toggle="pill"
+                                               href="#custom-tabs-one-vehicle" role="tab"
+                                               aria-controls="custom-tabs-one-messages"
+                                               aria-selected="false">Vehicle</a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a class="nav-link" id="custom-tabs-one-plan-tab" data-toggle="pill"
+                                               href="#custom-tabs-one-plan" role="tab"
+                                               aria-controls="custom-tabs-one-settings" aria-selected="false">Insurance
+                                                Plan</a>
+                                        </li>
+                                    </ul>
+                                </div>
+                                <div class="card-body">
+                                    <div class="tab-content" id="custom-tabs-one-tabContent">
+                                        <div class="tab-pane fade active show" id="custom-tabs-one-order"
+                                             role="tabpanel" aria-labelledby="custom-tabs-one-order-tab">
+                                            <div class="form-horizontal">
+                                                <div class="form-group row">
+                                                    <label class="col-sm-2 col-form-label">Status</label>
+                                                    <div class="col-sm-10">
+                                                        <select name="status" class="form-control" required>
+                                                            <option value="Created" <%= dataOrder.status === 'Created' ? 'selected' : '' %>>
+                                                                Created
+                                                            </option>
+                                                            <option value="Confirmed" <%= dataOrder.status === 'Confirmed' ? 'selected' : '' %>>
+                                                                Confirmed
+                                                            </option>
+                                                            <option value="Paid" <%= dataOrder.status === 'Paid' ? 'selected' : '' %>>
+                                                                Paid
+                                                            </option>
+                                                            <option value="Shipped" <%= dataOrder.status === 'Shipped' ? 'selected' : '' %>>
+                                                                Shipped
+                                                            </option>
+                                                            <option value="Canceled" <%= dataOrder.status === 'Canceled' ? 'selected' : '' %>>
+                                                                Canceled
+                                                            </option>
+                                                            <% if (dataOrder.status === 'Deleted') { %>
+                                                                <option value="Deleted" selected>
+                                                                    Deleted
+                                                                </option>
+                                                            <% } %>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group row" id="rowCancelReason"
+                                                     style="<%= dataOrder.status !== 'Canceled' ? 'display: none' : '' %>">
+                                                    <label class="col-sm-2 col-form-label">Cancel Reason</label>
+                                                    <div class="col-sm-10">
+                                                        <input type="text" name="cancelReason" class="form-control"
+                                                               value="<%= dataOrder.cancelReason %>">
+                                                    </div>
+                                                </div>
+                                                <div class="form-group row">
+                                                    <label class="col-sm-2 col-form-label">Recipient</label>
+                                                    <div class="col-sm-10">
+                                                        <div class="row">
+                                                            <div class="col-md-4 mb-3 mb-md-0 validate">
+                                                                <input type="text" placeholder="Name"
+                                                                       value="<%= dataOrder.shippingAddress.name %>"
+                                                                       class="form-control"
+                                                                       name="name">
+                                                            </div>
+                                                            <div class="col-md-4 mb-3 mb-md-0 validate">
+                                                                <input type="text" placeholder="Phone"
+                                                                       value="<%= dataOrder.shippingAddress.phone %>"
+                                                                       class="form-control"
+                                                                       name="phone">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group row">
+                                                    <label class="col-sm-2 col-form-label">Shipping Address</label>
+                                                    <div class="col-sm-10">
+                                                        <div class="form-group row">
+                                                            <div class="col-md-4 mb-3 mb-md-0">
+                                                                <select name="cityId" class="form-control">
+                                                                    <option value selected disabled>Select city</option>
+                                                                    <% for (var i = 0; i < listCity.length; i++) { %>
+                                                                        <option value="<%= listCity[i]._id %>" <%= dataOrder.shippingAddress && dataOrder.shippingAddress.cityId && dataOrder.shippingAddress.cityId.toString() === listCity[i]._id.toString() ? 'selected' : '' %>><%= listCity[i].name %></option>
+                                                                    <% } %>
+                                                                </select>
+                                                            </div>
+                                                            <div class="col-md-4 mb-3 mb-md-0">
+                                                                <select name="districtId" class="form-control">
+                                                                    <option value selected disabled>Select district
+                                                                    </option>
+                                                                    <% if (typeof listDistrict !== 'undefined') {
+                                                                    listDistrict.forEach(item => { %>
+                                                                        <option value="<%= item._id %>" <%= dataOrder.shippingAddress && dataOrder.shippingAddress.districtId && dataOrder.shippingAddress.districtId.toString() === item._id.toString() ? 'selected' : '' %>><%= item.name %></option>
+                                                                    <% })
+                                                                    } %>
+                                                                </select>
+                                                            </div>
+                                                            <div class="col-md-4 mb-3 mb-md-0">
+                                                                <select name="wardId" class="form-control">
+                                                                    <option value selected disabled>Select ward</option>
+                                                                    <% if (typeof listWard !== 'undefined') {
+                                                                    listWard.forEach(item => { %>
+                                                                        <option value="<%= item._id %>" <%= dataOrder.shippingAddress && dataOrder.shippingAddress.wardId && dataOrder.shippingAddress.wardId._id.toString() === item._id.toString() ? 'selected' : '' %>><%= item.name %></option>
+                                                                    <% })
+                                                                    } %>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group row">
+                                                            <div class="col-md-4 mb-3 mb-md-0 validate">
+                                                                <input type="text" name="street" class="form-control"
+                                                                       placeholder="Street"
+                                                                       value="<%= dataOrder.shippingAddress ? dataOrder.shippingAddress.street : '' %>">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group row" id="rowPaymentMethod"
+                                                     style="<%= dataOrder.status === 'Created' || dataOrder.status === 'Confirmed' ? 'display: none' : '' %>">
+                                                    <label class="col-sm-2 col-form-label">Payment Method</label>
+                                                    <div class="col-sm-10">
+                                                        <select name="paymentMethod" class="form-control">
+                                                            <option value selected disabled>Select payment method
+                                                            </option>
+                                                            <option value="PayPal" <%= dataOrder.paymentMethod === 'PayPal' ? 'selected' : '' %>>
+                                                                PayPal
+                                                            </option>
+                                                            <option value="Bank Transfer" <%= dataOrder.paymentMethod === 'Bank Transfer' ? 'selected' : '' %>>
+                                                                Bank Transfer
+                                                            </option>
+                                                            <option value="Cash" <%= dataOrder.paymentMethod === 'Cash' ? 'selected' : '' %>>
+                                                                Cash
+                                                            </option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="tab-pane fade" id="custom-tabs-one-customer" role="tabpanel"
+                                             aria-labelledby="custom-tabs-one-customer-tab">
+                                            <div class="row">
+                                                <div class="col-12">
+                                                    <a href="/admin/user/update/<%= dataOrder.userId._id %>"
+                                                       class="btn btn-primary my-3" target="_blank">Edit customer
+                                                        info</a>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-12 col-md-6">
+                                                    <table class="table table-sm table-borderless">
+                                                        <tbody>
+                                                        <tbody>
+                                                        <tr>
+                                                            <th>Name:</th>
+                                                            <td><%= dataOrder.userId.firstName + ' ' + dataOrder.userId.lastName %></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <th>Gender:</th>
+                                                            <td><%= dataOrder.userId.gender === 1 ? 'Male' : 'Female' %></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <th>Date of Birth:</th>
+                                                            <td><%= dataOrder.userId.dob.toLocaleDateString('en-gb') %></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <% let educationLevelText = 'default'; switch (dataOrder.userId.educationLevel) {
+                                                                case 1:
+                                                                    educationLevelText = 'No High School Diploma';
+                                                                    break;
+                                                                case 2:
+                                                                    educationLevelText = 'High School Diploma';
+                                                                    break;
+                                                                case 3:
+                                                                    educationLevelText = 'Associate';
+                                                                    break;
+                                                                case 4:
+                                                                    educationLevelText = 'Bachelors';
+                                                                    break;
+                                                                case 5:
+                                                                    educationLevelText = 'Masters';
+                                                                    break;
+                                                                case 6:
+                                                                    educationLevelText = 'PhD';
+                                                                    break;
+                                                            } %>
+                                                            <th>Education Level:</th>
+                                                            <td><%= educationLevelText %></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <% let employmentStatusText = ''; switch (dataOrder.userId.employmentStatus) {
+                                                                case 1:
+                                                                    employmentStatusText = 'Employed';
+                                                                    break;
+                                                                case 3:
+                                                                    employmentStatusText = 'Student';
+                                                                    break;
+                                                                case 2:
+                                                                    employmentStatusText = 'Retired';
+                                                                    break;
+                                                                case 5:
+                                                                    employmentStatusText = 'Unemployed';
+                                                                    break;
+                                                                case 4:
+                                                                    employmentStatusText = 'Other';
+                                                                    break;
+                                                            } %>
+                                                            <th>Employment Status:</th>
+                                                            <td><%= employmentStatusText %></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <th>Created At:</th>
+                                                            <td><%= dataOrder.userId.createdAt.toLocaleString('en-gb') %></td>
+                                                        </tr>
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                                <div class="col-12 col-md-6">
+                                                    <table class="table table-sm table-borderless">
+                                                        <tbody>
+                                                        <tr>
+                                                            <th>Email:</th>
+                                                            <td><%= dataOrder.userId.email %></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <th>Address:</th>
+                                                            <td><%= dataOrder.userId.address.street %><br>
+                                                                <%= dataOrder.userId.address.wardId.pathWithType %></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <th>Phone:</th>
+                                                            <td><%= dataOrder.userId.phone %></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <th>Driving Records:</th>
+                                                            <td><%= dataOrder.userId.drivingRecords.length ? '' : 'None' %>
+                                                                <ul>
+                                                                    <% dataOrder.userId.drivingRecords.forEach(function (item) { %>
+                                                                        <li><%= item.incidentName %>
+                                                                            , <%= item.incidentYear %></li>
+                                                                    <% }) %>
+                                                                </ul>
+                                                            </td>
+                                                        </tr>
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="tab-pane fade" id="custom-tabs-one-vehicle" role="tabpanel"
+                                             aria-labelledby="custom-tabs-one-vehicle-tab">
+                                            <div class="row">
+                                                <div class="col-12 col-md-6">
+                                                    <table class="table table-sm table-borderless">
+                                                        <tbody>
+                                                        <tr>
+                                                            <th>Kind:</th>
+                                                            <td><%= dataOrder.vehicle.kind %></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <th>Make:</th>
+                                                            <td><%=dataOrder.vehicle.makeId.name%></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <th>Model:</th>
+                                                            <td><%= dataOrder.vehicle.modelId.name %></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <th>Year:</th>
+                                                            <td><%= dataOrder.vehicle.year %></td>
+                                                        </tr>
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                                <div class="col-6">
+                                                    <input type="text" hidden class="form-control" name="kind"
+                                                           value="<%= dataOrder.vehicle.kind %>">
+                                                    <input type="text" hidden class="form-control" name="modelId"
+                                                           value="<%= dataOrder.vehicle.modelId._id %>">
+                                                    <input type="text" hidden class="form-control" name="year"
+                                                           value="<%= dataOrder.vehicle.year %>">
+                                                    <input type="text" hidden class="form-control" name="makeId"
+                                                           value="<%=dataOrder.vehicle.makeId._id%>">
+                                                    <div class="form-group validate">
+                                                        <label>Vehicle Registration Plate</label>
+                                                        <input type="text" class="form-control" name="vehicleRegistrationPlate"
+                                                               value="<%= dataOrder.vehicle.vehicleRegistrationPlate %>">
+                                                    </div>
+                                                    <div class="form-group validate">
+                                                        <label>Vehicle Identification Number</label>
+                                                        <input type="text" class="form-control" name="vehicleIdentificationNumber"
+                                                               value="<%= dataOrder.vehicle.vehicleIdentificationNumber %>">
+                                                    </div>
+                                                    <div class="form-group validate">
+                                                        <label>Purchased Date</label>
+                                                        <div class="input-group date" id="purchasedDate"
+                                                             data-target-input="nearest">
+                                                            <input type="text" class="form-control datetimepicker-input"
+                                                                   data-target="#purchasedDate" name="purchasedDate"
+                                                                   placeholder="MM/DD/YYYY">
+                                                            <div class="input-group-append" data-target="#purchasedDate"
+                                                                 data-toggle="datetimepicker">
+                                                                <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group validate">
+                                                        <label>Engine Number</label>
+                                                        <input type="text" class="form-control" name="engineNumber"
+                                                               value="<%= dataOrder.vehicle.engineNumber %>">
+                                                    </div>
+                                                    <div class="row form-group">
+                                                        <div class="col validate">
+                                                            <label> Is For Commercial Use</label>
+                                                            <select class="form-control"
+                                                                    name="isForCommercialUse">
+                                                                <option value="1"> True</option>
+                                                                <option value="0"> Fales</option>
+
+                                                            </select>
+                                                        </div>
+                                                        <div class="col validate">
+                                                            <label>Annual Mileage</label>
+                                                            <input type="number" class="form-control"
+                                                                   name="annualMileage"
+                                                                   value="<%= dataOrder.vehicle.annualMileage %>">
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group validate">
+                                                        <label>Value</label>
+                                                        <input type="number" class="form-control"
+                                                               name="value"
+                                                               value="<%= dataOrder.vehicle.value %>">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="tab-pane fade" id="custom-tabs-one-plan" role="tabpanel"
+                                             aria-labelledby="custom-tabs-one-plan-tab d-flex">
+
+
+                                            <div class="justify-content-center d-flex ">
+                                                <img src="<%= dataOrder.plan.insurerId.logo %>"
+                                                     style="width: 150px; height: 80px; object-fit: contain">
+                                            </div>
+
+                                            <table class="table table-borderless mt-4">
+                                                <thead>
+                                                <tr>
+                                                    <td style="width: 25%;">&nbsp;</td>
+                                                    <th width="15%"><span class="badge  p-2">Claim Limit Value</span>
+                                                    </th>
+                                                    <th width="15%"><span class="badge  p-2">Deductible</span></th>
+                                                    <th width="15%"><span class="badge  p-2">Price</span></th>
+
+                                                </tr>
+                                                </thead>
+                                                <tbody>
+                                                <tr class="divider">
+                                                    <td colspan="4"><strong>Compulsory third party's liability
+                                                            insurance</strong></td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Bodily Injury Liability</td>
+                                                    <td> <%= (dataOrder.plan.mainCoverages) ? formatMoney(dataOrder.plan.mainCoverages.liabilityBody.claimLimitValue) : '' %> </td>
+                                                    <td>None</td>
+                                                    <td> <%= (dataOrder.plan.mainCoverages) ? formatMoney(dataOrder.plan.mainCoverages.liabilityBody.price) : '' %> </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Property Damage Liability</td>
+                                                    <td> <%= (dataOrder.plan.mainCoverages) ? formatMoney(dataOrder.plan.mainCoverages.liabilityProperty.claimLimitValue) : '' %></td>
+                                                    <td>None</td>
+                                                    <td> <%= (dataOrder.plan.mainCoverages) ? formatMoney(dataOrder.plan.mainCoverages.liabilityProperty.price) : '' %></td>
+
+                                                </tr>
+                                                <tr class="divider">
+                                                    <td colspan="4"><strong>Personal accident insurance for driver and
+                                                            passengers</strong></td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Medical Payments</td>
+
+                                                    <td><%= (dataOrder.plan.mainCoverages) ? formatMoney(dataOrder.plan.mainCoverages.personalMedical.claimLimitValue) : 'Not Desired' %></td>
+                                                    <td>None</td>
+                                                    <td><%= (dataOrder.plan.mainCoverages) ? formatMoney(dataOrder.plan.mainCoverages.personalMedical.price) : 'Not Desired' %></td>
+
+
+                                                </tr>
+                                                <tr>
+                                                    <td>Uninsured Motorist Bodily Injury</td>
+
+                                                    <td><%= (dataOrder.plan.mainCoverages) ? formatMoney(dataOrder.plan.mainCoverages.personalBody.claimLimitValue) : 'Not Desired' %></td>
+                                                    <td>None</td>
+                                                    <td><%= (dataOrder.plan.mainCoverages) ? formatMoney(dataOrder.plan.mainCoverages.personalBody.price) : 'Not Desired' %></td>
+
+                                                </tr>
+                                                <tr>
+                                                    <td>Uninsured Motorist Property Damage</td>
+
+                                                    <td><%= (dataOrder.plan.mainCoverages) ? formatMoney(dataOrder.plan.mainCoverages.personalProperty.claimLimitValue) : 'Not Desired' %></td>
+                                                    <td>None</td>
+                                                    <td><%= (dataOrder.plan.mainCoverages) ? formatMoney(dataOrder.plan.mainCoverages.personalProperty.price) : 'Not Desired' %></td>
+
+                                                </tr>
+                                                <% if (dataOrder.vehicle.kind === 'Car') { %>
+                                                    <tr>
+                                                        <td>Identity Theft</td>
+
+                                                        <td><%= (dataOrder.plan.carCoverages) ? formatMoney(dataOrder.plan.carCoverages.personalIdentityTheft.claimLimitValue) : 'Not Desired' %></td>
+                                                        <td>None</td>
+                                                        <td><%= (dataOrder.plan.carCoverages) ? formatMoney(dataOrder.plan.carCoverages.personalIdentityTheft.price) : 'Not Desired' %></td>
+
+                                                    </tr>
+                                                <% } %>
+
+                                                <tr class="divider">
+                                                    <td colspan="4"><strong>Vehicle physical damage insurance</strong></td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Collision</td>
+                                                    <td><%= (dataOrder.plan.mainCoverages) ? dataOrder.plan.mainCoverages.vehicleCollision.claimLimitText : 'Not Desired' %></td>
+                                                    <td><%= (dataOrder.plan.mainCoverages) ? formatMoney(dataOrder.plan.mainCoverages.vehicleCollision.deductible) : 'Not Desired' %></td>
+                                                    <td><%= (dataOrder.plan.mainCoverages) ? formatMoney(dataOrder.plan.mainCoverages.vehicleCollision.price) : 'Not Desired' %></td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Comprehensive</td>
+                                                    <td><%= (dataOrder.plan.mainCoverages) ? dataOrder.plan.mainCoverages.vehicleComprehensive.claimLimitText : 'Not Desired' %></td>
+                                                    <td><%= (dataOrder.plan.mainCoverages) ? formatMoney(dataOrder.plan.mainCoverages.vehicleComprehensive.deductible) : 'Not Desired' %></td>
+                                                    <td><%= (dataOrder.plan.mainCoverages) ? formatMoney(dataOrder.plan.mainCoverages.vehicleComprehensive.price) : 'Not Desired' %></td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Rental Reimbursement</td>
+                                                    <td><%= (dataOrder.plan.mainCoverages) ? formatMoney(dataOrder.plan.mainCoverages.vehicleRentalReimbursement.claimLimitValue) : 'Not Desired' %></td>
+                                                    <td>None</td>
+                                                    <td><%= (dataOrder.plan.mainCoverages) ? formatMoney(dataOrder.plan.mainCoverages.vehicleRentalReimbursement.price) : 'Not Desired' %></td>
+
+                                                </tr>
+                                                <tr>
+                                                    <td>Enhanced Towing Coverage</td>
+
+                                                    <td><%= (dataOrder.plan.mainCoverages) ? formatMoney(dataOrder.plan.mainCoverages.vehicleTowing.claimLimitValue) : 'Not Desired' %></td>
+                                                    <td>None</td>
+                                                    <td><%= (dataOrder.plan.mainCoverages) ? formatMoney(dataOrder.plan.mainCoverages.vehicleTowing.price) : 'Not Desired' %></td>
+
+
+                                                </tr>
+                                                <% if (dataOrder.vehicle.kind === 'Car') { %>
+                                                    <tr>
+                                                        <td>Sound System</td>
+
+                                                        <td><%= (dataOrder.plan.carCoverages) ? formatMoney(dataOrder.plan.carCoverages.vehicleSoundSystem.claimLimitValue) : 'Not Desired' %></td>
+                                                        <td>None</td>
+                                                        <td><%= (dataOrder.plan.carCoverages) ? formatMoney(dataOrder.plan.carCoverages.vehicleSoundSystem.price) : 'Not Desired' %></td>
+                                                    </tr>
+                                                <% } %>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <button class="btn btn-primary btn-block" type="submit">Submit</button>
+                        <div class="modal fade" id="DeleteModel<%= dataOrder.id %>" tabindex="-1" role="dialog"
+                             aria-labelledby="deleteCar"
+                             aria-hidden="true">
+                            <div class="modal-dialog" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-body">
+                                        <p>Are you sure you want to delete Order#<%= dataOrder.orderNumber %></p>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-outline-primary" data-dismiss="modal">
+                                            Cancel
+                                        </button>
+                                        <a href="/admin/order/delete/<%= dataOrder._id %>" class="btn btn-primary">Delete</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <% if (dataOrder._id) { %>
+                            <a type="button" class="btn mt-2 btn-block btn-danger" data-toggle="modal"
+                               data-target="#DeleteModel<%= dataOrder._id %>">Delete</a>
+                        <% } %>
+                    </div>
+                </form>
+            </div>
+        </section>
+    </div>
+    <%- include('../partial/footer'); -%>
+</div>
+<%- include('../partial/scripts'); -%>
+<script src="/admin/plugins/moment/moment.min.js"></script>
+<script src="/admin/plugins/inputmask/jquery.inputmask.min.js"></script>
+<script src="/admin/plugins/daterangepicker/daterangepicker.js"></script>
+<script src="/admin/plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.1/jquery.validate.min.js"></script>
+
+<script>
+    $(function () {
+        $('#purchasedDate').datetimepicker({
+            format: 'L',
+            defaultDate: '<%= dataOrder.vehicle.purchasedDate %>'
+        });
+    })
+
+    // Status - hide show addition fields
+    const selectStatus = $('select[name="status"]');
+    const rowPaymentMethod = $('#rowPaymentMethod');
+    const rowCancelReason = $('#rowCancelReason');
+    selectStatus.change(function () {
+        switch ($(selectStatus).val()) {
+            case 'Created':
+            case 'Confirmed':
+                rowPaymentMethod.hide();
+                rowCancelReason.hide();
+                break;
+            case 'Paid':
+            case 'Shipped':
+                rowPaymentMethod.show();
+                rowCancelReason.hide();
+                break;
+            case 'Canceled':
+                rowCancelReason.show();
+        }
+    })
+
+    // Address - Chain dropdown
+    const selectCity = $('select[name="cityId"]');
+    const selectDistrict = $('select[name="districtId"]');
+    const selectWard = $('select[name="wardId"]');
+
+    selectCity.change(function () {
+        $.ajax({
+            type: 'GET',
+            url: '/api/district/' + selectCity.val(),
+            beforeSend: function () {
+                selectDistrict.html('<option value disabled selected>Select district</option>').prop('disabled', false);
+            },
+            success: function (data) {
+                data.forEach(item => selectDistrict.append(new Option(item.name, item._id)));
+            },
+            error: function (xhr) {
+                let errors = JSON.parse(xhr.responseText).errors;
+                alert(errors.map(a => a.msg).join(';'));
+            }
+        });
+    })
+
+    selectDistrict.change(function () {
+        $.ajax({
+            type: 'GET',
+            url: '/api/ward/' + selectDistrict.val(),
+            beforeSend: function () {
+                selectWard.html('<option value disabled selected>Select ward</option>').prop('disabled', false);
+            },
+            success: function (data) {
+                data.forEach(item => selectWard.append(new Option(item.name, item._id)));
+            },
+            error: function (xhr) {
+                let errors = JSON.parse(xhr.responseText).errors;
+                alert(errors.map(a => a.msg).join(';'));
+            }
+        });
+    })
+</script>
+
+<script>
+    $(function () {
+        $('#formModel').validate({
+            rules: {
+                name: {
+                    required: true
+                },
+                phone: {
+                    required: true,
+                    maxlength: 15,
+                    minlength: 5
+                },
+                street: {
+                    required: true
+                }
+            },
+            messages: {
+                name: {
+                    required: "Please enter your name"
+                },
+                phone: {
+                    required: 'Please enter a number phone',
+                    maxlength: 'Phone name is limited to 15 characters',
+                    minlength: 'Phone minimum 5 characters'
+                },
+                street: {
+                    required: "Please enter your street"
+                }
+            },
+            errorClass: 'errorMsg',
+            errorPlacement: function (error, element) {
+                error.appendTo(element.parents('.validate'));
+            }
+        })
+    })
+</script>
+
+<script>
+    $(function () {
+        $('#formModel').validate({
+            rules: {
+                vehicleRegistrationPlate: {
+                    required: true
+                },
+                vehicleIdentificationNumber: {
+                    required: true
+                },
+                purchasedDate: {
+                    required: true
+                },
+                engineNumber: {
+                    required: true
+                },
+                isForCommercialUse: {
+                    required: true
+                },
+                annualMileage: {
+                    required: true
+                },
+                value: {
+                    required: true
+                }
+            },
+            messages: {
+                vehicleRegistrationPlate: {
+                    required: 'Please enter vehicle registration plate'
+                },
+                vehicleIdentificationNumber: {
+                    required: 'Please enter vehicle identification number'
+                },
+                purchasedDate: {
+                    required: 'Please enter purchased date'
+                },
+                engineNumber: {
+                    required: 'Please enter engine number'
+                },
+                isForCommercialUse: {
+                    required: 'Please select is for commercial use'
+                },
+                annualMileage: {
+                    required: 'Please select annual mileage'
+                },
+                value: {
+                    required: 'Please enter value'
+                }
+            },
+            errorClass: 'errorMsg',
+            errorPlacement: function (error, element) {
+                error.appendTo(element.parents('.validate'));
+            }
+        });
+    });
+</script>
+
+</body>
+</html>

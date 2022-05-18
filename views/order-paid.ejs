@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<%- include('partial/head'); -%>
+<body>
+<%- include('partial/header'); -%>
+
+<!-- Banner -->
+<section class="peach-bg py-5">
+    <div class="container text-center">
+        <h1>
+            Your order has been paid.
+        </h1>
+    </div>
+</section>
+<div class="container order-container my-5">
+    <h4>An email confirmation has been sent to you.</h4>
+    <div>
+        <b>Your order is expected to ship in 5 business days. Once your order
+            ships you'll receive a separate email containing shipment information.</b>
+        <ul>
+            <li>Order # <%= dataOrder.orderNumber %></li>
+            <li>Payment Date: <%= dataOrder.paidAt.toLocaleString() %></li>
+            <li>Payment Method: <%= dataOrder.paymentMethod %></li>
+        </ul>
+    </div>
+    <a href="/order/detail/<%= dataOrder._id %>" type="button" class="btn btn-secondary px-4 py-3 mb-4 mt-2">Review or edit your order
+        <i class="ml-2 fa fa-chevron-right" aria-hidden="true"></i>
+    </a>
+</div>
+<%- include('partial/footer'); -%>
+</body>
+</html>

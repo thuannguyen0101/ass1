@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include('partial/head') -%>
+</head>
+<% function emailTimeDisplay(dbDate) {
+    dbDate = new moment(dbDate);
+    var currentDate = new moment();
+    if (currentDate.isSame(dbDate, 'day'))
+        return dbDate.format('h:mm a');
+    else if (currentDate.isSame(dbDate, 'year'))
+        return dbDate.format("MMM DD");
+    else
+        return dbDate.format("MM/DD/YYYY");
+} %>
+<body class="hold-transition sidebar-mini layout-fixed layout-navbar-fixed layout-footer-fixed">
+<div class="wrapper">
+    <%- include('partial/topbar') -%>
+    <%- include('partial/sidebar') -%>
+
+    <!-- Content Wrapper. Contains page content -->
+    <div class="content-wrapper">
+        <!-- Content Header (Page header) -->
+        <div class="content-header">
+            <div class="container-fluid">
+                <div class="row mb-2">
+                    <div class="col-sm-6">
+                        <h1 class="m-0"><%= title %></h1>
+                    </div><!-- /.col -->
+                    <div class="col-sm-6">
+                        <ol class="breadcrumb float-sm-right">
+                            <li class="breadcrumb-item">Home</li>
+                        </ol>
+                    </div><!-- /.col -->
+                </div><!-- /.row -->
+            </div><!-- /.container-fluid -->
+        </div>
+        <!-- /.content-header -->
+
+        <!-- Main content -->
+        <section class="content">
+            <div class="container-fluid">
+                <!-- Info boxes -->
+                <div class="row">
+                    <div class="col-12 col-sm-6 col-md-3">
+                        <div class="info-box">
+                            <span class="info-box-icon bg-info elevation-1"><i class="fas fa-shopping-cart"></i></span>
+                            <div class="info-box-content">
+                                <span class="info-box-text">Orders</span>
+                                <span class="info-box-number"><%= countOrder %></span>
+                            </div>
+                            <!-- /.info-box-content -->
+                        </div>
+                        <!-- /.info-box -->
+                    </div>
+                    <!-- /.col -->
+                    <div class="col-12 col-sm-6 col-md-3">
+                        <div class="info-box mb-3">
+                            <span class="info-box-icon bg-danger elevation-1"><i class="fas fa-dollar-sign"></i></span>
+                            <div class="info-box-content">
+                                <span class="info-box-text">Sales</span>
+                                <span class="info-box-number"><%= countSales.toLocaleString('en-US', {
+                                        style: 'currency',
+                                        currency: 'USD',
+                                        minimumFractionDigits: 0
+                                    }) %></span>
+                            </div>
+                            <!-- /.info-box-content -->
+                        </div>
+                        <!-- /.info-box -->
+                    </div>
+                    <!-- /.col -->
+
+                    <!-- fix for small devices only -->
+                    <div class="clearfix hidden-md-up"></div>
+
+                    <div class="col-12 col-sm-6 col-md-3">
+                        <div class="info-box mb-3">
+                            <span class="info-box-icon bg-success elevation-1"><i
+                                        class="fas fa-cube"></i></span>
+
+                            <div class="info-box-content">
+                                <span class="info-box-text">Plans</span>
+                                <span class="info-box-number"><%= countPlan %></span>
+                            </div>
+                            <!-- /.info-box-content -->
+                        </div>
+                        <!-- /.info-box -->
+                    </div>
+                    <!-- /.col -->
+                    <div class="col-12 col-sm-6 col-md-3">
+                        <div class="info-box mb-3">
+                            <span class="info-box-icon bg-warning elevation-1"><i class="fas fa-users"></i></span>
+
+                            <div class="info-box-content">
+                                <span class="info-box-text">Users</span>
+                                <span class="info-box-number"><%= countUser %></span>
+                            </div>
+                            <!-- /.info-box-content -->
+                        </div>
+                        <!-- /.info-box -->
+                    </div>
+                    <!-- /.col -->
+                </div>
+                <!-- /.row -->
+
+                <!-- Main row -->
+                <div class="row">
+                    <!-- Left col -->
+                    <div class="col-md-8">
+                        <!-- TABLE: LATEST ORDERS -->
+                        <div class="card">
+                            <div class="card-header border-transparent">
+                                <h3 class="card-title">Latest Orders</h3>
+
+                                <div class="card-tools">
+                                    <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                                        <i class="fas fa-minus"></i>
+                                    </button>
+                                    <button type="button" class="btn btn-tool" data-card-widget="remove">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <!-- /.card-header -->
+                            <div class="card-body p-0">
+                                <div class="table-responsive">
+                                    <table class="table m-0">
+                                        <thead>
+                                        <tr>
+                                            <th>Order#</th>
+                                            <th>Customer</th>
+                                            <th>Plan</th>
+                                            <th>Status</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <% listOrder.forEach(item => { %>
+                                            <tr>
+                                                <td><a href="/admin/order/update/<%= item._id %>"><%= item.orderNumber %></a></td>
+                                                <td><%= item.userId.fullName %></td>
+                                                <td><%= item.plan.insurerId.name %> <%= item.plan.name %></td>
+                                                <td><button type="button"
+                                                            class="btn btn-sm btn-status"><%= item.status %></button></td>
+                                            </tr>
+                                        <% }) %>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <!-- /.table-responsive -->
+                            </div>
+                            <!-- /.card-body -->
+                            <div class="card-footer text-center">
+                                <a href="/admin/order/list" class="uppercase">View All Orders</a>
+                            </div>
+                            <!-- /.card-footer -->
+                        </div>
+                        <!-- /.card -->
+                    </div>
+                    <!-- /.col -->
+
+                    <div class="col-md-4">
+                        <!-- PRODUCT LIST -->
+                        <div class="card">
+                            <div class="card-header">
+                                <h3 class="card-title">Latest Messages</h3>
+
+                                <div class="card-tools">
+                                    <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                                        <i class="fas fa-minus"></i>
+                                    </button>
+                                    <button type="button" class="btn btn-tool" data-card-widget="remove">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <!-- /.card-header -->
+                            <div class="card-body p-0">
+                                <ul class="products-list product-list-in-card pl-2 pr-2">
+                                    <% listMessage.forEach(item => { %>
+                                        <li class="item">
+                                            <div class="product-info ml-2">
+                                                <a href="/admin/message/read/<%= item._id %>" class="product-title">
+                                                    <%= item.fullName %>
+                                                    <span class="badge float-right text-secondary"><i
+                                                                class="far fa-clock mr-1"></i><%= emailTimeDisplay(item.createdAt) %></span>
+                                                </a>
+                                                <span class="product-description">
+                        <%= item.comment %>
+                      </span>
+                                            </div>
+                                        </li>
+                                    <% }) %>
+                                </ul>
+                            </div>
+                            <!-- /.card-body -->
+                            <div class="card-footer text-center">
+                                <a href="/admin/message/list" class="uppercase">View All Messages</a>
+                            </div>
+                            <!-- /.card-footer -->
+                        </div>
+                        <!-- /.card -->
+                    </div>
+                    <!-- /.col -->
+                </div>
+                <!-- /.row -->
+            </div><!--/. container-fluid -->
+        </section>
+        <!-- /.content -->
+    </div>
+    <!-- /.content-wrapper -->
+
+    <%- include('partial/footer') -%>
+</div>
+
+<%- include('partial/scripts') -%>
+<!-- PAGE PLUGINS -->
+<!-- jQuery Mapael -->
+<script src="/admin/plugins/jquery-mousewheel/jquery.mousewheel.js"></script>
+<script src="/admin/plugins/raphael/raphael.min.js"></script>
+<script src="/admin/plugins/jquery-mapael/jquery.mapael.min.js"></script>
+<script src="/admin/plugins/jquery-mapael/maps/usa_states.min.js"></script>
+<!-- ChartJS -->
+<script src="/admin/plugins/chart.js/Chart.min.js"></script>
+<!-- AdminLTE dashboard demo (This is only for demo purposes) -->
+<script src="/admin/dist/js/pages/dashboard2.js"></script>
+</body>
+</html>

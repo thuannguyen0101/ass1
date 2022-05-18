@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<%- include('partial/head'); -%>
+<body>
+<%- include('partial/header'); -%>
+
+<!-- Banner -->
+<section class="light-blue-bg py-5">
+    <div class="container text-center">
+        <h1>
+            Order history
+        </h1>
+    </div>
+</section>
+<div class="container">
+    <% listOrder.forEach(item => { %>
+        <div class="card my-5">
+            <div class="card-header d-md-flex justify-content-between align-items-center py-3 <%= (item.status === 'Confirmed' || item.status === 'Created' || item.status === 'Paid' ? 'light-blue-bg' : '') %>">
+                <div class="d-md-flex">
+                    <div class="mr-5 d-flex flex-md-column align-items-end align-items-md-start">
+                        <div class="text-secondary text-uppercase small mr-3">Order placed</div>
+                        <div><%= item.createdAt.toLocaleDateString('en-GB') %></div>
+                    </div>
+                    <div class="mr-5 d-flex flex-md-column align-items-end align-items-md-start">
+                        <div class="text-secondary text-uppercase small mr-3">Total</div>
+                        <div><%= item.plan.planPrice.toLocaleString('en-US', {
+                                style: 'currency',
+                                currency: 'USD',
+                                minimumFractionDigits: 2
+                            }) %></div>
+                    </div>
+                    <div class="mr-5 d-flex flex-md-column align-items-end align-items-md-start">
+                        <div class="text-secondary text-uppercase small mr-3">Ship to</div>
+                        <div class="dropdown-shipping-address">
+                            <%= item.shippingAddress.name %>
+                            <i class="ml-2 fa fa-chevron-down" aria-hidden="true"></i>
+                            <div class="dropdown-shipping-address-content">
+                                <%= item.shippingAddress.name %><br>
+                                <%= item.shippingAddress.street %>, <%= item.shippingAddress.wardId.name %><br>
+                                <%= item.shippingAddress.districtId.name %>, <%= item.shippingAddress.cityId.name %><br>
+                                <%= item.shippingAddress.phone %>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="d-flex flex-md-column align-items-end">
+                    <div class="text-secondary text-uppercase small mr-3 mr-md-0">Order Number</div>
+                    <div><%= item.orderNumber %></div>
+                </div>
+            </div>
+            <div class="card-body d-md-flex justify-content-between py-4 pl-3">
+                <div class="mr-md-5 d-md-flex align-items-center">
+                    <img width="160" src="<%= item.vehicle.modelId.typeId ? item.vehicle.modelId.typeId.photo : '' %>" alt="<%= item.vehicle.modelId.name %>">
+                    <div class="my-4 my-md-0">
+                        <% let statusText, statusDetail; switch (item.status) {
+                            case 'Created':
+                                statusText = 'Order created';
+                                statusDetail = 'We will soon contact you to confirm your order.';
+                                break;
+                            case 'Confirmed':
+                                statusText = 'Order confirmed';
+                                statusDetail = 'You can make the payment now.';
+                                break;
+                            case 'Paid':
+                                statusText = 'Order paid';
+                                statusDetail = 'We are working our best to deliver it to you.';
+                                break;
+                            case 'Shipped':
+                                statusText = 'Order shipped';
+                                statusDetail = 'Thank you for your purchase.';
+                                break;
+                            case 'Canceled':
+                                statusText = `Order canceled`;
+                                statusDetail = `Cancel reason: ${item.cancelReason}`;
+                                break;
+                        } %>
+                        <h4 class="font-weight-bold"><%= statusText %></h4>
+                        <div class="mb-2"><%= statusDetail %></div>
+                        <div><b>Vehicle:</b> <%= `${item.vehicle.makeId.name} ${item.vehicle.modelId.name} (${item.vehicle.vehicleRegistrationPlate})` %></div>
+                        <div><b>Plan:</b> <%= `${item.plan.insurerId.name} ${item.plan.name}` %></div>
+                    </div>
+                </div>
+                <div class="ml-md-5 d-flex flex-column">
+                    <% if (item.status === 'Confirmed') { %>
+                        <a href="/order/detail/<%= item._id %>?m=payment" type="button" class="btn btn-primary px-4 py-2 my-1 w-100">Make payment</a>
+                    <% } %>
+                    <a href="/order/detail/<%= item._id %>" type="button" class="btn btn-secondary px-4 py-2 my-1 w-100">Order details</a>
+                    <% if (item.status === 'Created' || item.status === 'Confirmed') { %>
+                        <a type="button" href="/order/update-shipping/<%=item._id%>" class="btn btn-secondary px-4 py-2 my-1 w-100">Change shipping address</a>
+                        <a type="button" href="/order/cancel/<%=item._id%>" class="btn btn-secondary px-4 py-2 my-1 w-100">Cancel order</a>
+                    <% } %>
+                </div>
+            </div>
+        </div>
+    <% }) %>
+    <% if (listOrder.length === 0) { %>
+        <div>You haven't placed any order yet.</div>
+        <a type="button" href="/" class="btn btn-secondary px-4 py-3 mt-5">Back to homepage
+            <i class="ml-2 fa fa-chevron-right"></i>
+        </a>
+    <% } %>
+</div>
+<%- include('partial/footer'); -%>
+</body>
+</html>

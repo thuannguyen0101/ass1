@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<%- include('partial/head'); -%>
+<body>
+<%- include('partial/header'); -%>
+
+<!-- Banner -->
+<section class="light-blue-bg py-5">
+    <div class="container text-center">
+        <h1>
+            My Profile
+        </h1>
+    </div>
+</section>
+<div class="container">
+    <% if (message) { %>
+        <div class="alert alert-success alert-dismissible fade show">
+            <button type="button" class="close" data-dismiss="alert">&times;</button>
+            <strong>Success!</strong> <%- (message) %>
+        </div>
+    <% } %>
+    <div class="main-body">
+        <div class="row gutters-sm">
+            <div class="col-md-8">
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-sm-3">
+                                <h6 class="mb-0">Email</h6>
+                            </div>
+                            <div class="col-sm-9 text-secondary">
+                                <%= dataUser.email %>
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="row">
+                            <div class="col-sm-3">
+                                <h6 class="mb-0">Last Name</h6>
+                            </div>
+                            <div class="col-sm-9 text-secondary">
+                                <%= dataUser.lastName %>
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="row">
+                            <div class="col-sm-3">
+                                <h6 class="mb-0">First Name</h6>
+                            </div>
+                            <div class="col-sm-9 text-secondary">
+                                <%= dataUser.firstName %>
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="row">
+                            <div class="col-sm-3">
+                                <h6 class="mb-0">Phone</h6>
+                            </div>
+                            <div class="col-sm-9 text-secondary">
+                                <%= dataUser.phone %>
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="row">
+                            <div class="col-sm-3">
+                                <h6 class="mb-0">Date Of Birth</h6>
+                            </div>
+                            <div class="col-sm-9 text-secondary">
+                                <%= dataUser.dob.toLocaleDateString('en-GB') %>
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="row">
+                            <div class="col-sm-3">
+                                <h6 class="mb-0">Gender</h6>
+                            </div>
+                            <div class="col-sm-9 text-secondary">
+                                <% if (dataUser.gender === 0){ %>
+                                    <%= 'Female' %>
+                                <% } else { %>
+                                    <%= 'Male' %>
+                                <% } %>
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="row">
+                            <div class="col-sm-3">
+                                <h6 class="mb-0">Address</h6>
+                            </div>
+                            <div class="col-sm-9 text-secondary">
+                                <%= dataUser.address.street %>, <%= dataUser.address.wardId.name %>, <%= dataUser.address.districtId.name %>, <%=dataUser.address.cityId.name %>
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="row">
+                            <div class="col-sm-3">
+                                <h6 class="mb-0">Level of Education</h6>
+                            </div>
+                            <div class="col-sm-9 text-secondary">
+                                <% if (dataUser.educationLevel === 1){ %>
+                                    <%= 'No High School Diploma' %>
+                                <% } else if (dataUser.educationLevel === 2){ %>
+                                    <%= 'High School Diploma' %>
+                                <% } else if (dataUser.educationLevel === 3){ %>
+                                    <%= 'Associate' %>
+                                <% } else if (dataUser.educationLevel === 4){ %>
+                                    <%= 'Bachelors' %>
+                                <% } else if (dataUser.educationLevel === 5){ %>
+                                    <%= 'Masters' %>
+                                <% } else { %>
+                                    <%= 'PhD' %>
+                                <% } %>
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="row">
+                            <div class="col-sm-3">
+                                <h6 class="mb-0">Employment Status</h6>
+                            </div>
+                            <div class="col-sm-9 text-secondary">
+                                <% if (dataUser.employmentStatus === 1){ %>
+                                    <%= 'Employed' %>
+                                <% } else if (dataUser.employmentStatus === 2){ %>
+                                    <%= 'Retired' %>
+                                <% } else if (dataUser.employmentStatus === 3){ %>
+                                    <%= 'Student' %>
+                                <% } else if (dataUser.employmentStatus === 4){ %>
+                                    <%= 'Other' %>
+                                <% }  else { %>
+                                    <%= 'Unemployed' %>
+                                <% } %>
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="row">
+                            <div class="col-sm-3">
+                                <h6 class="mb-0">Driving Records</h6>
+                            </div>
+                            <div class="col-sm-9 text-secondary">
+                                <% if (dataUser.drivingRecords.length) { %>
+                                    <% dataUser.drivingRecords.forEach(function (item) { %>
+                                        <%= item.incidentName %>
+                                        , <%= item.incidentYear %>
+                                    <% }) %>
+                                <% }else { %>
+                                    None
+                                <% } %>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-3">
+                <div class="card">
+                    <div class="card-body text-center">
+
+                        <div>
+                            <h4><%= dataUser.firstName %> <%= dataUser.lastName %></h4>
+                            <div class=" flex-column">
+                                <a href="/my-profile/update-my-profile/<%= dataUser.id %>" type="button"
+                                   class="btn btn-secondary px-4 py-2 my-1 w-100">Update profile</a>
+                                <a href="/order/history" type="button" class="btn btn-secondary px-4 py-2 my-1 w-100">My
+                                    order</a>
+                                <a href="/entry/sign-out" type="button" class="btn btn-secondary px-4 py-2 my-1 w-100">Sign
+                                    out</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<%- include('partial/footer'); -%>
+</body>
+</html>

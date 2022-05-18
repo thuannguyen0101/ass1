@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include('../partial/head') -%>
+    <!-- icheck bootstrap -->
+    <link rel="stylesheet" href="/admin/plugins/icheck-bootstrap/icheck-bootstrap.min.css">
+    <style>
+        .checked-row {
+            background-color: #c2dbff !important;
+        }
+    </style>
+</head>
+<% function emailTimeDisplay(dbDate) {
+    dbDate = new moment(dbDate);
+    var currentDate = new moment();
+    if (currentDate.isSame(dbDate, 'day'))
+        return dbDate.format('h:mm a');
+    else if (currentDate.isSame(dbDate, 'year'))
+        return dbDate.format("MMM DD");
+    else
+        return dbDate.format("MM/DD/YYYY");
+} %>
+<body class="hold-transition sidebar-mini layout-fixed layout-navbar-fixed layout-footer-fixed">
+<div class="wrapper">
+    <%- include('../partial/topbar'); -%>
+    <%- include('../partial/sidebar'); -%>
+
+    <div class="content-wrapper">
+        <section class="content-header">
+            <div class="container-fluid">
+                <div class="row mb-2">
+                    <div class="col-sm-6">
+                        <h1><%= title %></h1>
+                    </div>
+                    <div class="col-sm-6">
+                        <ol class="breadcrumb float-sm-right">
+                            <li class="breadcrumb-item"><a href="#">Home</a></li>
+                            <li class="breadcrumb-item active"><%= title %></li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="content">
+            <div class="row">
+                <div class="col-md-3">
+                    <%- include('sidebar') -%>
+                </div>
+                <div class="col-md-9">
+                    <div class="card card-outline">
+                        <div class="card-header">
+                            <h3 class="card-title"><%= title %></h3>
+                            <div class="card-tools">
+                                <div class="input-group input-group-sm">
+                                    <input type="text" class="form-control" placeholder="Search Mail">
+                                    <div class="input-group-append">
+                                        <div class="btn btn-primary">
+                                            <i class="fas fa-search"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- /.card-tools -->
+                        </div>
+                        <!-- /.card-header -->
+                        <div class="card-body p-0">
+                            <div class="mailbox-controls">
+                                <!-- Check all button -->
+                                <button type="button" class="btn btn-default btn-sm checkbox-toggle"><i
+                                            class="far fa-square"></i>
+                                </button>
+                                <div class="btn-group" style="display: none;">
+                                    <% if (title === 'Trash') { %>
+                                        <button type="button" class="btn btn-default btn-sm btn-multiple"
+                                                data-action="restore" title="Restore">
+                                            <i class="fas fa-trash-restore"></i>
+                                        </button>
+                                    <% } else { %>
+                                        <button type="button" class="btn btn-default btn-sm btn-multiple"
+                                                data-action="delete" title="Delete">
+                                            <i class="far fa-trash-alt"></i>
+                                        </button>
+                                    <% } %>
+                                    <button type="button" class="btn btn-default btn-sm btn-multiple"
+                                            data-action="read" title="Mark as Read">
+                                        <i class="fas fa-envelope-open"></i>
+                                    </button>
+                                    <button type="button" class="btn btn-default btn-sm btn-multiple"
+                                            data-action="unread" title="Mark as Unread">
+                                        <i class="fas fa-envelope"></i>
+                                    </button>
+                                    <button type="button" class="btn btn-default btn-sm btn-multiple" data-action="star"
+                                            title="Add star">
+                                        <i class="fas fa-star"></i>
+                                    </button>
+                                </div>
+                                <!-- /.btn-group -->
+                                <button type="button" class="btn btn-default btn-sm btn-reload">
+                                    <i class="fas fa-sync-alt"></i>
+                                </button>
+                                <div class="float-right">
+<!--                                    1-5/200-->
+<!--                                    <div class="btn-group">-->
+<!--                                        <button type="button" class="btn btn-default btn-sm">-->
+<!--                                            <i class="fas fa-chevron-left"></i>-->
+<!--                                        </button>-->
+<!--                                        <button type="button" class="btn btn-default btn-sm">-->
+<!--                                            <i class="fas fa-chevron-right"></i>-->
+<!--                                        </button>-->
+<!--                                    </div>-->
+                                    <!-- /.btn-group -->
+                                </div>
+                                <!-- /.float-right -->
+                            </div>
+                            <div class="table-responsive mailbox-messages">
+                                <table class="table table-hover">
+                                    <tbody>
+                                    <% listMessage.forEach(item => { %>
+                                        <tr style="<%= item.isRead ? 'background-color: rgba(0,0,0,.05);' : 'background-color: white; font-weight: bold;' %>">
+                                            <td>
+                                                <div class="icheck-primary">
+                                                    <input type="checkbox" value="" id="check<%= item._id %>"
+                                                           data-target="<%= item._id %>"
+                                                           data-is-read="<%= item.isRead %>">
+                                                    <label for="check<%= item._id %>"></label>
+                                                </div>
+                                            </td>
+                                            <td class="mailbox-star align-middle">
+                                                <a href="#">
+                                                    <i class="fa-star <%= item.isStarred ? 'fas text-warning' : 'far text-light' %>"
+                                                       data-target="<%= item._id %>"></i>
+                                                </a>
+                                            </td>
+                                            <td class="mailbox-name align-middle"><a
+                                                        href="/admin/message/read/<%= item._id %>"
+                                                        class="text-dark"><%= item.fullName %></a></td>
+                                            <td class="mailbox-subject align-middle"><a
+                                                        href="/admin/message/read/<%= item._id %>"
+                                                        class="text-dark"><span
+                                                            class="text-secondary">[<%= item.subject %>]</span> <%= item.title %>
+                                                </a>
+                                            </td>
+                                            <td class="mailbox-date align-middle text-right"><%= emailTimeDisplay(item.createdAt) %></td>
+                                        </tr>
+                                    <% }) %>
+                                    </tbody>
+                                </table>
+                                <!-- /.table -->
+                            </div>
+                            <!-- /.mail-box-messages -->
+                        </div>
+                        <!-- /.card-body -->
+                        <div class="card-footer p-0">
+                            <div class="mailbox-controls">
+                                <!-- Check all button -->
+                                <button type="button" class="btn btn-default btn-sm checkbox-toggle">
+                                    <i class="far fa-square"></i>
+                                </button>
+                                <div class="btn-group" style="display: none;">
+                                    <% if (title === 'Trash') { %>
+                                        <button type="button" class="btn btn-default btn-sm btn-multiple"
+                                                data-action="restore" title="Restore">
+                                            <i class="fas fa-trash-restore"></i>
+                                        </button>
+                                    <% } else { %>
+                                        <button type="button" class="btn btn-default btn-sm btn-multiple"
+                                                data-action="delete" title="Delete">
+                                            <i class="far fa-trash-alt"></i>
+                                        </button>
+                                    <% } %>
+                                    <button type="button" class="btn btn-default btn-sm btn-multiple"
+                                            data-action="read" title="Mark as Read">
+                                        <i class="fas fa-envelope-open"></i>
+                                    </button>
+                                    <button type="button" class="btn btn-default btn-sm btn-multiple"
+                                            data-action="unread" title="Mark as Unread">
+                                        <i class="fas fa-envelope"></i>
+                                    </button>
+                                    <button type="button" class="btn btn-default btn-sm btn-multiple" data-action="star"
+                                            title="Add star">
+                                        <i class="fas fa-star"></i>
+                                    </button>
+                                </div>
+                                <!-- /.btn-group -->
+                                <button type="button" class="btn btn-default btn-sm btn-reload">
+                                    <i class="fas fa-sync-alt"></i>
+                                </button>
+                                <div class="float-right">
+<!--                                    1-50/200-->
+<!--                                    <div class="btn-group">-->
+<!--                                        <button type="button" class="btn btn-default btn-sm">-->
+<!--                                            <i class="fas fa-chevron-left"></i>-->
+<!--                                        </button>-->
+<!--                                        <button type="button" class="btn btn-default btn-sm">-->
+<!--                                            <i class="fas fa-chevron-right"></i>-->
+<!--                                        </button>-->
+<!--                                    </div>-->
+                                    <!-- /.btn-group -->
+                                </div>
+                                <!-- /.float-right -->
+                            </div>
+                        </div>
+                    </div>
+                    <!-- /.card -->
+                </div>
+                <!-- /.col -->
+            </div>
+            <!-- /.row -->
+        </section>
+        <!-- /.content -->
+    </div>
+
+    <!-- /.content-wrapper -->
+    <%- include('../partial/footer'); -%>
+</div>
+
+<%- include('../partial/scripts'); -%>
+<script>
+    $(function () {
+        //Enable check and uncheck all functionality
+        $('.checkbox-toggle').click(function () {
+            var clicks = $(this).data('clicks')
+            if (clicks) {
+                //Uncheck all checkboxes
+                $('.mailbox-messages input[type=\'checkbox\']').prop('checked', false)
+                $('.checkbox-toggle .far.fa-check-square').removeClass('fa-check-square').addClass('fa-square')
+            } else {
+                //Check all checkboxes
+                $('.mailbox-messages input[type=\'checkbox\']').prop('checked', true)
+                $('.checkbox-toggle .far.fa-square').removeClass('fa-square').addClass('fa-check-square')
+            }
+            $(this).data('clicks', !clicks)
+            showHideBtnGroup();
+        });
+
+        $('.mailbox-messages input[type="checkbox"]').change(function () {
+            showHideBtnGroup();
+        })
+
+        function showHideBtnGroup() {
+            let checkedMessage = $('.mailbox-messages input[type="checkbox"]:checkbox:checked');
+            let uncheckedMessage = $('.mailbox-messages input[type="checkbox"]:checkbox:not(:checked)');
+            if (checkedMessage.length) {
+                $('.mailbox-controls .btn-group').show();
+            } else {
+                $('.mailbox-controls .btn-group').hide();
+            }
+            checkedMessage.closest('tr').addClass('checked-row');
+            uncheckedMessage.closest('tr').removeClass('checked-row');
+            if ($('.mailbox-messages input[type="checkbox"][data-is-read="false"]:checkbox:checked').length) {
+                $('.btn-multiple[data-action="read"]').show();
+                $('.btn-multiple[data-action="unread"]').hide();
+            } else {
+                $('.btn-multiple[data-action="read"]').hide();
+                $('.btn-multiple[data-action="unread"]').show();
+            }
+        }
+
+        function getJsonId() {
+            let checkedMessage = $('.mailbox-messages input[type="checkbox"]:checkbox:checked');
+            let checkedId = [];
+            checkedMessage.each(function () {
+                checkedId.push($(this).attr('data-target'));
+            })
+            return checkedId;
+        }
+
+        $('.btn-multiple').click(function () {
+            let action = $(this).attr('data-action');
+            let jsonData = JSON.stringify({
+                id: getJsonId(),
+                action: action
+            })
+            $.ajax({
+                type: 'POST',
+                url: `/admin/message/update-many`,
+                contentType: 'application/json',
+                data: jsonData,
+                success: function () {
+                    location.reload();
+                },
+                error: function (xhr) {
+                    alert(JSON.parse(xhr.responseText).message);
+                }
+            })
+            return false;
+        })
+
+        $('.btn-reload').click(function () {
+            location.reload();
+        })
+
+        $('.fa-star').click(function () {
+            $.ajax({
+                type: 'GET',
+                url: `/admin/message/toggle-star/${$(this).attr('data-target')}`,
+                success: () => $(this).toggleClass('fas far text-warning text-light'),
+                error: function (xhr) {
+                    alert(JSON.parse(xhr.responseText).message);
+                }
+            })
+        })
+    })
+</script>
+</body>
+</html>

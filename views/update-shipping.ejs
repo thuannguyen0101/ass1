@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<%- include('partial/head'); -%>
+<body>
+<%- include('partial/header'); -%>
+
+
+<section class="light-blue-bg py-5">
+    <div class="container text-center">
+        <h1>
+            Change shipping address
+        </h1>
+    </div>
+</section>
+<div class="container ">
+    <h5>
+        <a href="/order/history">Order history</a> / Order# <%= dataOrder.orderNumber %> / Change shipping address
+    </h5>
+</div>
+<div class="container">
+    <div class="card my-5">
+        <div class="card-header d-md-flex justify-content-between align-dataOrders-center py-3 <%= (dataOrder.status === 'Confirmed' || dataOrder.status === 'Created' || dataOrder.status === 'Paid' ? 'light-blue-bg' : '') %>">
+            <div class="d-md-flex">
+                <div class="mr-5 d-flex flex-md-column align-dataOrders-end align-dataOrders-md-start">
+                    <div class="text-secondary text-uppercase small mr-3">Order placed</div>
+                    <div><%= dataOrder.createdAt.toLocaleDateString('en-GB') %></div>
+                </div>
+                <div class="mr-5 d-flex flex-md-column align-dataOrders-end align-dataOrders-md-start">
+                    <div class="text-secondary text-uppercase small mr-3">Total</div>
+                    <div><%= dataOrder.plan.planPrice.toLocaleString('en-US', {
+                            style: 'currency',
+                            currency: 'USD',
+                            minimumFractionDigits: 2
+                        }) %></div>
+                </div>
+            </div>
+            <div class="d-flex flex-md-column align-dataOrders-end">
+                <div class="text-secondary text-uppercase small mr-3 mr-md-0">Order Number</div>
+                <div><%= dataOrder.orderNumber %></div>
+            </div>
+        </div>
+        <div class="card-body ">
+            <form method="post" id="formUpdate">
+                <div class="row form-group">
+                    <div class="col-12 col-sm-6 mg validate">
+                        <input type="text" name="name" value="<%= dataOrder.shippingAddress.name %>"
+                               class="form-control" placeholder=" ">
+                        <label class="form-label">Recipient</label>
+                    </div>
+                    <div class="col-12 col-sm-6 validate">
+                        <input type="text" name="phone" class="form-control" placeholder=" "
+                               value=" <%= dataOrder.shippingAddress.phone %>">
+                        <label class="form-label">Phone Number</label>
+                    </div>
+                </div>
+                <div class="row form-group">
+                    <div class="col-12 col-sm-6 mg validate">
+                        <select name="cityId" class="form-control" required>
+                            <option value hidden selected disabled></option>
+                            <% for (var i = 0; i < listCity.length ; i++) { %>
+                                <option value="<%= listCity[i]._id %>" <%= dataOrder.shippingAddress.cityId._id.toString() === listCity[i]._id.toString() ? 'selected' : '' %>><%= listCity[i].name %></option>
+                            <% } %>
+                        </select>
+                        <label class="form-label">City</label>
+                    </div>
+                    <div class="col-12 col-sm-6 validate">
+                        <select name="districtId" class="form-control"
+                                required <%= listDistrict.length ? '' : 'disabled' %>>
+                            <option value hidden selected disabled></option>
+                            <% for (let i = 0; i < listDistrict.length; i++) { %>
+                                <option value="<%= listDistrict[i]._id %>" <%= dataOrder.shippingAddress.districtId._id.toString() === listDistrict[i]._id.toString() ? 'selected' : '' %>><%= listDistrict[i].name %></option>
+                            <% } %>
+                        </select>
+                        <label class="form-label">District</label>
+                    </div>
+                </div>
+                <div class="row form-group">
+                    <div class="col-12 col-sm-6 mg validate">
+                        <select name="wardId" class="form-control" required <%= listWard.length ? '' : 'disabled' %>>
+                            <option value hidden selected disabled></option>
+                            <% for (let i = 0; i < listWard.length; i++) { %>
+                                <option value="<%= listWard[i]._id %>" <%= dataOrder.shippingAddress.wardId._id.toString() === listWard[i]._id.toString() ? 'selected' : '' %>><%= listWard[i].name %></option>
+                            <% } %>
+                        </select>
+                        <label class="form-label">Ward</label>
+                    </div>
+                    <div class="col-12 col-sm-6 validate">
+                        <input type="text" name="street" class="form-control" placeholder=" "
+                               value="<%= dataOrder.shippingAddress.street %>">
+                        <label class="form-label">Street</label>
+                    </div>
+                </div>
+                <div class="mt-5 d-flex justify-content-center">
+                    <button style="width: 20%" type="submit" class="btn btn-block btn-primary">Submit</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+<%- include('partial/footer'); -%>
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.1/jquery.validate.min.js"></script>
+
+<!-- Address chain dropdown -->
+<script>
+    const selectCity = $('select[name="cityId"]');
+    const selectDistrict = $('select[name="districtId"]');
+    const selectWard = $('select[name="wardId"]');
+
+    selectCity.change(function () {
+        $.ajax({
+            type: 'GET',
+            url: '/api/district/' + selectCity.val(),
+            beforeSend: function () {
+                selectDistrict.html('<option value hidden disabled selected></option>').prop('disabled', false);
+            },
+            success: function (data) {
+                selectWard.html('').prop('disabled', true);
+                data.forEach(dataOrder => selectDistrict.append(new Option(dataOrder.name, dataOrder._id)));
+            },
+            error: function (xhr) {
+                let errors = JSON.parse(xhr.responseText).errors;
+                alert(errors.map(a => a.msg).join(';'));
+            }
+        });
+    })
+
+    selectDistrict.change(function () {
+        $.ajax({
+            type: 'GET',
+            url: '/api/ward/' + selectDistrict.val(),
+            beforeSend: function () {
+                selectWard.html('<option value hidden disabled selected></option>').prop('disabled', false);
+            },
+            success: function (data) {
+                data.forEach(dataOrder => selectWard.append(new Option(dataOrder.name, dataOrder._id)));
+            },
+            error: function (xhr) {
+                let errors = JSON.parse(xhr.responseText).errors;
+                alert(errors.map(a => a.msg).join(';'));
+            }
+        });
+    })
+</script>
+<!-- Form validation -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.1/jquery.validate.min.js"></script>
+<script>
+    $(function () {
+        $('#formUpdate').validate({
+            rules: {
+                name: {
+                    required: true
+                },
+                phone: {
+                    required: true,
+                    maxlength: 15,
+                    minlength: 5
+                },
+                cityId: {
+                    required: true,
+                },
+                districtId: {
+                    required: true,
+                },
+                wardId: {
+                    required: true,
+                },
+                street: {
+                    required: true,
+                    maxlength: 255,
+                    minlength: 5
+                }
+            },
+            messages: {
+                name: {
+                    required: 'Please enter your name'
+                },
+                phone: {
+                    required: 'Please enter a number phone',
+                    maxlength: 'Phone name is limited to 15 characters',
+                    minlength: 'Phone minimum 5 characters'
+                },
+                cityId: {
+                    required: 'Please select a city'
+                },
+                districtId: {
+                    required: 'Please select a district'
+                },
+                wardId: {
+                    required: 'Please select a ward'
+                },
+                street: {
+                    required: 'Please enter the street',
+                    maxlength: 'Street name is limited to 255 characters',
+                    minlength: 'Street minimum 5 characters'
+                }
+            },
+            errorClass: 'errorMsg',
+            errorPlacement: function (error, element) {
+                error.appendTo(element.parents('.validate'));
+            }
+        });
+    });
+</script>
+
+</body>
+</html>

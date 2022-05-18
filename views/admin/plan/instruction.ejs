@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include('../partial/head') -%>
+</head>
+<body class="hold-transition sidebar-mini layout-fixed layout-navbar-fixed layout-footer-fixed">
+<div class="wrapper">
+    <%- include('../partial/topbar'); -%>
+    <%- include('../partial/sidebar'); -%>
+
+    <!-- Content Wrapper. Contains page content -->
+    <div class="content-wrapper">
+        <!-- Content Header (Page header) -->
+        <section class="content-header">
+            <div class="container-fluid">
+                <div class="row mb-2">
+                    <div class="col-sm-6">
+                        <h1><%= title %></h1>
+                    </div>
+                    <div class="col-sm-6">
+                        <ol class="breadcrumb float-sm-right">
+                            <li class="breadcrumb-item"><a href="#">Home</a></li>
+                            <li class="breadcrumb-item active"><%= title %></li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <section class="content">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="card card-secondary">
+                            <div class="card-header">
+                                A formula can be written as
+                            </div>
+                            <div class="card-body">
+                                <table class="table table-bordered">
+                                    <tbody>
+                                    <tr>
+                                        <th>A number:</th>
+                                        <td><code>689</code></td>
+                                    </tr>
+                                    <tr>
+                                        <th>A variable:</th>
+                                        <td><code>carValue</code></td>
+                                    </tr>
+                                    <tr>
+                                        <th>An expression of several constants and/or variables:</th>
+                                        <td><code>(carValue + 10) * 0.08</code></td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="card card-secondary">
+                            <div class="card-header">
+                                Operators
+                            </div>
+                            <div class="card-body">
+                                <table class="table table-bordered">
+                                    <thead>
+                                    <tr>
+                                        <th>Operator</th>
+                                        <th>Description</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr>
+                                        <td><code>+</code></td>
+                                        <td>Addition</td>
+                                    </tr>
+                                    <tr>
+                                        <td><code>-</code></td>
+                                        <td>Subtraction</td>
+                                    </tr>
+                                    <tr>
+                                        <td><code>*</code></td>
+                                        <td>Multiplication</td>
+                                    </tr>
+                                    <tr>
+                                        <td><code>/</code></td>
+                                        <td>Division</td>
+                                    </tr>
+                                    <tr>
+                                        <td><code>%</code></td>
+                                        <td>Modulus (Remainder)</td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="card card-secondary">
+                            <div class="card-header">
+                                Variables
+                            </div>
+                            <div class="card-body">
+                                <table class="table table-bordered">
+                                    <thead>
+                                    <tr>
+                                        <th>Variable</th>
+                                        <th>Description</th>
+                                        <th>Possible values</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr>
+                                        <td><code>gender</code></td>
+                                        <td>Driver's gender</td>
+                                        <td>
+                                            <ul>
+                                                <li>1 if the driver is male</li>
+                                                <li>0 if the driver is female</li>
+                                            </ul>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td><code>age</code></td>
+                                        <td>Driver's age</td>
+                                        <td>Actual age of the driver, rounded down</td>
+                                    </tr>
+                                    <tr>
+                                        <td><code>educationLevel</code></td>
+                                        <td>Driver's highest level of education</td>
+                                        <td>
+                                            <ul>
+                                                <li>1 for No High School Diploma</li>
+                                                <li>2 for High School Diploma</li>
+                                                <li>3 for Associate</li>
+                                                <li>4 for Bachelors</li>
+                                                <li>5 for Masters</li>
+                                                <li>6 for PhD</li>
+                                            </ul>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td><code>employmentStatus</code></td>
+                                        <td>Driver's current employment status</td>
+                                        <td>
+                                            <ul>
+                                                <li>1 for Employed</li>
+                                                <li>2 for Retired</li>
+                                                <li>3 for Student</li>
+                                                <li>4 for Other</li>
+                                                <li>5 for Unemployed</li>
+                                            </ul>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td><code>hasIncident</code></td>
+                                        <td>Whether the driver has an accident / violation in the last 5 years</td>
+                                        <td>
+                                            <ul>
+                                                <li>1 for True</li>
+                                                <li>0 for False</li>
+                                            </ul>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td><code>incidentCount</code></td>
+                                        <td>Total number of incidents the driver has had in the last 5 years</td>
+                                        <td>Number of incidents</td>
+                                    </tr>
+                                    <tr>
+                                        <td><code>vehicleValue</code></td>
+                                        <td>Initial cash value of the vehicle, based on model</td>
+                                        <td>Actual number, in dollars</td>
+                                    </tr>
+                                    <tr>
+                                        <td><code>isNew</code></td>
+                                        <td>The vehicle's condition when purchased</td>
+                                        <td>
+                                            <ul>
+                                                <li>1 for New</li>
+                                                <li>0 for Old</li>
+                                            </ul>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td><code>annualMileage</code></td>
+                                        <td>The vehicle's annual mileage, in kilometers</td>
+                                        <td>Annual mileage, in kilometers</td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+    <%- include('../partial/footer'); -%>
+</div>
+
+<%- include('../partial/scripts'); -%>
+</body>
+</html>

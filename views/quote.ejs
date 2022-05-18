@@ -1,0 +1,769 @@
+<!DOCTYPE html>
+<html lang="en">
+<%- include('partial/head') -%>
+<link rel="stylesheet" href="bootstrap-datetimepicker.min.css">
+<body>
+<!-- Header -->
+<header>
+    <div class="progress-bar-container row d-flex align-items-center">
+        <div class="col-md-4 d-flex align-items-center justify-content-center">
+            <a href="/">
+                <img class="logo-quote my-2" src="/images/logo-v1.png">
+            </a>
+        </div>
+        <div class="col-md-8 d-none d-md-flex text-center">
+            <ul class="progressbar">
+                <li class="active">Driver</li>
+                <li>Vehicle</li>
+                <li>Options</li>
+                <li>Result</li>
+            </ul>
+        </div>
+    </div>
+</header>
+
+<!-- Main content (Forms + Result) -->
+<div class="error-message text-danger"></div>
+<form id="quote-driver-info" class="quote-step" style="display: none">
+    <div class="container">
+        <h2 class="mt-5">Driver information</h2>
+        <div>
+            <%- (user) ? 'Please check your information and make sure it is up to date.' : 'Already have an account? <a href="/entry/sign-in?r=quote">Sign in</a> to get your quote faster.' %>
+        </div>
+        <div class="row mt-5">
+            <div class="col-lg-8">
+                <div class="row form-group">
+                    <div class="col-12 col-sm-6 mg validate">
+                        <input type="text" name="firstName" class="form-control" placeholder=" "
+                               value="<%= user ? user.firstName : '' %>">
+                        <label class="form-label">First name</label>
+                    </div>
+                    <div class="col-12 col-sm-6 validate">
+                        <input type="text" name="lastName" class="form-control" placeholder=" "
+                               value="<%= user ? user.lastName : '' %>">
+                        <label class="form-label">Last name</label>
+                    </div>
+                </div>
+                <div class="row form-group">
+                    <div class="col-12 col-sm-6 mg validate">
+                        <select name="gender" class="form-control" required>
+                            <option hidden selected disabled></option>
+                            <option value="1" <%= user && user.gender === 1 ? 'selected' : '' %>>Male</option>
+                            <option value="0" <%= user && user.gender === 0 ? 'selected' : '' %>>Female</option>
+                        </select>
+                        <label class="form-label">Gender</label>
+                    </div>
+                    <div class="col-12 col-sm-6">
+                        <input type="date" name="dob" max="<%= new Date().toLocaleDateString('en-CA')  %>" class="form-control" placeholder=" "
+                               value="<%= user ? new Date(user.dob).toLocaleDateString('en-CA') : '' %>">
+                        <label class="form-label">Date of birth</label>
+                    </div>
+                </div>
+                <div class="row form-group">
+                    <div class="col-12 col-sm-6 mg validate">
+                        <select name="cityId" class="form-control" required>
+                            <option value="" hidden selected disabled></option>
+                            <% for (var i = 0; i < listCity.length ; i++) { %>
+                                <option value="<%= listCity[i]._id %>" <%= user && user.address.cityId.toString() === listCity[i]._id.toString() ? 'selected' : '' %>><%= listCity[i].name %></option>
+                            <% } %>
+                        </select>
+                        <label class="form-label">City</label>
+                    </div>
+                    <div class="col-12 col-sm-6 validate">
+                        <select name="districtId" class="form-control"
+                                required <%= listDistrict.length ? '' : 'disabled' %>>
+                            <% for (let i = 0; i < listDistrict.length; i++) { %>
+                                <option value="<%= listDistrict[i]._id %>" <%= user && user.address.districtId.toString() === listDistrict[i]._id.toString() ? 'selected' : '' %>><%= listDistrict[i].name %></option>
+                            <% } %>
+                        </select>
+                        <label class="form-label">District</label>
+                    </div>
+                </div>
+                <div class="row form-group">
+                    <div class="col-12 col-sm-6 mg validate">
+                        <select name="wardId" class="form-control" required <%= listWard.length ? '' : 'disabled' %>>
+                            <% for (let i = 0; i < listWard.length; i++) { %>
+                                <option value="<%= listWard[i]._id %>" <%= user && user.address.wardId.toString() === listWard[i]._id.toString() ? 'selected' : '' %>><%= listWard[i].name %></option>
+                            <% } %>
+                        </select>
+                        <label class="form-label">Ward</label>
+                    </div>
+                    <div class="col-12 col-sm-6 validate">
+                        <input type="text" name="street" class="form-control" placeholder=" "
+                               value="<%= user ? user.address.street : '' %>">
+                        <label class="form-label">Street</label>
+                    </div>
+                </div>
+                <div class="form-group validate">
+                    <input type="email" name="email" class="form-control" placeholder=" "
+                           value="<%= user ? user.email : '' %>">
+                    <label class="form-label">Email</label>
+                </div>
+                <div class="form-group validate">
+                    <input type="text" name="phone" class="form-control" placeholder=" "
+                           value="<%= user ? user.phone : '' %>">
+                    <label class="form-label">Phone number</label>
+                </div>
+                <div class="row form-group">
+                    <div class="col-12 col-sm-6 mg validate">
+                        <select name="educationLevel" class="form-control" required>
+                            <option value hidden selected disabled></option>
+                            <option value="1" <%= user && user.educationLevel === 1 ? 'selected' : '' %>>No High School
+                                Diploma
+                            </option>
+                            <option value="2" <%= user && user.educationLevel === 2 ? 'selected' : '' %>>High School
+                                Diploma
+                            </option>
+                            <option value="3" <%= user && user.educationLevel === 3 ? 'selected' : '' %>>Associate
+                            </option>
+                            <option value="4" <%= user && user.educationLevel === 4 ? 'selected' : '' %>>Bachelors
+                            </option>
+                            <option value="5" <%= user && user.educationLevel === 5 ? 'selected' : '' %>>Masters
+                            </option>
+                            <option value="6" <%= user && user.educationLevel === 6 ? 'selected' : '' %>>PhD</option>
+                        </select>
+                        <label class="form-label">Level of education</label>
+                    </div>
+                    <div class="col-12 col-sm-6 validate">
+                        <select name="employmentStatus" class="form-control" required>
+                            <option value hidden selected disabled></option>
+                            <option value="1" <%= user && user.employmentStatus === 1 ? 'selected' : '' %>>Employed
+                            </option>
+                            <option value="3" <%= user && user.employmentStatus === 3 ? 'selected' : '' %>>Student
+                            </option>
+                            <option value="2" <%= user && user.employmentStatus === 2 ? 'selected' : '' %>>Retired
+                            </option>
+                            <option value="5" <%= user && user.employmentStatus === 5 ? 'selected' : '' %>>Unemployed
+                            </option>
+                            <option value="4" <%= user && user.employmentStatus === 4 ? 'selected' : '' %>>Other
+                            </option>
+                        </select>
+                        <label class="form-label">Employment status</label>
+                    </div>
+                </div>
+                <div class="my-4">
+                    <p>Have you had any motor vehicle violations or accidents in the past 5 years?</p>
+                    <label class="choice-box-container validate">Yes
+                        <input type="radio" name="hasIncident yes"
+                               value="1" <%= user && user.drivingRecords && user.drivingRecords.filter(a => a.incidentYear >= (new Date().getFullYear() - 5)).length ? 'checked' : '' %>>
+                        <span class="choice-mark"></span>
+                    </label>
+                    <label class="choice-box-container validate">No
+                        <input type="radio" name="hasIncident no"
+                               value="0" <%= user && user.drivingRecords && !user.drivingRecords.filter(a => a.incidentYear >= (new Date().getFullYear() - 5)).length ? 'checked' : '' %>>
+                        <span class="choice-mark"></span>
+                    </label>
+                    <div class="incident-list bg-light p-4 my-3" style="display: none">
+                        <h5>Your Incidents</h5>
+                        <ul></ul>
+                        <hr>
+                        <div>For the most accurate quote, please include all incidents in the past 5 years</div>
+                        <button type="button" class="btn btn-primary px-3 py-2 mt-3" id="add-incident">Add another
+                            incident
+                        </button>
+                    </div>
+                </div>
+                <%- include('partial/quote-policy') -%>
+            </div>
+            <div class="col-lg-4 d-none d-lg-block">
+                <img class="img-fluid" src="/images/vietnam.png">
+            </div>
+        </div>
+        <div class="text-center">
+            <button type="submit" class="btn btn-primary px-4 py-3 mt-2 my-5">
+                    <span class="spinner" style="display: none">
+                            <span class="spinner-border spinner-border-sm"></span> Processing...
+                        </span>
+                <span class="submit-text">Next</span>
+            </button>
+        </div>
+    </div>
+</form>
+<form id="quote-vehicle-info" class="quote-step" style="display: none">
+    <div class="container">
+        <h2 class="mt-5">Vehicle information</h2>
+        <div class="row mt-5">
+            <div class="col-lg-8">
+                <div class="row form-group">
+                    <div class="col-12 col-sm-6 mg validate">
+                        <select name="kind" class="form-control" id="input-kind" required>
+                            <option hidden selected disabled></option>
+                            <option value="Car">Car</option>
+                            <option value="Motorcycle">Motorcycle</option>
+                        </select>
+                        <label class="form-label" for="input-kind">Kind</label>
+                    </div>
+                    <div class="col-12 col-sm-6 validate">
+                        <select name="year" class="form-control" id="input-year" required >
+                        </select>
+                        <label class="form-label" for="input-year">Year</label>
+                    </div>
+                </div>
+                <div class="row form-group">
+                    <div class="col-12 col-sm-6 mg validate">
+                        <select name="makeId" class="form-control" id="input-make" required >
+                        </select>
+                        <label class="form-label" for="input-make">Make</label>
+                    </div>
+                    <div class="col-12 col-sm-6 validate">
+                        <select name="modelId" class="form-control" id="input-model" required >
+                        </select>
+                        <label class="form-label" for="input-model">Model</label>
+                    </div>
+                </div>
+                <div class="row form-group">
+                    <div class="col-12 col-sm-6 validate">
+                        <input type="text" name="vehicleRegistrationPlate" class="form-control" placeholder=" ">
+                        <label class="form-label">Vehicle Registration Plate</label>
+                    </div>
+                    <div class="col-12 col-sm-6 validate">
+                        <input type="text" name="vehicleIdentificationNumber" class="form-control" placeholder=" ">
+                        <label class="form-label">Vehicle Identification Number (VIN)</label>
+                    </div>
+                </div>
+                <div class="row form-group">
+                    <div class="col-12 col-sm-6 validate">
+                        <input type="text" name="engineNumber" class="form-control" placeholder=" ">
+                        <label class="form-label">Engine number</label>
+                    </div>
+                    <div class="col-12 col-sm-6">
+                        <input type="date" name="purchasedDate" max="<%= new Date().toLocaleDateString('en-CA')  %>" class="form-control" placeholder=" ">
+                        <label class="form-label">Purchased date</label>
+                    </div>
+                </div>
+                <div class="row form-group">
+                    <div class="col-12 col-sm-6 mg validate">
+                        <select name="purchasedCondition" class="form-control" required>
+                            <option value hidden selected disabled></option>
+                            <option value="1">New</option>
+                            <option value="0">Old</option>
+                        </select>
+                        <label class="form-label">Purchase condition</label>
+                    </div>
+                    <div class="col-12 col-sm-6 validate">
+                        <select name="isForCommercialUse" class="form-control" required>
+                            <option value hidden selected disabled></option>
+                            <option value="1">Yes</option>
+                            <option value="0">No</option>
+                        </select>
+                        <label class="form-label">Is the vehicle for commercial use?</label>
+                    </div>
+                </div>
+                <div class="row form-group">
+                    <div class="col-12 validate">
+                        <input type="number" name="annualMileage" class="form-control" placeholder=" ">
+                        <label class="form-label">Annual mileage (in kilometers)</label>
+                    </div>
+                </div>
+                <%- include('partial/quote-policy') -%>
+            </div>
+            <div class="col-lg-4 d-none d-lg-block">
+                <img class="img-fluid" src="/images/vietnam.png">
+            </div>
+        </div>
+        <div class="text-center">
+            <button type="button" class="btn btn-secondary px-4 py-3 mt-2 my-5 mx-1 prev-form">
+                Back
+            </button>
+            <button type="submit" class="btn btn-primary px-4 py-3 mt-2 my-5 mx-1">
+                    <span class="spinner" style="display: none">
+                            <span class="spinner-border spinner-border-sm"></span> Processing...
+                        </span>
+                <span class="submit-text">Next</span>
+            </button>
+        </div>
+    </div>
+</form>
+<form id="quote-options" class="quote-step" style="display: none">
+    <div class="container">
+        <ul class="nav nav-pills mt-5 text-center">
+            <li class="nav-item">
+                <a class="nav-link active" data-toggle="pill" href="#one-insurer">Select an insurer</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" data-toggle="pill" href="#all-insurers">Find packages from all
+                    insurers</a>
+            </li>
+        </ul>
+        <div class="tab-content">
+            <div class="tab-pane container active py-4" id="one-insurer">
+                <div class="logo-list">
+                    <div class="row">
+                        <% for (var i = 0; i < listCarInsurer.length ; i++) { %>
+                            <div class="col-6 col-sm-4 col-md-3 col-xl-2 car-only">
+                                <img src="<%= listCarInsurer[i].logo %>" class="cursor-pointer"
+                                     data-insurer="<%= listCarInsurer[i]._id %>">
+                            </div>
+                        <% } %>
+                        <% for (var i = 0; i < listMotorcycleInsurer.length ; i++) { %>
+                            <div class="col-6 col-sm-4 col-md-3 col-xl-2 motorcycle-only">
+                                <img src="<%= listMotorcycleInsurer[i].logo %>" class="cursor-pointer"
+                                     data-insurer="<%= listMotorcycleInsurer[i]._id %>">
+                            </div>
+                        <% } %>
+                    </div>
+                </div>
+                <div class="text-center mt-5">
+                    <button type="button" class="btn btn-secondary px-4 py-3 mx-1 prev-form">
+                        Back
+                    </button>
+                </div>
+            </div>
+            <div class="tab-pane container fade py-5" id="all-insurers">
+                <div class="form-group validate">
+                    <label><b>Select your priority</b></label>
+                    <div class="d-flex flex-wrap">
+                        <label class="choice-box-container choice-box-container-format">Find
+                            me packages with the highest claim limits
+                            <input type="radio" name="priority" value="claimLimitHighest">
+                            <span class="choice-mark"></span>
+                        </label>
+                        <label class="choice-box-container">Find me
+                            the lowest prices available
+                            <input type="radio" name="priority" value="priceLowest">
+                            <span class="choice-mark"></span>
+                        </label>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label><b>Select your must-have coverages</b></label>
+                    <div class="form-group">
+                        <label>Compulsory third party's liability insurance</label>
+                        <div class="custom-control custom-checkbox">
+                            <input type="checkbox" class="custom-control-input" id="hasLiabilityBody"
+                                   name="mainCoverages" value="liabilityBody">
+                            <label class="custom-control-label" for="hasLiabilityBody">Bodily Injury Liability</label>
+                        </div>
+                        <div class="custom-control custom-checkbox">
+                            <input type="checkbox" class="custom-control-input" id="hasLiabilityProperty"
+                                   name="mainCoverages" value="liabilityProperty">
+                            <label class="custom-control-label" for="hasLiabilityProperty">Property Damage
+                                Liability</label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Personal accident insurance for driver and passengers</label>
+                        <div class="custom-control custom-checkbox">
+                            <input type="checkbox" class="custom-control-input" id="hasPersonalMedical"
+                                   name="mainCoverages" value="personalMedical">
+                            <label class="custom-control-label" for="hasPersonalMedical">Medical Payments</label>
+                        </div>
+                        <div class="custom-control custom-checkbox">
+                            <input type="checkbox" class="custom-control-input" id="hasPersonalBody"
+                                   name="mainCoverages" value="personalBody">
+                            <label class="custom-control-label" for="hasPersonalBody">Uninsured Motorist Bodily
+                                Injury</label>
+                        </div>
+                        <div class="custom-control custom-checkbox">
+                            <input type="checkbox" class="custom-control-input" id="hasPersonalProperty"
+                                   name="mainCoverages" value="personalProperty">
+                            <label class="custom-control-label" for="hasPersonalProperty">Uninsured Motorist Property
+                                Damage</label>
+                        </div>
+                        <div class="custom-control custom-checkbox car-only">
+                            <input type="checkbox" class="custom-control-input" id="hasPersonalIdentityTheft"
+                                   name="carCoverages" value="personalIdentityTheft">
+                            <label class="custom-control-label" for="hasPersonalIdentityTheft">Identity Theft</label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Car physical damage insurance</label>
+                        <div class="custom-control custom-checkbox">
+                            <input type="checkbox" class="custom-control-input" id="hasVehicleCollision"
+                                   name="mainCoverages" value="vehicleCollision">
+                            <label class="custom-control-label" for="hasVehicleCollision">Collision</label>
+                        </div>
+                        <div class="custom-control custom-checkbox">
+                            <input type="checkbox" class="custom-control-input" id="hasVehicleComprehensive"
+                                   name="mainCoverages" value="vehicleComprehensive">
+                            <label class="custom-control-label" for="hasVehicleComprehensive">Comprehensive</label>
+                        </div>
+                        <div class="custom-control custom-checkbox">
+                            <input type="checkbox" class="custom-control-input" id="hasVehicleRentalReimbursement"
+                                   name="mainCoverages" value="vehicleRentalReimbursement">
+                            <label class="custom-control-label" for="hasVehicleRentalReimbursement">Rental
+                                Reimbursement</label>
+                        </div>
+                        <div class="custom-control custom-checkbox">
+                            <input type="checkbox" class="custom-control-input" id="hasVehicleTowing"
+                                   name="mainCoverages" value="vehicleTowing">
+                            <label class="custom-control-label" for="hasVehicleTowing">Enhanced Towing Coverage</label>
+                        </div>
+                        <div class="custom-control custom-checkbox car-only">
+                            <input type="checkbox" class="custom-control-input" id="hasVehicleSoundSystem"
+                                   name="carCoverages" value="vehicleSoundSystem">
+                            <label class="custom-control-label" for="hasVehicleSoundSystem">Sound System</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="text-center mt-3">
+                    <button type="button" class="btn btn-secondary px-4 py-3 mx-1 prev-form">
+                        Back
+                    </button>
+                    <button type="submit" class="btn btn-primary px-4 py-3 mx-1">
+                    <span class="spinner" style="display: none">
+                            <span class="spinner-border spinner-border-sm"></span> Processing...
+                        </span>
+                        <span class="submit-text">Next</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+<div id="result-container" class="quote-step" style="display: none">
+    <div class="container"></div>
+</div>
+
+<!-- Incident Modal -->
+<div class="modal fade" id="incidentModal">
+    <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Add an Incident</h5>
+            </div>
+            <div class="modal-body">
+                <form id="incident-form">
+                    <div class="form-group">
+                        <label>What type of incident was it?</label>
+                        <div class="form-group">
+                            <div class="form-check-inline">
+                                <label class="form-check-label">
+                                    <input type="radio" class="form-check-input" name="incidentType"
+                                           value="Accident">Accident
+                                </label>
+                            </div>
+                            <div class="form-check-inline">
+                                <label class="form-check-label">
+                                    <input type="radio" class="form-check-input" name="incidentType"
+                                           value="Violation">Violation
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>When did this happen?</label>
+                        <select name="incidentYear">
+                            <option value hidden selected disabled></option>
+                            <% for (var i = new Date().getFullYear(); i >= new Date().getFullYear() - 5; i--) { %>
+                                <option value="<%= i %>"><%= i %></option>
+                            <% } %>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Incident description</label>
+                        <select name="incidentId" disabled>
+                            <option value hidden selected disabled></option>
+                        </select>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary close-btn" data-dismiss="modal">Cancel</button>
+                <button type="submit" class="btn btn-primary px-4" form="incident-form">Add</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Shipping address modal -->
+<div class="modal fade" id="shipping-address-modal">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Enter your shipping address</h5>
+            </div>
+            <div class="modal-body">
+                <form id="shipping-address-form">
+                    <div class="row form-group">
+                        <div class="col-12 col-sm-6 mg">
+                            <input type="text" name="shippingName" class="form-control" placeholder=" ">
+                            <label class="form-label">Recipient</label>
+                        </div>
+                        <div class="col-12 col-sm-6">
+                            <input type="text" name="shippingPhone" class="form-control" placeholder=" ">
+                            <label class="form-label">Phone Number</label>
+                        </div>
+                    </div>
+                    <div class="row form-group">
+                        <div class="col-12 col-sm-6 mg">
+                            <select name="cityId" class="form-control" required>
+                                <option value="" hidden selected disabled></option>
+                                <% for (var i = 0; i < listCity.length ; i++) { %>
+                                    <option value="<%= listCity[i]._id %>" <%= user && user.address.cityId.toString() === listCity[i]._id.toString() ? 'selected' : '' %>><%= listCity[i].name %></option>
+                                <% } %>
+                            </select>
+                            <label class="form-label">City</label>
+                        </div>
+                        <div class="col-12 col-sm-6">
+                            <select name="districtId" class="form-control"
+                                    required <%= listDistrict.length ? '' : 'disabled' %>>
+                                <% for (let i = 0; i < listDistrict.length; i++) { %>
+                                    <option value="<%= listDistrict[i]._id %>" <%= user && user.address.districtId.toString() === listDistrict[i]._id.toString() ? 'selected' : '' %>><%= listDistrict[i].name %></option>
+                                <% } %>
+                            </select>
+                            <label class="form-label">District</label>
+                        </div>
+                    </div>
+                    <div class="row form-group">
+                        <div class="col-12 col-sm-6 mg">
+                            <select name="wardId" class="form-control" required <%= listWard.length ? '' : 'disabled' %>>
+                                <% for (let i = 0; i < listWard.length; i++) { %>
+                                    <option value="<%= listWard[i]._id %>" <%= user && user.address.wardId.toString() === listWard[i]._id.toString() ? 'selected' : '' %>><%= listWard[i].name %></option>
+                                <% } %>
+                            </select>
+                            <label class="form-label">Ward</label>
+                        </div>
+                        <div class="col-12 col-sm-6">
+                            <input type="text" name="shippingStreet" class="form-control" placeholder=" "
+                                   value="<%= user ? user.address.street : '' %>">
+                            <label class="form-label">Street</label>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary close-btn" data-dismiss="modal">Cancel</button>
+                <button type="submit" class="btn btn-primary px-4" form="shipping-address-form">Place Order</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Sign Up modal -->
+<div class="modal fade" id="sign-up-modal">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Create a Safe Carz account to place an order</h5>
+            </div>
+            <div class="modal-body">
+                <form id="sign-up-form">
+                    <div class="form-group">
+                        <input type="email" name="email" class="form-control" placeholder=" ">
+                        <label class="form-label">Email</label>
+                    </div>
+                    <div class="form-group">
+                        <input type="password" name="password" class="form-control" placeholder=" ">
+                        <label class="form-label">Password</label>
+                    </div>
+                    <div class="form-group">
+                        <input type="password" name="confirmPassword" class="form-control" placeholder=" ">
+                        <label class="form-label">Confirm Password</label>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary close-btn" data-dismiss="modal">Cancel</button>
+                <button type="submit" class="btn btn-primary px-4" form="sign-up-form">Place Order</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<%- include('partial/footer') -%>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.1/jquery.validate.min.js"></script>
+<script>
+    $(function () {
+        $('#quote-driver-info').validate({
+            rules: {
+                firstName: {
+                    required: true,
+                    maxlength: 100,
+                },
+                lastName: {
+                    required: true,
+                    maxlength: 100,
+                },
+                gender: {
+                    required: true,
+                    max: 2,
+                    min: 0
+                },
+                dob: {
+                    required: true
+                },
+                cityId: {
+                    required: true
+                },
+                districtId: {
+                    required: true
+                },
+                wardId: {
+                  required: true
+                },
+                street: {
+                    required: true,
+                    maxlength: 255,
+                    minlength: 5
+                },
+                email: {
+                    required: true,
+                    maxlength: 255,
+                    email: true
+                },
+                phone: {
+                    required: true,
+                    maxlength: 15,
+                    minlength: 5
+                },
+                educationLevel: {
+                    required: true
+                },
+                employmentStatus: {
+                    required: true
+                }
+            },
+            messages: {
+                firstName: {
+                    required: 'Please enter a first name',
+                    maxlength: 'First name is limited to 100 characters'
+                },
+                lastName: {
+                    required: 'Please enter a last name',
+                    maxlength: 'Last name is limited to 100 characters'
+                },
+                gender: {
+                    required: 'Please select a gender '
+                },
+                dob: {
+                    required: 'Date of birth must be in MM/DD/YYYY format and no later than today'
+                },
+                cityId: {
+                    required: 'Please select a city'
+                },
+                districtId: {
+                    required: 'Please select a district'
+                },
+                wardId: {
+                    required: 'Please select a ward'
+                },
+                street: {
+                    required: 'Please enter the street',
+                    maxlength: 'Street name is limited to 255 characters',
+                    minlength: 'Street minimum 5 characters'
+                },
+                email: {
+                    required: 'Please enter email',
+                    maxlength: 'Email name is limited to 255 characters',
+                    email: 'Please enter true email'
+                },
+                phone: {
+                    required: 'Please enter a number phone',
+                    maxlength: 'Phone name is limited to 15 characters',
+                    minlength: 'Phone minimum 5 characters'
+                },
+                educationLevel: {
+                    required: 'Please select a education level'
+                },
+                employmentStatus: {
+                    required: 'Please select a employment status'
+                }
+            },
+            errorClass: 'errorMsg',
+            errorPlacement: function (error, element) {
+                error.appendTo(element.parents('.validate'));
+            }
+        });
+    });
+</script>
+
+<script>
+    $(function () {
+        $('#quote-vehicle-info').validate({
+            rules: {
+                kind: {
+                    required: true,
+                    maxlength: 255,
+                },
+                year: {
+                    required: true
+                },
+                makeId: {
+                    required: true
+                },
+                modelId: {
+                    required: true
+                },
+                vehicleRegistrationPlate: {
+                    required: true
+                },
+                vehicleIdentificationNumber: {
+                    required: true
+                },
+                engineNumber: {
+                    required: true
+                },
+                purchasedDate: {
+                    required: true
+                },
+                purchasedCondition: {
+                    required: true
+                },
+                isForCommercialUse: {
+                    required: true
+                },
+                annualMileage: {
+                    required: true
+                }
+            },
+            messages: {
+                kind: {
+                    required: 'Please select a kind',
+                    maxlength: 'Kind name is limited to 255 characters',
+                },
+                year: {
+                    required: 'Please select a year'
+                },
+                makeId: {
+                    required: 'Please select a make'
+                },
+                modelId: {
+                    required: 'Please select a model'
+                },
+                vehicleRegistrationPlate: {
+                    required: "Please enter your vehicle registration plate"
+                },
+                vehicleIdentificationNumber: {
+                    required: "Please enter your vehicle identification number"
+                },
+                engineNumber: {
+                    required: "Please enter your engine number"
+                },
+                purchasedDate: {
+                    required: "Please enter your purchased date"
+                },
+                purchasedCondition: {
+                    required: 'Please select a purchased condition'
+                },
+                isForCommercialUse: {
+                    required: 'Please select a dor commercial use'
+                },
+                annualMileage: {
+                    required: "Please enter your annual mileage"
+                }
+            },
+            errorClass: 'errorMsg',
+            errorPlacement: function (error, element) {
+                error.appendTo(element.parents('.validate'));
+            }
+        });
+    });
+</script>
+
+<script>
+    let drivingRecords = [];
+    <% if (user && user.drivingRecords.length) { %>
+    drivingRecords = <%- JSON.stringify(user.drivingRecords.filter(a => a.incidentYear >= (new Date().getFullYear() - 5))) %>;
+    <% } %>
+
+    let isSignedIn = false;
+    <% if (user) { %>
+    isSignedIn = true;
+    <% } %>
+</script>
+<script src="/javascripts/quote.js"></script>
+
+
+</body>
+</html>

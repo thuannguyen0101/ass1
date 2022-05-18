@@ -1,0 +1,39 @@
+<script src="/admin/plugins/jquery/jquery.min.js"></script>
+<script src="/admin/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+<script src="/admin/plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js"></script>
+<script src="/admin/dist/js/adminlte.min.js"></script>
+<script>
+    $(document).ready(function () {
+        // Keep sidebar opened
+        const path = $(location).attr('pathname');
+        $(`nav .nav-link[href="${path}"]`)
+            .addClass('active')
+            .parent().parent().prev().addClass('active')
+            .parent().addClass('menu-open');
+
+        // Make order status button change color
+        const btnOrderStatus = $('.btn-status');
+        btnOrderStatus.each(function () {
+            switch ($(this).text()) {
+                case 'Created':
+                    $(this).addClass('btn-warning');
+                    break;
+                case 'Confirmed':
+                    $(this).addClass('btn-info');
+                    break;
+                case 'Paid':
+                    $(this).addClass('btn-danger');
+                    break;
+                case 'Shipped':
+                    $(this).addClass('btn-success');
+                    break;
+                case 'Canceled':
+                    $(this).addClass('btn-dark');
+                    break;
+                case 'Deleted':
+                    $(this).addClass('btn-dark');
+                    break;
+            }
+        })
+    });
+</script>

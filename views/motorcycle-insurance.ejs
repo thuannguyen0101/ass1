@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<%- include('partial/head'); -%>
+<body>
+<%- include('partial/header'); -%>
+
+<!-- Banner -->
+<section class="banner peach-bg">
+    <div class="container h-100 d-flex align-items-center">
+        <div class="banner-text">
+            <div class="banner-text-title">Motorcycle insurance</div>
+            <div class="banner-text-content">
+                Hit the open road knowing you're protected.
+            </div>
+        </div>
+        <div class="banner-img-container">
+            <div class="banner-img">
+                <img class="banner-img-photo" src="../images/motorcycle-insurance-2.jpg" style="object-position: left;">
+                <img class="logo-z" src="../images/logo-z.svg">
+            </div>
+            <div class="half-circle"></div>
+        </div>
+    </div>
+</section>
+
+<!-- Insurer info -->
+<section>
+    <div class="container">
+        <div class="col-12 col-md-10 col-lg-8 mx-auto">
+            <h3>The right auto insurance policy for your needs</h3>
+            <p>We have partnered with different insurers, each offers different options so you can pick the policy
+                that best suit your needs.</p>
+            <h3>What you have to consider</h3>
+            <ul>
+                <li>Insurer</li>
+                <li>Motorcycle model (new, second hand, old-timer)</li>
+                <li>Riding habits</li>
+                <li>Cover (comprehensive, injury liability, damage)</li>
+                <li>Price</li>
+            </ul>
+        </div>
+    </div>
+</section>
+
+<section class="logo-list">
+    <div class="container">
+        <h2 class="section-title">Select your insurer</h2>
+        <div class="row text-center">
+            <% for (var i = 0; i < listMotorcycleInsurer.length; i++) { %>
+                <div class="col-6 col-sm-4 col-md-3 col-xl-2">
+                    <a href="/insurer/<%= listMotorcycleInsurer[i].slug %>">
+                        <img src="<%= listMotorcycleInsurer[i].logo %>">
+                    </a>
+                </div>
+            <% } %>
+        </div>
+
+    </div>
+</section>
+
+<section class="peach-bg py-5">
+    <div class="container text-center">
+        <h3>
+            Don't know which insurer to choose?<br>Find out which plan fits you the most.
+        </h3>
+<!--        <button type="button" class="btn btn-primary px-4 py-3 mt-4 mx-1">Get a quote-->
+<!--            <i class="ml-2 fa fa-chevron-right text-white"></i>-->
+<!--        </button>-->
+        <a href="/quote" type="button" class="btn btn-primary px-4 py-3 mt-4 mx-1">Get a quote
+            <i class="ml-2 fa fa-chevron-right text-white"></i>
+        </a>
+    </div>
+</section>
+
+<%- include('partial/footer'); -%>
+</body>
+</html>

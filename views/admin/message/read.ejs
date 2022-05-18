@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include('../partial/head') -%>
+</head>
+<body class="hold-transition sidebar-mini layout-fixed layout-navbar-fixed layout-footer-fixed">
+<div class="wrapper">
+    <%- include('../partial/topbar'); -%>
+    <%- include('../partial/sidebar'); -%>
+
+    <!-- Content Wrapper. Contains page content -->
+    <div class="content-wrapper">
+        <!-- Content Header (Page header) -->
+        <section class="content-header">
+            <div class="container-fluid">
+                <div class="row mb-2">
+                    <div class="col-sm-6">
+                        <h1><%= title %></h1>
+                    </div>
+                    <div class="col-sm-6">
+                        <ol class="breadcrumb float-sm-right">
+                            <li class="breadcrumb-item"><a href="#">Home</a></li>
+                            <li class="breadcrumb-item active"><%= title %></li>
+                        </ol>
+                    </div>
+                </div>
+            </div><!-- /.container-fluid -->
+        </section>
+
+        <section class="content">
+            <div class="row">
+                <div class="col-md-3">
+                    <%- include('sidebar') -%>
+                </div>
+                <div class="col-md-9">
+                    <div class="card card-outline">
+                        <div class="card-body p-0">
+                            <div class="mailbox-read-info">
+                                <h5>
+                                    <span class="small text-secondary">[<%= dataMessage.subject %>]</span> <%= dataMessage.title %>
+                                </h5>
+                                <h6>From: <%= dataMessage.fullName %> (<%= dataMessage.email %>)
+                                    <div class="mailbox-read-time float-right">
+                                        <%= dataMessage.cityId.name %>, <%= dataMessage.createdAt.toLocaleString('en-GB') %>
+                                    </div>
+                                </h6>
+                            </div>
+                            <!-- /.mailbox-read-info -->
+                            <div class="mailbox-controls with-border text-center">
+                                <div class="btn-group">
+                                    <% if (dataMessage.status === 'Deleted') { %>
+                                        <a href="/admin/message/restore/<%= dataMessage._id %>" type="button"
+                                           class="btn btn-default btn-sm" data-container="body"
+                                           title="Restore">
+                                            <i class="fas fa-trash-restore"></i>
+                                        </a>
+                                    <% } else { %>
+                                        <a href="/admin/message/delete/<%= dataMessage._id %>" type="button"
+                                           class="btn btn-default btn-sm" data-container="body"
+                                           title="Delete">
+                                            <i class="far fa-trash-alt"></i>
+                                        </a>
+                                    <% } %>
+                                    <a href="/admin/message/reply/<%= dataMessage._id %>" type="button" class="btn btn-default btn-sm" data-container="body"
+                                            title="Reply">
+                                        <i class="fas fa-reply"></i>
+                                    </a>
+                                    <a href="/admin/message/forward/<%= dataMessage._id %>" type="button" class="btn btn-default btn-sm" data-container="body"
+                                            title="Forward">
+                                        <i class="fas fa-share"></i>
+                                    </a>
+                                </div>
+                                <!-- /.btn-group -->
+                                <button type="button" class="btn btn-default btn-sm btn-print" title="Print">
+                                    <i class="fas fa-print"></i>
+                                </button>
+                            </div>
+                            <!-- /.mailbox-controls -->
+                            <div class="mailbox-read-message py-4">
+                                <div style="white-space: pre-wrap; word-wrap: break-word;"><%= dataMessage.comment %></div>
+                            </div>
+                            <!-- /.mailbox-read-message -->
+                        </div>
+                        <!-- /.card-footer -->
+                        <div class="card-footer">
+                            <div class="float-right">
+                                <a href="/admin/message/reply/<%= dataMessage._id %>" type="button" class="btn btn-default"><i class="fas fa-reply"></i> Reply
+                                </a>
+                                <a href="/admin/message/forward/<%= dataMessage._id %>" type="button" class="btn btn-default"><i class="fas fa-share"></i> Forward
+                                </a>
+                            </div>
+                            <% if (dataMessage.status === 'Deleted') { %>
+                                <a href="/admin/message/restore/<%= dataMessage._id %>" type="button" class="btn btn-default"><i class="fas fa-trash-restore"></i> Restore
+                                </a>
+                            <% } else { %>
+                                <a href="/admin/message/delete/<%= dataMessage._id %>" type="button" class="btn btn-default"><i class="far fa-trash-alt"></i> Delete
+                                </a>
+                            <% } %>
+                            <button type="button" class="btn btn-default btn-print"><i class="fas fa-print"></i> Print</button>
+                        </div>
+                        <!-- /.card-footer -->
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+    <%- include('../partial/footer'); -%>
+</div>
+<%- include('../partial/scripts'); -%>
+<script>
+    $('.btn-print').click(function () {
+        const prtContent = `${$('.mailbox-read-info').html()}<hr>${$('.mailbox-read-message').html()}`;
+        const WinPrint = window.open('', '', 'left=0,top=0,width=800,height=900,toolbar=0,scrollbars=0,status=0');
+        WinPrint.document.write(prtContent);
+        WinPrint.document.close();
+        WinPrint.focus();
+        WinPrint.print();
+    })
+</script>
+</body>
+</html>

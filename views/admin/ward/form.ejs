@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include('../partial/head') -%>
+</head>
+<body class="hold-transition sidebar-mini layout-fixed layout-navbar-fixed layout-footer-fixed">
+<div class="wrapper">
+    <%- include('../partial/topbar'); -%>
+    <%- include('../partial/sidebar'); -%>
+
+    <!-- Content Wrapper. Contains page content -->
+    <div class="content-wrapper">
+        <!-- Content Header (Page header) -->
+        <section class="content-header">
+            <div class="container-fluid">
+                <div class="row mb-2">
+                    <div class="col-sm-6">
+                        <h1><%= title %></h1>
+                    </div>
+                    <div class="col-sm-6">
+                        <ol class="breadcrumb float-sm-right">
+                            <li class="breadcrumb-item"><a href="#">Home</a></li>
+                            <li class="breadcrumb-item active"><span><%= title %></span></li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <section class="content">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-md-6">
+                        <form class="card" method="post" id="formWard">
+                            <div class="card-body">
+                                <div class="form-group">
+                                    <label for="exampleInputEmail1">Name</label>
+                                    <input type="text" class="form-control" name="name" value="<%= dataWard.name %>">
+                                </div>
+                                <div class="form-group">
+                                    <label for="exampleInputEmail1">Slug</label>
+                                    <input type="text" class="form-control" name="slug" value="<%= dataWard.slug %>">
+                                </div>
+                                <div class="form-group">
+                                    <label for="exampleInputEmail1">Type</label>
+                                    <select class="form-control" name="type">
+                                        <option hidden selected disabled></option>
+                                        <option value="ward"<% if (dataWard.type === 'ward' ){ %><%= 'selected' %><% } %>>ward</option>
+                                        <option value="village" <% if (dataWard.type === 'village' ){ %><%= 'selected' %><% } %>>village</option>
+                                        <option value="town" <% if (dataWard.type === 'town' ){ %><%= 'selected' %><% } %>>town</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="exampleInputEmail1">Name With Type</label>
+                                    <input type="text" class="form-control" name="nameWithType" value="<%= dataWard.nameWithType %>">
+                                </div>
+                                <div class="form-group">
+                                    <label for="exampleInputEmail1">Path</label>
+                                    <input type="text" class="form-control" name="path" value="<%= dataWard.path %>">
+                                </div>
+                                <div class="form-group">
+                                    <label for="exampleInputEmail1">Path With Type</label>
+                                    <input type="text" class="form-control" name="pathWithType" value="<%= dataWard.pathWithType %>">
+                                </div>
+                                <div class="form-group">
+                                    <label for="exampleInputEmail1">Code</label>
+                                    <input type="text" class="form-control" name="code" value="<%= dataWard.code %>">
+                                </div>
+                                <div class="form-group">
+                                    <label for="exampleInputEmail1">Parent Code</label>
+                                    <input type="text" class="form-control" name="parentCode" value="<%= dataWard.parentCode %>">
+                                </div>
+
+
+                            </div>
+                            <div class="card-footer">
+                                <button type="submit" class="btn btn-block btn-primary">Submit</button>
+                                <div class="modal fade" id="DeleteWard<%= dataWard.id %>" tabindex="-1"
+                                     role="dialog" aria-labelledby="DeleteWard"
+                                     aria-hidden="true">
+                                    <div class="modal-dialog" role="document">
+                                        <div class="modal-content">
+                                            <div class="modal-body">
+                                                <p>Are you sure you want to delete
+                                                    <b><%= dataWard.name %></b>
+                                                </p>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-outline-primary"
+                                                        data-dismiss="modal">Cancel
+                                                </button>
+                                                <a href="/admin/ward/delete/<%= dataWard.id %>"
+                                                   class="btn btn-primary">Delete</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <% if ( dataWard.name) { %>
+                                    <a type="button" class="btn mt-3 btn-block btn-danger" data-toggle="modal"
+                                       data-target="#DeleteWard<%= dataWard.id %>">Delete</a>
+                                <% } %>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+    <%- include('../partial/footer'); -%>
+</div>
+
+<%- include('../partial/scripts'); -%>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.1/jquery.validate.min.js"></script>
+<script>
+    $(function () {
+        $('#formWard').validate({
+            rules: {
+                name: {
+                    required: true,
+                    maxlength: 255,
+                },
+                nameWithType: {
+                    required: true,
+                    maxlength: 255,
+                },
+                slug: {
+                    required: true
+                },
+                type: {
+                    required: true
+                },
+                path: {
+                    required: true
+                },
+                pathWithType: {
+                    required: true
+                },
+                code: {
+                    required: true,
+                },
+                parentCode: {
+                    required: true
+                },
+            },
+            messages: {
+                name: {
+                    required: 'Please enter name',
+                    maxlength: 'Name is limited to 255 characters',
+                },
+                slug: {
+                    required: 'Please select a slug',
+                },
+                type: {
+                    required: 'Please select a type'
+                },
+                nameWithType: {
+                    required: 'Please enter a Name With Type',
+                    maxlength: 'Name With Type is limited to 255 characters',
+                },
+                path: {
+                    required: 'Please enter path',
+                },
+                pathWithType: {
+                    required: 'Please enter Path With Type',
+                },
+                code: {
+                    required: 'Please enter Code',
+                },
+                parentCode: {
+                    required: 'Please enter Parent Code',
+                },
+            },
+            errorClass: 'errorMsg',
+            errorPlacement: function (error, element) {
+                error.appendTo(element.parents('.form-group'));
+            }
+        });
+    })
+</script>
+</body>
+</html>

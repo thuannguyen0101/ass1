@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<%- include('partial/head'); -%>
+<body>
+<%- include('partial/header'); -%>
+
+<!-- Banner -->
+<section class="light-green-bg py-5">
+    <div class="container text-center">
+        <h1>
+            Your order has been placed.
+        </h1>
+    </div>
+</section>
+<div class="container order-container my-5">
+    <h4>An email confirmation has been sent to you.</h4>
+    <div>
+        <b>We will contact you within 24 business hours to schedule a meeting for the verification of your vehicle.</b>
+        <ul>
+            <li>Order # <%= dataOrder.orderNumber %></li>
+            <li>Order Date: <%= dataOrder.createdAt.toLocaleString() %></li>
+        </ul>
+    </div>
+    <a href="/order/detail/<%= dataOrder._id %>" type="button" class="btn btn-secondary  px-4 py-3 mb-4 mt-2">Review or edit your order
+        <i class="ml-2 fa fa-chevron-right" aria-hidden="true"></i>
+    </a>
+</div>
+<%- include('partial/footer'); -%>
+</body>
+</html>

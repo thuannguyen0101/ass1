@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include('../partial/head') -%>
+    <link rel="stylesheet" href="/admin/plugins/daterangepicker/daterangepicker.css">
+</head>
+<body class="hold-transition sidebar-mini layout-fixed layout-navbar-fixed layout-footer-fixed">
+<div class="wrapper">
+    <%- include('../partial/topbar'); -%>
+    <%- include('../partial/sidebar'); -%>
+
+    <div class="content-wrapper">
+        <section class="content-header">
+            <div class="container-fluid">
+                <div class="row mb-2">
+                    <div class="col-sm-6">
+                        <h1><%= title %></h1>
+                    </div>
+                    <div class="col-sm-6">
+                        <ol class="breadcrumb float-sm-right">
+                            <li class="breadcrumb-item"><a href="#">Home</a></li>
+                            <li class="breadcrumb-item active"><%= title %></li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="content">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="card" id="sales">
+                            <div class="card-header">
+                                <div class="font-weight-bold">Sales</div>
+                                <div class="small text-secondary date-range-btn" style="cursor: pointer">
+                                        <span class="date-range">
+                                            <%= moment(new Date()).subtract(29, 'days').format('DD MMMM, YYYY') + ' - ' + moment(new Date()).format('DD MMMM, YYYY') %>
+                                        </span>
+                                    <i class="fas fa-edit ml-1"></i>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <div class="chart" style="max-width: 100%; height: 400px"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card" id="quantity">
+                            <div class="card-header">
+                                <div class="font-weight-bold">Quantity</div>
+                                <div class="small text-secondary date-range-btn" style="cursor: pointer">
+                                        <span class="date-range">
+                                            <%= moment(new Date()).subtract(29, 'days').format('DD MMMM, YYYY') + ' - ' + moment(new Date()).format('DD MMMM, YYYY') %>
+                                        </span>
+                                    <i class="fas fa-edit ml-1"></i>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <div class="chart" style="max-width: 100%; height: 400px"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card" id="insurer">
+                            <div class="card-header">
+                                <div class="font-weight-bold">Insurer</div>
+                                <div class="small text-secondary date-range-btn" style="cursor: pointer">
+                                        <span class="date-range">
+                                            <%= moment(new Date()).subtract(29, 'days').format('DD MMMM, YYYY') + ' - ' + moment(new Date()).format('DD MMMM, YYYY') %>
+                                        </span>
+                                    <i class="fas fa-edit ml-1"></i>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <div class="chart" style="max-width: 100%; height: 400px"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card" id="kind">
+                            <div class="card-header">
+                                <div class="font-weight-bold">Vehicle Kind</div>
+                                <div class="small text-secondary date-range-btn" style="cursor: pointer">
+                                        <span class="date-range">
+                                            <%= moment(new Date()).subtract(29, 'days').format('DD MMMM, YYYY') + ' - ' + moment(new Date()).format('DD MMMM, YYYY') %>
+                                        </span>
+                                    <i class="fas fa-edit ml-1"></i>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <div class="chart" style="max-width: 100%; height: 400px"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+    <%- include('../partial/footer'); -%>
+</div>
+
+<%- include('../partial/scripts'); -%>
+<script src="/admin/plugins/moment/moment.min.js"></script>
+<script src="/admin/plugins/daterangepicker/daterangepicker.js"></script>
+
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+
+<!-- Sales -->
+<script type="text/javascript">
+    google.charts.load('current', {'packages': ['corechart']});
+    google.charts.setOnLoadCallback(drawSalesChart);
+
+    function drawSalesChart(customData) {
+        let data = google.visualization.arrayToDataTable(<%- JSON.stringify(statsSales) %>);
+        if (customData !== undefined ) {
+            data = google.visualization.arrayToDataTable(customData);
+        }
+
+        let options = {
+            title: 'Sales, in US dollars',
+            curveType: 'function',
+            legend: {position: 'none'}
+        };
+
+        let chart = new google.visualization.LineChart(document.querySelector('#sales .chart'));
+
+        chart.draw(data, options);
+    }
+
+    // Date range picker
+    $('#sales .date-range-btn').daterangepicker(
+        {
+            ranges: {
+                'Last 7 Days': [moment().subtract(6, 'days'), moment()],
+                'Last 30 Days': [moment().subtract(29, 'days'), moment()],
+                'This Month': [moment().startOf('month'), moment().endOf('month')],
+                'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')],
+                'Last Year': [moment().subtract(1, 'year').startOf('year'), moment().subtract(1, 'year').endOf('year')]
+            },
+            startDate: moment().subtract(29, 'days'),
+            endDate: moment()
+        },
+        function (start, end) {
+            let jsonData = JSON.stringify({
+                start: start,
+                end: end
+            });
+            $.ajax({
+                type: 'POST',
+                url: '/admin/statistics/sales',
+                contentType: 'application/json',
+                data: jsonData,
+                success: function (data) {
+                    drawSalesChart(data);
+                    $('#sales .date-range').text(`${start.format('DD MMMM, YYYY')} - ${end.format('DD MMMM, YYYY')}`);
+                },
+                error: function (xhr) {
+                    alert('An error occurred. Please try again later');
+                }
+            })
+        }
+    )
+</script>
+
+<!-- Quantity -->
+<script type="text/javascript">
+    google.charts.load('current', {'packages': ['corechart']});
+    google.charts.setOnLoadCallback(drawQuantityChart);
+
+    function drawQuantityChart(customData) {
+        let data = google.visualization.arrayToDataTable(<%- JSON.stringify(statsQuantity) %>);
+        if (customData !== undefined) {
+            data = google.visualization.arrayToDataTable(customData);
+        }
+
+        let options = {
+            title: 'Quantity',
+            legend: {position: 'none'}
+        };
+
+        let chart = new google.visualization.LineChart(document.querySelector('#quantity .chart'));
+
+        chart.draw(data, options);
+    }
+
+    // Date range picker
+    $('#quantity .date-range-btn').daterangepicker(
+        {
+            ranges: {
+                'Last 7 Days': [moment().subtract(6, 'days'), moment()],
+                'Last 30 Days': [moment().subtract(29, 'days'), moment()],
+                'This Month': [moment().startOf('month'), moment().endOf('month')],
+                'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')],
+                'Last Year': [moment().subtract(1, 'year').startOf('year'), moment().subtract(1, 'year').endOf('year')]
+            },
+            startDate: moment().subtract(29, 'days'),
+            endDate: moment()
+        },
+        function (start, end) {
+            let jsonData = JSON.stringify({
+                start: start,
+                end: end
+            });
+            $.ajax({
+                type: 'POST',
+                url: '/admin/statistics/quantity',
+                contentType: 'application/json',
+                data: jsonData,
+                success: function (data) {
+                    drawQuantityChart(data);
+                    $('#quantity .date-range').text(`${start.format('DD MMMM, YYYY')} - ${end.format('DD MMMM, YYYY')}`);
+                },
+                error: function (xhr) {
+                    alert('An error occurred. Please try again later');
+                }
+            })
+        }
+    )
+</script>
+
+<!-- Insurer -->
+<script type="text/javascript">
+    google.charts.load('current', {'packages': ['bar']});
+    google.charts.setOnLoadCallback(drawInsurerChart);
+
+    function drawInsurerChart(customData) {
+        let defaultStats = <%- JSON.stringify(statsInsurer) %>;
+        if (customData === undefined) {
+            customData = defaultStats;
+        }
+        for (let i = 1; i < customData.length; i++) {
+            customData[i][1] = Number(customData[i][1]);
+        }
+        var data = new google.visualization.arrayToDataTable(customData);
+
+        var options = {
+            title: 'Bestselling insurer',
+            legend: {position: 'none'},
+            chart: {
+                title: 'Bestselling insurer',
+                subtitle: 'Popularity by percentage'
+            },
+            bars: 'horizontal',
+            axes: {
+                x: {
+                    0: {side: 'top', label: 'Percentage'}
+                }
+            },
+            bar: {groupWidth: "90%"}
+        };
+
+        var chart = new google.charts.Bar(document.querySelector('#insurer .chart'));
+        chart.draw(data, options);
+    }
+
+    // Date range picker
+    $('#insurer .date-range-btn').daterangepicker(
+        {
+            ranges: {
+                'Last 7 Days': [moment().subtract(6, 'days'), moment()],
+                'Last 30 Days': [moment().subtract(29, 'days'), moment()],
+                'This Month': [moment().startOf('month'), moment().endOf('month')],
+                'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')],
+                'Last Year': [moment().subtract(1, 'year').startOf('year'), moment().subtract(1, 'year').endOf('year')]
+            },
+            startDate: moment().subtract(29, 'days'),
+            endDate: moment()
+        },
+        function (start, end) {
+            let jsonData = JSON.stringify({
+                start: start,
+                end: end
+            });
+            $.ajax({
+                type: 'POST',
+                url: '/admin/statistics/insurer',
+                contentType: 'application/json',
+                data: jsonData,
+                success: function (data) {
+                    drawInsurerChart(data);
+                    $('#insurer .date-range').text(`${start.format('DD MMMM, YYYY')} - ${end.format('DD MMMM, YYYY')}`);
+                },
+                error: function (xhr) {
+                    alert('An error occurred. Please try again later');
+                }
+            })
+        }
+    )
+</script>
+
+<!-- Kind -->
+<script type="text/javascript">
+    google.charts.load('current', {'packages':['corechart']});
+    google.charts.setOnLoadCallback(drawKind);
+
+    function drawKind(customData) {
+        var data = google.visualization.arrayToDataTable(<%- JSON.stringify(statsKind) %>);
+        if (customData !== undefined) {
+            data = google.visualization.arrayToDataTable(customData);
+        }
+
+        var options = {
+            title: 'Vehicle Kind',
+        };
+
+        var chart = new google.visualization.PieChart(document.querySelector('#kind .chart'));
+        chart.draw(data, options);
+    }
+
+    // Date range picker
+    $('#kind .date-range-btn').daterangepicker(
+        {
+            ranges: {
+                'Last 7 Days': [moment().subtract(6, 'days'), moment()],
+                'Last 30 Days': [moment().subtract(29, 'days'), moment()],
+                'This Month': [moment().startOf('month'), moment().endOf('month')],
+                'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')],
+                'Last Year': [moment().subtract(1, 'year').startOf('year'), moment().subtract(1, 'year').endOf('year')]
+            },
+            startDate: moment().subtract(29, 'days'),
+            endDate: moment()
+        },
+        function (start, end) {
+            let jsonData = JSON.stringify({
+                start: start,
+                end: end
+            });
+            $.ajax({
+                type: 'POST',
+                url: '/admin/statistics/kind',
+                contentType: 'application/json',
+                data: jsonData,
+                success: function (data) {
+                    drawKind(data);
+                    $('#kind .date-range').text(`${start.format('DD MMMM, YYYY')} - ${end.format('DD MMMM, YYYY')}`);
+                },
+                error: function (xhr) {
+                    alert('An error occurred. Please try again later');
+                }
+            })
+        }
+    )
+</script>
+</body>
+</html>

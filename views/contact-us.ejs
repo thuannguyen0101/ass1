@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<%- include('partial/head'); -%>
+<body>
+<%- include('partial/header'); -%>
+
+<!-- Banner -->
+<div class="banner-small d-flex justify-content-center align-items-center">
+    <div>We are here for you.<br>Contact us.</div>
+</div>
+
+<section id="contact-us">
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <h2 class="location-text">Office Location</h2>
+            </div>
+            <div class="col-12 col-lg-4 my-3">
+                <div class="contact-box">
+                    <div class="contact-title">Safe Carz Limited Base</div>
+                    <hr>
+                    <div class="contact-text-container">
+                        <div>70 Nguyen Hoang</div>
+                        <div>My Dinh 2, Nam Tu Liem</div>
+                        <div>Hanoi</div>
+                        <div>Vietnam</div>
+                        <div>Tel: +84 936 666 888</div>
+                        <div>Fax: +84 555 666 888</div>
+                        <div>Email: <a href="mailto:contact@safecarz.com">contact@safecarz.com</a></div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-lg-4 my-3">
+                <div class="contact-box">
+                    <div class="contact-title">Shareholder Services & Investor Relations</div>
+                    <hr>
+                    <div class="contact-text-container">
+                        <div>For queries about your share in Safe Carz Insurance Group
+                            Ltd. and institutional investors an analysts.
+                        </div>
+                        <div>Tel: +84 936 666 778</div>
+                        <div>Email: <a href="mailto:queries@safecarz.com">queries@safecarz.com</a></div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-lg-4 my-3">
+                <div class="contact-box">
+                    <div class="contact-title">Group Media Relations Contact</div>
+                    <hr>
+                    <div class="contact-text-container">
+                        <div>Safe Carz Insurance Group</div>
+                        <div>Media Relations</div>
+                        <div>72A Nguyen Trai</div>
+                        <div>Hanoi</div>
+                        <div>Vietnam</div>
+                        <div>Tel: +84 936 666 888</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 mt-4">
+                <div id="map"></div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Form -->
+<div class="container-md my-5 form">
+    <h2>Contact us</h2>
+    <form method="post" class="mt-4" role="form" id="formContact">
+        <div class="error-message text-danger mb-3"></div>
+        <div class="form-group validate">
+            <select name="subject" class="custom-select form-control valid" required>
+                <option hidden selected disabled></option>
+                <% for (let i = 0; i < listSubject.length; i++) { %>
+                    <option value="<%= listSubject[i] %>"><%= listSubject[i] %></option>
+                <% } %>
+            </select>
+            <label class="form-label repair-subject">Subject</label>
+        </div>
+        <div class="form-group validate">
+            <input type="text" class="form-control" name="title" placeholder=" ">
+            <label class="form-label">Title</label>
+        </div>
+        <div class="row form-group">
+            <div class="col-12 col-sm-6 mg validate">
+                <input type="text" class="form-control" name="fullName" placeholder=" ">
+                <label class="form-label">Full name</label>
+            </div>
+            <div class="col-12 col-sm-6 validate">
+                <input type="email" class="form-control" placeholder=" " name="email">
+                <label class="form-label">Email</label>
+                <i class="fa fa-envelope envelope " aria-hidden="true"></i>
+            </div>
+        </div>
+        <div class="row form-group">
+            <div class="col-12 col-sm-6 mg validate">
+                <input type="text" class="form-control" placeholder=" " name="phone">
+                <label class="form-label">Phone</label>
+            </div>
+            <div class="col-12 col-sm-6 validate">
+                <select name="cityId" class="custom-select form-control valid" required>
+                    <option hidden selected disabled></option>
+                    <% for (var i = 0; i < listCity.length; i++) { %>
+                        <option value="<%= listCity[i].id %>"><%= listCity[i].name %></option>
+                    <% } %>
+                </select>
+                <label class="form-label">City</label>
+            </div>
+        </div>
+        <div class="form-group validate">
+            <textarea class="form-control" name="comment" rows="4" placeholder=" "></textarea>
+            <label class="form-label">Comment</label>
+        </div>
+        <div class="text-center">
+            <button type="submit" class="btn btn-primary btn-contact px-4 py-3 mt-2">Submit</button>
+        </div>
+    </form>
+</div>
+
+<!-- Thank you -->
+<section class="green-bg one-line-section text-white" id="thank-you" style="display: none">
+    <div class="container text-center">
+        <h3>
+            Thanks for contacting us.<br>
+            We will get in touch with you shortly.
+        </h3>
+        <a type="button" href="/" class="btn btn-primary px-4 py-3 mt-4">Back to homepage
+            <i class="ml-2 fa fa-chevron-right text-white"></i>
+        </a>
+    </div>
+</section>
+
+<%- include('partial/footer'); -%>
+<script async
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDEbnW5Azp4LKQDWIfvkZa2r-C8ehROZ24&callback=initMap">
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.1/jquery.validate.min.js"></script>
+<script>
+    function submitForm() {
+        let formData = new FormData($('form')[0]);
+        let jsonData = JSON.stringify(Object.fromEntries(formData));
+        $.ajax({
+            type: 'POST',
+            url: '/contact-us',
+            contentType: 'application/json',
+            data: jsonData,
+            success: function () {
+                $('.form').fadeOut('fast', function () {
+                    $('section#thank-you').fadeIn('fast');
+                });
+            },
+            error: function (xhr) {
+                const errors = JSON.parse(xhr.responseText).errors;
+                $('.error-message').html(errors.map(a => a.msg).join('<br>'));
+            }
+        })
+        return false;
+    }
+
+    $(function () {
+        $('#formContact').validate({
+            rules: {
+                subject: {
+                    required: true
+                },
+                title: {
+                    required: true
+                },
+                fullName: {
+                    required: true
+                },
+                email: {
+                    required: true,
+                    maxlength: 255,
+                    email: true
+                },
+                phone: {
+                    required: true,
+                    maxlength: 15,
+                    minlength: 7
+                },
+                cityId: {
+                    required: true
+                },
+                comment: {
+                    required: true
+                }
+            },
+            messages: {
+                subject: {
+                    required: "Please enter a subject"
+                },
+                title: {
+                    required: "Please enter a title"
+                },
+                fullName: {
+                    required: "Please enter your full name"
+                },
+                email: {
+                    required: 'Please enter your email',
+                    maxlength: 'Email name is limited to 255 characters',
+                    email: 'Please enter true email'
+                },
+                phone: {
+                    required: 'Please enter your number phone',
+                    maxlength: 'Phone number is limited to 15 characters',
+                    minlength: 'Phone number must have at least 7 characters'
+                },
+                cityId: {
+                    required: 'Please select your city'
+                },
+                comment: {
+                    required: 'Please enter your comment'
+                }
+            },
+            errorClass: 'errorMsg',
+            errorPlacement: function (error, element) {
+                error.appendTo(element.parents('.validate'));
+            },
+            submitHandler: function () {
+                submitForm();
+                return false;
+            }
+        });
+    });
+</script>
+
+</body>
+</html>

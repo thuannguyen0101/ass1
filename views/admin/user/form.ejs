@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include('../partial/head') -%>
+    <link rel="stylesheet" href="/admin/plugins/daterangepicker/daterangepicker.css">
+</head>
+<body class="hold-transition sidebar-mini layout-fixed layout-navbar-fixed layout-footer-fixed">
+<div class="wrapper">
+    <%- include('../partial/topbar'); -%>
+    <%- include('../partial/sidebar'); -%>
+
+    <!-- Content Wrapper. Contains page content -->
+    <div class="content-wrapper">
+        <!-- Content Header (Page header) -->
+        <section class="content-header">
+            <div class="container-fluid">
+                <div class="row mb-2">
+                    <div class="col-sm-6">
+                        <h1><%= title %></h1>
+                    </div>
+                    <div class="col-sm-6">
+                        <ol class="breadcrumb float-sm-right">
+                            <li class="breadcrumb-item"><a href="#">Home</a></li>
+                            <li class="breadcrumb-item active"><span><%= title %></span></li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <section class="content">
+            <div class="container-fluid">
+                <% if (typeof message !== 'undefined' && !!message) { %>
+                    <div class="alert alert-danger alert-dismissible fade show">
+                        <button type="button" class="close" data-dismiss="alert">&times;</button>
+                        <strong>Error!</strong> <%- (message) %>
+                    </div>
+                <% } %>
+                <form method="post" id="formUser">
+                    <div class="row">
+                        <div class="col-12 col-md-6">
+                            <div class="card card-secondary mb-4">
+                                <div class="card-header">Log In Info</div>
+                                <div class="card-body">
+                                    <div class="form-group validate">
+                                        <label>Email </label>
+                                        <input type="email" class="form-control" value="<%= dataUser.email %>"
+                                               name="email"
+                                               aria-describedby="emailHelp">
+                                    </div>
+                                    <div class="row">
+                                        <div class="form-group col-6 validate">
+                                            <label>Password</label>
+                                            <input type="password" class="form-control" name="password"
+                                                   id="password">
+                                        </div>
+                                        <div class="form-group col-6 validate">
+                                            <label>Confirm Password</label>
+                                            <input type="password" class="form-control" name="confirmPassword">
+                                        </div>
+                                    </div>
+                                    <div class="form-group validate">
+                                        <label>Role</label>
+                                        <select class="form-control" name="role">
+                                            <option hidden selected disabled></option>
+                                            <option value="1"
+                                            <% if (Number(dataUser.role) === 1){ %>
+                                                <%= 'selected' %>
+                                                    <% } %>
+                                            >User
+                                            </option>
+                                            <option value="2"
+                                            <% if (Number(dataUser.role) === 2){ %>
+                                                <%= 'selected' %>
+                                                    <% } %>
+                                            >Admin
+                                            </option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card card-secondary mb-4">
+                                <div class="card-header">General Information</div>
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="form-group col-6 validate">
+                                            <label>First Name </label>
+                                            <input type="text" class="form-control" value="<%= dataUser.firstName %>"
+                                                   name="firstName">
+                                        </div>
+                                        <div class="form-group col-6 validate">
+                                            <label>Last Name </label>
+                                            <input type="text" class="form-control" value="<%= dataUser.lastName %>"
+                                                   name="lastName">
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <div class="col-6 ">
+                                            <label>Gender</label>
+                                            <div class="form-group validate">
+                                                <div class="form-check-inline">
+                                                    <label class="form-check-label">
+                                                        <input type="radio" class="form-check-input" value="1"
+                                                               name="gender"
+                                                        <% if (Number(dataUser.gender) === 1){ %>
+                                                            <%= 'checked' %>
+                                                                <% } %>
+                                                        >Male
+                                                    </label>
+                                                </div>
+                                                <div class="form-check-inline">
+                                                    <label class="form-check-label">
+                                                        <input type="radio" class="form-check-input" value="0"
+                                                               name="gender"
+                                                        <% if (Number(dataUser.gender) === 0){ %>
+                                                            <%= 'checked' %>
+                                                                <% } %>
+                                                        >Female
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-6 validate">
+                                            <label>Date of Birth</label>
+                                            <div class="input-group date" id="reservationdate"
+                                                 data-target-input="nearest">
+                                                <input type="text" class="form-control datetimepicker-input"
+                                                       data-target="#reservationdate" name="dob"
+                                                       placeholder="MM/DD/YYYY">
+                                                <div class="input-group-append" data-target="#reservationdate"
+                                                     data-toggle="datetimepicker">
+                                                    <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <div class="col-6 validate">
+                                            <label class="relocate">Level of Education</label>
+                                            <select name="educationLevel" class="form-control" required>
+                                                <option value hidden selected disabled></option>
+                                                <option value="1" <%= dataUser.educationLevel === 1 ? 'selected' : '' %>>
+                                                    No High School Diploma
+                                                </option>
+                                                <option value="2" <%= dataUser.educationLevel === 2 ? 'selected' : '' %>>
+                                                    High School Diploma
+                                                </option>
+                                                <option value="3" <%= dataUser.educationLevel === 3 ? 'selected' : '' %>>
+                                                    Associate
+                                                </option>
+                                                <option value="4" <%= dataUser.educationLevel === 4 ? 'selected' : '' %>>
+                                                    Bachelors
+                                                </option>
+                                                <option value="5" <%= dataUser.educationLevel === 5 ? 'selected' : '' %>>
+                                                    Masters
+                                                </option>
+                                                <option value="6" <%= dataUser.educationLevel === 6 ? 'selected' : '' %>>
+                                                    PhD
+                                                </option>
+                                            </select>
+                                        </div>
+                                        <div class="col-6 validate">
+                                            <label class="relocate">Employment Status</label>
+                                            <select name="employmentStatus" class="form-control" required>
+                                                <option value hidden selected disabled></option>
+                                                <option value="1" <%= dataUser.employmentStatus === 1 ? 'selected' : '' %>>
+                                                    Employed
+                                                </option>
+                                                <option value="3" <%= dataUser.employmentStatus === 3 ? 'selected' : '' %>>
+                                                    Student
+                                                </option>
+                                                <option value="2" <%= dataUser.employmentStatus === 2 ? 'selected' : '' %>>
+                                                    Retired
+                                                </option>
+                                                <option value="5" <%= dataUser.employmentStatus === 5 ? 'selected' : '' %>>
+                                                    Unemployed
+                                                </option>
+                                                <option value="4" <%= dataUser.employmentStatus === 4 ? 'selected' : '' %>>
+                                                    Other
+                                                </option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <div class="card card-secondary mb-4">
+                                <div class="card-header">Contact Details</div>
+                                <div class="card-body">
+                                    <div class="form-group row">
+                                        <div class="col-6 validate">
+                                            <label>City</label>
+                                            <select name="cityId" class="form-control" required>
+                                                <option value="" hidden selected disabled></option>
+                                                <% for (var i = 0; i < listCity.length; i++) { %>
+                                                    <option value="<%= listCity[i]._id %>" <%= dataUser.address && dataUser.address.cityId.toString() === listCity[i]._id.toString() ? 'selected' : '' %>><%= listCity[i].name %></option>
+                                                <% } %>
+                                            </select>
+                                        </div>
+                                        <div class="col-6 validate">
+                                            <label>District</label>
+                                            <select name="districtId" class=" form-control" required <%= typeof listDistrict === 'undefined' ? 'disabled' : '' %>>
+                                                <option hidden selected disabled></option>
+                                                <% if (typeof listDistrict !== 'undefined') {
+                                                listDistrict.forEach(item => { %>
+                                                    <option value="<%= item._id %>" <%= dataUser.address && dataUser.address.districtId.toString() === item._id.toString() ? 'selected' : '' %>><%= item.name %></option>
+                                                <% })
+                                                } %>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <div class="col-6 validate">
+                                            <label>Ward</label>
+                                            <select name="wardId" class=" form-control" required <%= typeof listWard === 'undefined' ? 'disabled' : '' %>>
+                                                <option hidden selected disabled></option>
+                                                <% if (typeof listWard !== 'undefined') {
+                                                listWard.forEach(item => { %>
+                                                    <option value="<%= item._id %>" <%= dataUser.address && dataUser.address.wardId.toString() === item._id.toString() ? 'selected' : '' %>><%= item.name %></option>
+                                                <% })
+                                                } %>
+                                            </select>
+                                        </div>
+                                        <div class="col-6 validate">
+                                            <label class="form-label">Street</label>
+                                            <input type="text" name="street" class="form-control" value="<%= dataUser.address ? dataUser.address.street : '' %>">
+                                        </div>
+                                    </div>
+                                    <div class="form-group validate">
+                                        <label>Phone</label>
+                                        <input type="text" value="<%= dataUser.phone %>" class="form-control"
+                                               name="phone">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card card-secondary mb-4">
+                                <div class="card-header">Driving Records</div>
+                                <div class="card-body">
+                                    <ul class="incident-list"></ul>
+                                    <button type="button" class="btn btn-primary my-3" id="add-incident">
+                                        Add an incident
+                                    </button>
+                                    <input type="hidden" name="drivingRecords">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <button class="btn btn-primary btn-block" type="submit">Submit</button>
+                        <div class="modal fade" id="DeleteUser<%= dataUser.id %>" tabindex="-1"
+                             role="dialog" aria-labelledby="deleteUser"
+                             aria-hidden="true">
+                            <div class="modal-dialog" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-body">
+                                        <p>Are you sure you want to delete
+                                            <b><%= dataUser.firstName %> <%= dataUser.lastName %></b>
+                                        </p>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-outline-primary"
+                                                data-dismiss="modal">Cancel
+                                        </button>
+                                        <a href="/admin/user/delete/<%= dataUser.id %>"
+                                           class="btn btn-primary">Delete</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <% if ( dataUser.email) { %>
+                            <a type="button" class="btn mt-2 btn-block btn-danger" data-toggle="modal"
+                               data-target="#DeleteUser<%= dataUser.id %>">Delete</a>
+                        <% } %>
+                    </div>
+                </form>
+            </div>
+        </section>
+    </div>
+    <%- include('../partial/footer'); -%>
+</div>
+
+<!-- Incident Modal -->
+<div class="modal fade" id="incidentModal">
+    <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Add an Incident</h5>
+            </div>
+            <div class="modal-body">
+                <form id="incident-form">
+                    <div class="form-group">
+                        <label>What type of incident was it?</label>
+                        <div class="form-group">
+                            <div class="form-check-inline">
+                                <label class="form-check-label">
+                                    <input type="radio" class="form-check-input" name="incidentType"
+                                           value="Accident" required>Accident
+                                </label>
+                            </div>
+                            <div class="form-check-inline">
+                                <label class="form-check-label">
+                                    <input type="radio" class="form-check-input" name="incidentType"
+                                           value="Violation">Violation
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>When did this happen?</label>
+                        <select name="incidentYear" required>
+                            <option value hidden selected disabled></option>
+                            <% for (var i = new Date().getFullYear(); i >= new Date().getFullYear() - 5; i--) { %>
+                                <option value="<%= i %>"><%= i %></option>
+                            <% } %>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Incident description</label>
+                        <select name="incidentId" required disabled>
+                            <option value hidden selected disabled></option>
+                        </select>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary close-btn" data-dismiss="modal">Cancel
+                </button>
+                <button type="submit" class="btn btn-primary px-4" form="incident-form">Add</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<%- include('../partial/scripts'); -%>
+<script src="/admin/plugins/moment/moment.min.js"></script>
+<script src="/admin/plugins/inputmask/jquery.inputmask.min.js"></script>
+<script src="/admin/plugins/daterangepicker/daterangepicker.js"></script>
+<script src="/admin/plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.1/jquery.validate.min.js"></script>
+<script>
+    $(function () {
+        $('#reservationdate').datetimepicker({
+            format: 'L',
+            defaultDate: '<%= dataUser.dob %>',
+            maxDate: new Date()
+        });
+    })
+    $(function () {
+        $('#formUser').validate({
+            rules: {
+                email: {
+                    required: true,
+                    maxlength: 255,
+                    email: true
+                },
+                password: {
+                    required: <%= !(dataUser._id) %>,
+                    passwordCheck: true
+                },
+                confirmPassword: {
+                    required: function () {
+                        return Boolean(<%= !(dataUser._id) %> || ($('#password').val().length)
+                    )
+                        ;
+                    },
+                    equalTo: '#password'
+                },
+                role: {
+                    required: true
+                },
+                firstName: {
+                    required: true,
+                    maxlength: 100,
+                },
+                lastName: {
+                    required: true,
+                    maxlength: 100,
+                },
+                gender: {
+                    required: true,
+                    max: 2,
+                    min: 0
+                },
+                dob: {
+                    dobCheck: true
+                },
+                educationLevel: {
+                    required: true
+                },
+                employmentStatus: {
+                    required: true
+                },
+                cityId: {
+                    required: true,
+                },
+                districtId: {
+                    required: true
+                },
+                wardId: {
+                    required: true
+                },
+                street: {
+                    required: true,
+                    maxlength: 255,
+                    minlength: 5
+                },
+                phone: {
+                    required: true,
+                    maxlength: 15,
+                    minlength: 5
+                }
+            },
+            messages: {
+                email: {
+                    required: 'Please enter email',
+                    maxlength: 'Email name is limited to 255 characters',
+                    email: 'Please enter true email'
+                },
+                password: {
+                    required: 'Please enter a password',
+                    passwordCheck: 'Password must have at least 8 characters, including at least 1 number, 1 uppercase and 1 lowercase letter'
+                },
+                confirmPassword: {
+                    required: 'Please enter a password',
+                    equalTo: 'Please enter the same password'
+                },
+                role: {
+                    required: 'please select a role'
+                },
+                firstName: {
+                    required: 'Please enter a first name',
+                    maxlength: 'First name is limited to 100 characters'
+                },
+                lastName: {
+                    required: 'Please enter a last name',
+                    maxlength: 'Last name is limited to 100 characters'
+                },
+                gender: {
+                    required: 'Please select a gender '
+                },
+                dob: {
+                    dobCheck: 'Date of birth must be in MM/DD/YYYY format and no later than today'
+                },
+                educationLevel: {
+                    required: 'Please select a education level'
+                },
+                employmentStatus: {
+                    required: 'Please select a employment status'
+                },
+                cityId: {
+                    required: 'Please select a city '
+                },
+                districtId: {
+                    required: 'Please select a district'
+                },
+                wardId: {
+                    required: 'Please select a ward'
+                },
+                street: {
+                    required: 'Please enter the street',
+                    maxlength: 'Street name is limited to 255 characters',
+                    minlength: 'Street minimum 5 characters'
+                },
+                phone: {
+                    required: 'Please enter a number phone',
+                    maxlength: 'Phone name is limited to 15 characters',
+                    minlength: 'Phone minimum 5 characters'
+                }
+            },
+            errorClass: 'errorMsg',
+            errorPlacement: function (error, element) {
+                error.appendTo(element.parents('.validate'));
+            }
+        });
+    })
+    $.validator.addMethod("passwordCheck", function (value) {
+        return /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}$/.test(value) || ('<%= dataUser._id %>'.length);
+    });
+    $.validator.addMethod("dobCheck", function isValidDate(dateString) {
+        return moment(dateString, 'MM/DD/YYYY') < new Date();
+    });
+
+    // Address - Chain dropdown
+    const selectCity = $('select[name="cityId"]');
+    const selectDistrict = $('select[name="districtId"]');
+    const selectWard = $('select[name="wardId"]');
+
+    selectCity.change(function () {
+        $.ajax({
+            type: 'GET',
+            url: '/api/district/' + selectCity.val(),
+            beforeSend: function () {
+                selectDistrict.html('<option value hidden disabled selected></option>').prop('disabled', false);
+            },
+            success: function (data) {
+                selectWard.html('').prop('disabled', true);
+                data.forEach(item => selectDistrict.append(new Option(item.name, item._id)));
+            },
+            error: function (xhr) {
+                let errors = JSON.parse(xhr.responseText).errors;
+                alert(errors.map(a => a.msg).join(';'));
+            }
+        });
+    })
+
+    selectDistrict.change(function () {
+        $.ajax({
+            type: 'GET',
+            url: '/api/ward/' + selectDistrict.val(),
+            beforeSend: function () {
+                selectWard.html('<option value hidden disabled selected></option>').prop('disabled', false);
+            },
+            success: function (data) {
+                data.forEach(item => selectWard.append(new Option(item.name, item._id)));
+            },
+            error: function (xhr) {
+                let errors = JSON.parse(xhr.responseText).errors;
+                alert(errors.map(a => a.msg).join(';'));
+            }
+        });
+    })
+
+    // Incident list
+    // Add, edit, remove incident from driving records
+    const modalIncident = $('#incidentModal');
+    const formIncident = $('#incident-form');
+    const inputIncidentType = $('input[name="incidentType"]');
+    const selectIncidentId = $('select[name="incidentId"]');
+    const selectIncidentYear = $('[name="incidentYear"]');
+    const incidentList = $('.incident-list');
+    let drivingRecords = <%- (dataUser.drivingRecords) ? JSON.stringify(dataUser.drivingRecords) : '[]' %>;
+
+    $('#add-incident').click(() => {
+        modalIncident.modal();
+    })
+
+    inputIncidentType.change(function () {
+        $.ajax({
+            type: 'GET',
+            url: '/api/incident/' + $('input[name="incidentType"]:checked').val(),
+            beforeSend: function () {
+                selectIncidentId.html('<option value hidden disabled selected></option>').prop('disabled', false);
+            },
+            success: function (data) {
+                data.forEach(item => selectIncidentId.append(new Option(item.name, item._id)));
+            },
+            error: function (xhr) {
+                let errors = JSON.parse(xhr.responseText).errors;
+                alert(errors.map(a => a.msg).join(';'));
+            }
+        });
+    })
+
+    formIncident.submit(function (event) {
+        event.preventDefault();
+        drivingRecords.push({
+            incidentId: selectIncidentId.val(),
+            incidentName: $('select[name="incidentId"] option:selected').text(),
+            incidentType: $('input[name="incidentType"]:checked').val(),
+            incidentYear: selectIncidentYear.val()
+        })
+        updateDrivingRecords();
+        modalIncident.modal('hide');
+        formIncident[0].reset();
+        selectIncidentId.html('<option value hidden disabled selected></option>').prop('disabled', true);
+    })
+
+    function updateDrivingRecords() {
+        let content = '';
+        drivingRecords.forEach(item =>
+            content += `<li><div class="d-flex justify-content-between text-break">${item.incidentName}, ${item.incidentYear}
+<div class="flex-shrink-0">
+<a href="javascript:void(0)" class="remove-incident mx-2">Remove</a>
+</div>
+</div></li>`);
+        incidentList.html(content);
+        $('input[name="drivingRecords"]').val(JSON.stringify(drivingRecords));
+    }
+    incidentList.click((event) => {
+        if ($(event.target).hasClass('remove-incident')) {
+            console.log($(event.target).closest('li').index());
+            drivingRecords.splice($(event.target).closest('li').index(), 1);
+            updateDrivingRecords();
+        }
+    });
+    if (drivingRecords.length) {
+        updateDrivingRecords();
+    }
+</script>
+</body>
+</html>

@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<%- include('partial/head'); -%>
+<body>
+<%- include('partial/header'); -%>
+
+
+<section class="light-blue-bg py-5">
+    <div class="container text-center">
+        <h1>
+            Cancel order
+        </h1>
+    </div>
+</section>
+<div class="container ">
+    <h5>
+        <a href="/order/history">Order history</a> / Order# <%= dataOrder.orderNumber %> / Cancel order
+    </h5>
+</div>
+<div class="container">
+    <div class="card my-5">
+        <div class="card-header d-md-flex justify-content-between align-dataOrders-center py-3 <%= (dataOrder.status === 'Confirmed' || dataOrder.status === 'Created' || dataOrder.status === 'Paid' ? 'light-blue-bg' : '') %>">
+            <div class="d-md-flex">
+                <div class="mr-5 d-flex flex-md-column align-dataOrders-end align-dataOrders-md-start">
+                    <div class="text-secondary text-uppercase small mr-3">Order placed</div>
+                    <div><%= dataOrder.createdAt.toLocaleDateString('en-GB') %></div>
+                </div>
+                <div class="mr-5 d-flex flex-md-column align-dataOrders-end align-dataOrders-md-start">
+                    <div class="text-secondary text-uppercase small mr-3">Total</div>
+                    <div><%= dataOrder.plan.planPrice.toLocaleString('en-US', {
+                            style: 'currency',
+                            currency: 'USD',
+                            minimumFractionDigits: 2
+                        }) %></div>
+                </div>
+                <div class="mr-5 d-flex flex-md-column align-items-end align-items-md-start">
+                    <div class="text-secondary text-uppercase small mr-3">Ship to</div>
+                    <div class="dropdown-shipping-address">
+                        <%= dataOrder.shippingAddress.name %>
+                        <i class="ml-2 fa fa-chevron-down" aria-hidden="true"></i>
+                        <div class="dropdown-shipping-address-content">
+                            <%= dataOrder.shippingAddress.name %><br>
+                            <%= dataOrder.shippingAddress.street %>, <%= dataOrder.shippingAddress.wardId.name %><br>
+                            <%= dataOrder.shippingAddress.districtId.name %>
+                            , <%= dataOrder.shippingAddress.cityId.name %><br>
+                            <%= dataOrder.shippingAddress.phone %>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="d-flex flex-md-column align-dataOrders-end">
+                <div class="text-secondary text-uppercase small mr-3 mr-md-0">Order Number</div>
+                <div><%= dataOrder.orderNumber %></div>
+            </div>
+        </div>
+        <div class="card-body">
+            <form method="post" id="formCancel">
+                <div class="my-4">
+                    <p>Cancel reason</p>
+                    <label class="choice-box-container validate">
+                        <input type="radio" name="cancelReason" value="Order created in error">
+                    </label>
+                    <label class="choice-box-container validate">Order created in error
+                        <input type="radio" name="cancelReason" value="Order created in error">
+                        <span class="choice-mark"></span>
+                    </label>
+                    <label class="choice-box-container validate">I found one with a lower price
+                        <input type="radio" name="cancelReason" value="I found one with a lower price">
+                        <span class="choice-mark"></span>
+                    </label>
+                    <label class="choice-box-container validate">I no longer need this order
+                        <input type="radio" name="cancelReason" value="I no longer need this order">
+                        <span class="choice-mark"></span>
+                    </label>
+                    <label class="choice-box-container validate">Other reason
+                        <input type="radio" id="myCheck" name="cancelReason" value="0">
+                        <span class="choice-mark"></span>
+                    </label>
+                </div>
+                <div class="form-group validate" id="text" style="display:none">
+                    <textarea class="form-control" name="customReason" rows="4" placeholder=" "></textarea>
+                    <label class="form-label">Other reason</label>
+                </div>
+                <div class="mt-5 d-flex justify-content-center">
+                    <button style="width: 20%" type="submit" class="btn btn-block btn-primary">Submit</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+<%- include('partial/footer'); -%>
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.1/jquery.validate.min.js"></script>
+
+<!-- Address chain dropdown -->
+<!-- Form validation -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.1/jquery.validate.min.js"></script>
+<script>
+    $(function () {
+        $('#formCancel').validate({
+            rules: {
+                cancelReason: {
+                    required: true
+                },
+                customReason: {
+                    required: true
+                }
+            },
+            messages: {
+                cancelReason: {
+                    required: 'Please choose one of the following four reasons'
+                },
+                customReason: {
+                    required: 'Please enter the reason you want to cancel the order'
+                }
+            },
+            errorClass: 'errorMsg',
+            errorPlacement: function (error, element) {
+                error.appendTo(element.parents('.validate'));
+            }
+        });
+    });
+</script>
+
+<script>
+    const text = document.getElementById("text");
+    $('input:radio[name="cancelReason"]').change(function () {
+        if ($(this).val() === '0') {
+            text.style.display = "block";
+        } else {
+            text.style.display = "none";
+        }
+    });
+</script>
+
+</body>
+</html>

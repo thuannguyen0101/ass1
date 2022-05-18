@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<%- include('partial/head'); -%>
+<body>
+<%- include('partial/header'); -%>
+<div class="container my-5 form">
+    <h2 class="text-center mb-5">Sign up</h2>
+    <form class="mt-4" id="form-sign-up" method="post">
+        <div class="row form-group">
+            <div class="col-12 col-sm-6 mg validate">
+                <input type="text" class="form-control" name="firstName" placeholder=" ">
+                <label class="form-label">First Name</label>
+            </div>
+            <div class="col-12 col-sm-6 validate">
+                <input type="text" class="form-control" name="lastName" placeholder=" ">
+                <label class="form-label">Last Name</label>
+            </div>
+        </div>
+
+        <div class="row form-group">
+            <div class="col-12 col-sm-12 validate">
+                <input type="email" class="form-control" name="email" placeholder=" ">
+                <label class="form-label">Email</label>
+                <i class="fa fa-envelope envelope " aria-hidden="true"></i>
+            </div>
+        </div>
+
+        <div class="row form-group">
+            <div class="col-12 col-sm-6 mg validate">
+                <input type="password" class="form-control" name="password" id="password" placeholder=" ">
+                <label class="form-label">Password</label>
+                <i class="fas fa-lock fa-lock-sign-up envelope"></i>
+            </div>
+            <div class="col-12 col-sm-6 validate">
+                <input type="password" class="form-control" name="confirmPassword" placeholder=" ">
+                <label class="form-label">Confirm Password</label>
+                <i class="fas fa-lock fa-lock-sign-up envelope"></i>
+            </div>
+        </div>
+
+        <div class="row form-group">
+            <div class="col-12 col-sm-6 mg">
+                <select name="gender" class="form-control" id="input-gender" required>
+                    <option hidden selected disabled></option>
+                    <option value="1">Male</option>
+                    <option value="0">Female</option>
+                </select>
+                <label class="form-label">Gender</label>
+            </div>
+            <div class="col-12 col-sm-6 validate">
+                <input type="text" class="form-control" name="phone" placeholder=" ">
+                <label class="form-label">Phone</label>
+                <i class="fas fa-phone fa-phone-sign-up envelope"></i>
+            </div>
+        </div>
+
+        <div class="row form-group">
+            <div class="col-12 ">
+                <input type="date" name="dob" max="<%= new Date().toLocaleDateString('en-CA')  %>" class="form-control" placeholder=" ">
+                <label class="form-label">Date of birth</label>
+            </div>
+        </div>
+        <div class="row form-group">
+            <div class="col-4 col-sm-4 mg validate">
+                <select name="cityId" class="form-control" id="input-city" required>
+                    <option value="" hidden selected disabled></option>
+                    <% for (var i = 0; i < listCity.length; i++) { %>
+                    <option value="<%= listCity[i]._id %>"><%= listCity[i].name %></option>
+                    <% } %>
+                </select>
+                <label class="form-label">City</label>
+            </div>
+            <div class="col-4 col-sm-4">
+                <select name="districtId" class="custom-select form-control valid" required></select>
+                <label class="form-label">District</label>
+            </div>
+            <div class="col-4 col-sm-4">
+                <select name="wardId" class="custom-select form-control" required></select>
+                <label class="form-label">Ward</label>
+            </div>
+        </div>
+        <div class="row form-group">
+            <div class="col-12 col-sm-12 validate">
+                <input type="text" class="form-control" name="street" placeholder=" ">
+                <label class="form-label">Street</label>
+            </div>
+        </div>
+        <div class="row form-group">
+            <div class="col-12 col-sm-6 mg">
+                <select name="educationLevel" class="form-control" id="input-education" required>
+                    <option value="" hidden selected disabled></option>
+                    <option value="1">No High School Diploma</option>
+                    <option value="2">High School Diploma</option>
+                    <option value="3">Associate</option>
+                    <option value="4">Bachelors</option>
+                    <option value="5">Masters</option>
+                    <option value="6">PhD</option>
+                </select>
+                <label class="form-label">Level of education</label>
+            </div>
+            <div class="col-12 col-sm-6">
+                <select name="employmentStatus" class="form-control" id="input-status" required>
+                    <option value hidden selected disabled></option>
+                    <option value="1">Employed</option>
+                    <option value="3">Student</option>
+                    <option value="2">Retired</option>
+                    <option value="5">Unemployed</option>
+                    <option value="4">Other</option>
+                </select>
+                <label class="form-label">Employment status</label>
+            </div>
+        </div>
+        <div class="text-center">
+            <button type="submit" class="btn btn-primary btn-contact">Submit</button>
+        </div>
+    </form>
+</div>
+
+<%- include('partial/footer'); -%>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.1/jquery.validate.min.js"></script>
+<!-- Address chain dropdown -->
+<script>
+    const selectCity = $('select[name="cityId"]');
+    const selectDistrict = $('select[name="districtId"]');
+    const selectWard = $('select[name="wardId"]');
+
+    selectCity.change(function () {
+        $.ajax({
+            type: 'GET',
+            url: '/api/district/' + selectCity.val(),
+            beforeSend: function () {
+                selectDistrict.html('<option value hidden disabled selected></option>').prop('disabled', false);
+            },
+            success: function (data) {
+                selectWard.html('').prop('disabled', true);
+                data.forEach(item => selectDistrict.append(new Option(item.name, item._id)));
+            },
+            error: function (xhr) {
+                let errors = JSON.parse(xhr.responseText).errors;
+                alert(errors.map(a => a.msg).join(';'));
+            }
+        });
+    })
+
+    selectDistrict.change(function () {
+        $.ajax({
+            type: 'GET',
+            url: '/api/ward/' + selectDistrict.val(),
+            beforeSend: function () {
+                selectWard.html('<option value hidden disabled selected></option>').prop('disabled', false);
+            },
+            success: function (data) {
+                data.forEach(item => selectWard.append(new Option(item.name, item._id)));
+            },
+            error: function (xhr) {
+                let errors = JSON.parse(xhr.responseText).errors;
+                alert(errors.map(a => a.msg).join(';'));
+            }
+        });
+    })
+</script>
+<!-- Form validation -->
+<script>
+    $(function () {
+        $('#form-sign-up').validate({
+            rules: {
+                firstName: {
+                    required: true,
+                    maxlength: 255,
+                },
+                lastName: {
+                    required: true,
+                    maxlength: 255,
+                },
+                email: {
+                    required: true,
+                    maxlength: 255,
+                    email: true
+                },
+                password: {
+                    required: true
+                },
+                confirmPassword: {
+                    required: true,
+                    equalTo: '#password'
+                },
+                gender: {
+                    required: true,
+                    max: 2,
+                    min: 0
+                },
+                phone: {
+                    required: true,
+                    maxlength: 10,
+                    minlength: 5
+                },
+                dob: {
+                    required: true
+                },
+                cityId: {
+                    required: true
+                },
+                districtId: {
+                    required: true
+                },
+                wardId: {
+                    required: true
+                },
+                street: {
+                    required: true
+                }
+            },
+            messages: {
+                firstName: {
+                    required: 'Please enter a first name',
+                    maxlength: 'First name is limited to 100 characters'
+                },
+                lastName: {
+                    required: 'Please enter a last name',
+                    maxlength: 'Lirst name is limited to 100 characters'
+                },
+                email: {
+                    required: 'Please enter email',
+                    maxlength: 'Email name is limited to 255 characters',
+                    email: 'Please enter true email'
+                },
+                password: {
+                    required: 'Please enter a password'
+                },
+                confirmPassword: {
+                    required: 'Please enter a password',
+                    equalTo: 'Please enter the same password'
+                },
+                gender: {
+                    required: 'Please select a gender '
+                },
+                phone: {
+                    required: 'Please enter a number phone',
+                    maxlength: 'Phone name is limited to 10 characters',
+                    minlength: 'Phone minimum 5 characters'
+                },
+                dob: {
+                    required: 'Please enter a date of birth'
+                },
+                street: {
+                    required: 'Please enter the street where you live '
+                }
+            },
+            errorClass: 'errorMsg',
+            errorPlacement: function (error, element) {
+                error.appendTo(element.parents('.validate'));
+            }
+        });
+    })
+</script>
+
+</body>
+</html>

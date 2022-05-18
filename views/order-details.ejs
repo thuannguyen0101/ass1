@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="en">
+<%- include('partial/head'); -%>
+<body>
+<%- include('partial/header'); -%>
+<% formatMoney = value => value.toLocaleString('en-US', {
+    style: 'currency',
+    currency: 'USD',
+    minimumFractionDigits: 2
+}) %>
+<div class="container detail-container my-5 p-0">
+    <h2><b>Order Details</b></h2>
+    <h4><b>Order #2420-558710-0380</b></h4>
+    <div class="card my-5">
+        <div class="card-header d-md-flex justify-content-between align-items-center py-3 <%= (dataOrder.status === 'Confirmed' || dataOrder.status === 'Created' || dataOrder.status === 'Paid' ? 'light-blue-bg' : '') %>">
+            <div class="d-md-flex">
+                <div class="mr-5 d-flex flex-md-column align-items-end align-items-md-start">
+                    <div class="text-secondary text-uppercase small mr-3">Order placed</div>
+                    <div><%= dataOrder.createdAt.toLocaleDateString('en-GB') %></div>
+                </div>
+                <div class="mr-5 d-flex flex-md-column align-items-end align-items-md-start">
+                    <div class="text-secondary text-uppercase small mr-3">Total</div>
+                    <div><%= dataOrder.plan.planPrice.toLocaleString('en-US', {
+                            style: 'currency',
+                            currency: 'USD',
+                            minimumFractionDigits: 2
+                        }) %></div>
+                </div>
+                <div class="mr-5 d-flex flex-md-column align-items-end align-items-md-start">
+                    <div class="text-secondary text-uppercase small mr-3">Ship to</div>
+                    <div class="dropdown-shipping-address">
+                        <%= dataOrder.shippingAddress.name %>
+                        <i class="ml-2 fa fa-chevron-down" aria-hidden="true"></i>
+                        <div class="dropdown-shipping-address-content">
+                            <%= dataOrder.shippingAddress.name %><br>
+                            <%= dataOrder.shippingAddress.street %>, <%= dataOrder.shippingAddress.wardId.name %><br>
+                            <%= dataOrder.shippingAddress.districtId.name %>
+                            , <%= dataOrder.shippingAddress.cityId.name %><br>
+                            <%= dataOrder.shippingAddress.phone %>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="d-flex flex-md-column align-items-end">
+                <div class="text-secondary text-uppercase small mr-3 mr-md-0">Order Number</div>
+                <div><%= dataOrder.orderNumber %></div>
+            </div>
+        </div>
+        <div class="card-body d-md-flex justify-content-between py-4 pl-3">
+            <div class="mr-md-5 d-md-flex align-items-center">
+                <img width="160" src="<%= dataOrder.vehicle.modelId.typeId ? dataOrder.vehicle.modelId.typeId.photo : '' %>"
+                     alt="<%= dataOrder.vehicle.modelId.name %>">
+                <div class="my-4 my-md-0">
+                    <% let statusText, statusDetail; switch (dataOrder.status) {
+                        case 'Created':
+                            statusText = 'Order created';
+                            statusDetail = 'We will soon contact you to confirm your order.';
+                            break;
+                        case 'Confirmed':
+                            statusText = 'Order confirmed';
+                            statusDetail = 'You can make the payment now.';
+                            break;
+                        case 'Paid':
+                            statusText = 'Order paid';
+                            statusDetail = 'We are working our best to deliver it to you.';
+                            break;
+                        case 'Shipped':
+                            statusText = 'Order shipped';
+                            statusDetail = 'Thank you for your purchase.';
+                            break;
+                        case 'Canceled':
+                            statusText = `Order canceled`;
+                            statusDetail = `Cancel reason: ${dataOrder.cancelReason}`;
+                            break;
+                    } %>
+                    <h4 class="font-weight-bold"><%= statusText %></h4>
+                    <div class="mb-2"><%= statusDetail %></div>
+                    <div>
+                        <b>Vehicle:</b> <%= `${dataOrder.vehicle.makeId.name} ${dataOrder.vehicle.modelId.name} (${dataOrder.vehicle.vehicleRegistrationPlate})` %>
+                    </div>
+                    <div><b>Plan:</b> <%= `${dataOrder.plan.insurerId.name} ${dataOrder.plan.name}` %></div>
+                </div>
+            </div>
+            <div class="ml-md-5 d-flex flex-column">
+                <% if (dataOrder.status === 'Confirmed') { %>
+                    <button data-toggle="modal" data-target="#payment-modal" type="button"
+                            class="btn btn-primary px-4 py-2 my-1 w-100">Make payment
+                    </button>
+                <% } %>
+                <% if (dataOrder.status === 'Created' || dataOrder.status === 'Confirmed') { %>
+                <a type="button" href="/order/update-shipping/<%= dataOrder._id %>"
+                   class="btn btn-secondary px-4 py-2 my-1 w-100">Change shipping address</a>
+                <a type="button" href="/order/cancel/<%= dataOrder._id %>"
+                   class="btn btn-secondary px-4 py-2 my-1 w-100">Cancel order</a>
+                <% } %>
+            </div>
+        </div>
+    </div>
+</div>
+<section>
+    <div class="container ">
+        <ul class="nav nav-tabs">
+            <li class="nav-item ">
+                <a class="nav-link active" data-toggle="tab" href="#plans"> Plan </a>
+            </li>
+            <li class="nav-item ">
+                <a class="nav-link " data-toggle="tab"
+                   href="#vehicle">Vehicle</a>
+            </li>
+        </ul>
+        <!-- Tab panes -->
+        <div class="tab-content">
+            <div class="tab-pane active" id="plans">
+                <table class="table table-borderless ">
+                    <thead>
+                    <tr>
+                        <td style="width: 25%;">&nbsp;</td>
+                        <th width="15%"><span class="badge  p-2">Claim Limit Value</span>
+                        </th>
+                        <th width="15%"><span class="badge  p-2">Deductible</span></th>
+                        <th width="15%"><span class="badge  p-2">Price</span></th>
+
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr class="divider">
+                        <td colspan="4"><strong>Compulsory third party's liability
+                                insurance</strong></td>
+                    </tr>
+                    <tr>
+                        <td>Bodily Injury Liability</td>
+                        <td> <%= (dataOrder.plan.mainCoverages) ? formatMoney(dataOrder.plan.mainCoverages.liabilityBody.claimLimitValue) : '' %> </td>
+                        <td>None</td>
+                        <td> <%= (dataOrder.plan.mainCoverages) ? formatMoney(dataOrder.plan.mainCoverages.liabilityBody.price) : '' %> </td>
+                    </tr>
+                    <tr>
+                        <td>Property Damage Liability</td>
+                        <td> <%= (dataOrder.plan.mainCoverages) ? formatMoney(dataOrder.plan.mainCoverages.liabilityProperty.claimLimitValue) : '' %></td>
+                        <td>None</td>
+                        <td> <%= (dataOrder.plan.mainCoverages) ? formatMoney(dataOrder.plan.mainCoverages.liabilityProperty.price) : '' %></td>
+
+                    </tr>
+                    <tr class="divider">
+                        <td colspan="4"><strong>Personal accident insurance for driver and
+                                passengers</strong></td>
+                    </tr>
+                    <tr>
+                        <td>Medical Payments</td>
+
+                        <td><%= (dataOrder.plan.mainCoverages) ? formatMoney(dataOrder.plan.mainCoverages.personalMedical.claimLimitValue) : 'Not Desired' %></td>
+                        <td>None</td>
+                        <td><%= (dataOrder.plan.mainCoverages) ? formatMoney(dataOrder.plan.mainCoverages.personalMedical.price) : 'Not Desired' %></td>
+
+
+                    </tr>
+                    <tr>
+                        <td>Uninsured Motorist Bodily Injury</td>
+
+                        <td><%= (dataOrder.plan.mainCoverages) ? formatMoney(dataOrder.plan.mainCoverages.personalBody.claimLimitValue) : 'Not Desired' %></td>
+                        <td>None</td>
+                        <td><%= (dataOrder.plan.mainCoverages) ? formatMoney(dataOrder.plan.mainCoverages.personalBody.price) : 'Not Desired' %></td>
+
+                    </tr>
+                    <tr>
+                        <td>Uninsured Motorist Property Damage</td>
+
+                        <td><%= (dataOrder.plan.mainCoverages) ? formatMoney(dataOrder.plan.mainCoverages.personalProperty.claimLimitValue) : 'Not Desired' %></td>
+                        <td>None</td>
+                        <td><%= (dataOrder.plan.mainCoverages) ? formatMoney(dataOrder.plan.mainCoverages.personalProperty.price) : 'Not Desired' %></td>
+
+                    </tr>
+                    <% if (dataOrder.vehicle.kind === 'Car') { %>
+                        <tr>
+                            <td>Identity Theft</td>
+
+                            <td><%= (dataOrder.plan.carCoverages) ? formatMoney(dataOrder.plan.carCoverages.personalIdentityTheft.claimLimitValue) : 'Not Desired' %></td>
+                            <td>None</td>
+                            <td><%= (dataOrder.plan.carCoverages) ? formatMoney(dataOrder.plan.carCoverages.personalIdentityTheft.price) : 'Not Desired' %></td>
+
+                        </tr>
+                    <% } %>
+
+                    <tr class="divider">
+                        <td colspan="4"><strong>Vehicle physical damage insurance</strong></td>
+                    </tr>
+                    <tr>
+                        <td>Collision</td>
+                        <td><%= (dataOrder.plan.mainCoverages) ? dataOrder.plan.mainCoverages.vehicleCollision.claimLimitText : 'Not Desired' %></td>
+                        <td><%= (dataOrder.plan.mainCoverages) ? formatMoney(dataOrder.plan.mainCoverages.vehicleCollision.deductible) : 'Not Desired' %></td>
+                        <td><%= (dataOrder.plan.mainCoverages) ? formatMoney(dataOrder.plan.mainCoverages.vehicleCollision.price) : 'Not Desired' %></td>
+                    </tr>
+                    <tr>
+                        <td>Comprehensive</td>
+                        <td><%= (dataOrder.plan.mainCoverages) ? dataOrder.plan.mainCoverages.vehicleComprehensive.claimLimitText : 'Not Desired' %></td>
+                        <td><%= (dataOrder.plan.mainCoverages) ? formatMoney(dataOrder.plan.mainCoverages.vehicleComprehensive.deductible) : 'Not Desired' %></td>
+                        <td><%= (dataOrder.plan.mainCoverages) ? formatMoney(dataOrder.plan.mainCoverages.vehicleComprehensive.price) : 'Not Desired' %></td>
+                    </tr>
+                    <tr>
+                        <td>Rental Reimbursement</td>
+                        <td><%= (dataOrder.plan.mainCoverages) ? formatMoney(dataOrder.plan.mainCoverages.vehicleRentalReimbursement.claimLimitValue) : 'Not Desired' %></td>
+                        <td>None</td>
+                        <td><%= (dataOrder.plan.mainCoverages) ? formatMoney(dataOrder.plan.mainCoverages.vehicleRentalReimbursement.price) : 'Not Desired' %></td>
+
+                    </tr>
+                    <tr>
+                        <td>Enhanced Towing Coverage</td>
+
+                        <td><%= (dataOrder.plan.mainCoverages) ? formatMoney(dataOrder.plan.mainCoverages.vehicleTowing.claimLimitValue) : 'Not Desired' %></td>
+                        <td>None</td>
+                        <td><%= (dataOrder.plan.mainCoverages) ? formatMoney(dataOrder.plan.mainCoverages.vehicleTowing.price) : 'Not Desired' %></td>
+
+
+                    </tr>
+                    <% if (dataOrder.vehicle.kind === 'Car') { %>
+                        <tr>
+                            <td>Sound System</td>
+
+                            <td><%= (dataOrder.plan.carCoverages) ? formatMoney(dataOrder.plan.carCoverages.vehicleSoundSystem.claimLimitValue) : 'Not Desired' %></td>
+                            <td>None</td>
+                            <td><%= (dataOrder.plan.carCoverages) ? formatMoney(dataOrder.plan.carCoverages.vehicleSoundSystem.price) : 'Not Desired' %></td>
+                        </tr>
+                    <% } %>
+                    </tbody>
+                </table>
+            </div>
+            <div class="tab-pane " id="vehicle">
+                <table class="table table-borderless ">
+                    <tbody>
+                    <tr>
+                        <td >
+                            Model
+                        </td>
+                        <td>
+                            <%= dataOrder.vehicle.modelNameWithMake %>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td >
+                            Registration Plate
+                        </td>
+                        <td>
+                            <%= dataOrder.vehicle.vehicleRegistrationPlate %>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td >
+                            Identification Number
+                        </td>
+                        <td>
+                            <%= dataOrder.vehicle.vehicleIdentificationNumber %>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td >
+                            Engine Number
+                        </td>
+                        <td>
+                            <%= dataOrder.vehicle.engineNumber %>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td >
+                            Purchased Date
+                        </td>
+                        <td>
+                            <%= dataOrder.vehicle.purchasedDate.toLocaleDateString('en-GB') %>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td >
+                            Purchased Condition
+                        </td>
+                        <td>
+                            <%= Number(dataOrder.vehicle.purchasedCondition) === 1 ? 'New' : 'Old' %>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            Commercial Use
+                        </td>
+                        <td>
+                            <%= dataOrder.vehicle.isForCommercialUse ? 'Yes' : 'No' %>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td >
+                            Annual Mileage
+                        </td>
+                        <td>
+                            <%= dataOrder.vehicle.annualMileage %>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    </div>
+</section>
+
+
+
+
+
+<!-- Payment modal -->
+<% if (!dataOrder.paidAt) { %>
+    <div class="modal fade" id="payment-modal">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Select a payment method</h4>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div id="accordion">
+                        <div class="card border-top-0">
+                            <div class="card-header">
+                                <a class="card-link" data-toggle="collapse" href="#collapseOne">
+                                    PayPal / Credit Card
+                                </a>
+                            </div>
+                            <div id="collapseOne" class="collapse" data-parent="#accordion">
+                                <div class="card-body">
+                                    <div id="paypal-button-container"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-header">
+                                <a class="collapsed card-link" data-toggle="collapse" href="#collapseTwo">
+                                    Bank Transfer
+                                </a>
+                            </div>
+                            <div id="collapseTwo" class="collapse" data-parent="#accordion">
+                                <div class="card-body">
+                                    <table border="0" cellpadding="0" cellspacing="0"
+                                           style="border-collapse: collapse; font-size: 14px;" width="100%">
+                                        <tr>
+                                            <td style="vertical-align: top" width="30%">
+                                                <b>Beneficiary Name</b>
+                                            </td>
+                                            <td>
+                                                Safe Carz Ltd.
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td style="vertical-align: top">
+                                                <b>Account Number</b>
+                                            </td>
+                                            <td>
+                                                012345678998
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td style="vertical-align: top">
+                                                <b>Bank</b>
+                                            </td>
+                                            <td>
+                                                Vietnam Technological and Commercial Joint Stock Bank (Techcombank)
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td style="vertical-align: top">
+                                                <b>Amount</b>
+                                            </td>
+                                            <td>
+                                                <%= dataOrder.plan.planPrice.toLocaleString('en-US', {
+                                                    style: 'currency',
+                                                    currency: 'USD',
+                                                    minimumFractionDigits: 2
+                                                }) %>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td style="vertical-align: top">
+                                                <b>Description</b>
+                                            </td>
+                                            <td>
+                                                SC Order <%= dataOrder.orderNumber %>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card border-bottom-0">
+                            <div class="card-header">
+                                <a class="collapsed card-link" data-toggle="collapse" href="#collapseThree">
+                                    Cash Payment
+                                </a>
+                            </div>
+                            <div id="collapseThree" class="collapse" data-parent="#accordion">
+                                <div class="card-body">
+                                    <p>Cash payment can be made at:</p>
+                                    Safe Carz's office<br>
+                                    70 Nguyen Hoang, My Dinh 2<br>
+                                    Nam Tu Liem, Hanoi
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+<% } %>
+
+<%- include('partial/footer'); -%>
+<script src="https://www.paypal.com/sdk/js?client-id=ARn5BILox_3RrSQvTjEizIZ7H5jxS6L13kCAdyvI4H1akhXAmdMtsT4mkipuasPmKX5E8NVS6rSz-BjZ"></script>
+<script>
+    const urlParams = new URLSearchParams(window.location.search);
+    const myParam = urlParams.get('m');
+    if (myParam === 'payment') {
+        $('#payment-modal').modal();
+    }
+
+    paypal.Buttons({
+        createOrder: function () {
+            return fetch('/order/pay/<%= dataOrder._id %>', {
+                method: 'post',
+                headers: {
+                    'content-type': 'application/json'
+                }
+            }).then(function (res) {
+                return res.json();
+            }).then(function (data) {
+                return data.orderID;
+            });
+        },
+        onApprove: function (data) {
+            return fetch('/order/capture/<%= dataOrder._id %>', {
+                method: 'post',
+                headers: {
+                    'content-type': 'application/json'
+                },
+                body: JSON.stringify({
+                    orderID: data.orderID,
+                    id: '<%= dataOrder._id %>'
+                })
+            }).then(function (res) {
+                return res.json();
+            }).then(function () {
+                location.replace('/order/pay/<%= dataOrder._id %>');
+            })
+        },
+        onError: function (err) {
+            alert('An error occurred. Please try again later');
+        }
+    }).render(document.querySelector('#paypal-button-container'));
+</script>
+</body>
+</html>

@@ -1,0 +1,260 @@
+<aside class="main-sidebar sidebar-dark-primary elevation-4">
+    <!-- Brand Logo -->
+    <a href="/admin/" class="brand-link">
+        <img src="/images/logo-z-only.png" alt="Safe Carz Logo" class="brand-image img-circle elevation-3">
+        <span class="brand-text font-weight-light">Safe Carz</span>
+    </a>
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <!-- Sidebar user (optional) -->
+        <div class="user-panel mt-3 pb-3 mb-3 d-flex align-items-center">
+            <div class="image">
+                <img src="/images/user-profile.jpg" class="img-circle elevation-2" alt="User Image">
+            </div>
+            <div class="info">
+                <div class="text-white"><%= typeof user !== 'undefined' ? `${user.firstName} ${user.lastName}` : 'Admin' %></div>
+                <a href="/entry/sign-out" class="small text-light">Sign Out</a>
+            </div>
+        </div>
+        <!-- Sidebar Menu -->
+        <nav class="mt-2">
+            <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+                <!-- Add icons to the links using the .nav-icon class
+                     with font-awesome or any other icon font library -->
+                <li class="nav-item">
+                    <a href="/admin/" class="nav-link">
+                        <i class="nav-icon fas fa-fw fa-tachometer-alt"></i>
+                        <p>
+                            Dashboard
+                        </p>
+                    </a>
+                </li>
+                <li class="nav-header">ORDERS</li>
+                <li class="nav-item">
+                    <a href="/admin/order/list" class="nav-link">
+                        <i class="nav-icon fas fa-fw fa-clipboard"></i>
+                        <p>
+                            All Orders
+                            <span class="badge badge-info right"></span>
+                        </p>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="/admin/order/list?status=Created" class="nav-link">
+                        <i class="nav-icon fas fa-fw fa-bullhorn"></i>
+                        <p>
+                            New Orders
+                            <span class="badge badge-info right"><%= countNewOrder %></span>
+                        </p>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="/admin/order/list?status=Paid" class="nav-link">
+                        <i class="nav-icon fas fa-fw fa-dollar-sign"></i>
+                        <p>
+                            Paid Orders
+                            <span class="badge badge-info right"><%= countPaidOrder %></span>
+                        </p>
+                    </a>
+                </li>
+                <li class="nav-header">INSURERS</li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <i class="nav-icon fas fa-fw fa-building"></i>
+                        <p>
+                            Insurer Manager
+                            <i class="fas fa-angle-left right"></i>
+                        </p>
+                    </a>
+                    <ul class="nav nav-treeview">
+                        <li class="nav-item">
+                            <a href="/admin/insurer/list" class="nav-link">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>Insurer List</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="/admin/insurer/create" class="nav-link">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>Create New Insurer</p>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <i class="nav-icon fas fa-fw fa-american-sign-language-interpreting"></i>
+                        <p>
+                            Plan Manager
+                            <i class="fas fa-angle-left right"></i>
+                        </p>
+                    </a>
+                    <ul class="nav nav-treeview">
+                        <li class="nav-item">
+                            <a href="/admin/plan/list" class="nav-link">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>Plan List</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="/admin/plan/create" class="nav-link">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>Create New Plan</p>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <i class="nav-icon fas fa-fw fa-car"></i>
+                        <p>
+                            Vehicle Manager
+                            <i class="fas fa-angle-left right"></i>
+                            <span class="badge badge-info right"></span>
+                        </p>
+                    </a>
+                    <ul class="nav nav-treeview">
+                        <li class="nav-item">
+                            <a href="/admin/model/list" class="nav-link">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>Model List</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="/admin/model/create" class="nav-link">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>Create New Model</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="/admin/make/list" class="nav-link">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>Make List</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="/admin/type/list" class="nav-link">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>Type List</p>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <i class="nav-icon fa-fw fas fa-car-crash"></i>
+                        <p>Incident Manager
+                            <i class="fas fa-angle-left right"></i>
+                        </p>
+                    </a>
+                    <ul class="nav nav-treeview">
+                        <li class="nav-item">
+                            <a href="/admin/incident/list" class="nav-link">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>Incident List</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="/admin/incident/create" class="nav-link">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>Create New Incident</p>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+
+                <li class="nav-header">USERS</li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <i class="far fa-user m-2"></i>
+                        <!--                        <i class="nav-icon fa fa-fw fa-user"></i>-->
+                        <p>
+                            User Manager
+                            <i class="fas fa-angle-left right"></i>
+                            <span class="badge badge-info right"></span>
+                        </p>
+                    </a>
+                    <ul class="nav nav-treeview">
+                        <li class="nav-item">
+                            <a href="/admin/user/list" class="nav-link">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>User List</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="/admin/user/create" class="nav-link">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>Create New User</p>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <i class="nav-icon fas fa-fw fa-envelope"></i>
+                        <p>
+                            Mailbox
+                            <i class="fas fa-angle-left right"></i>
+                            <span class="badge badge-info right"><%= unreadMessage %></span>
+                        </p>
+                    </a>
+                    <ul class="nav nav-treeview">
+                        <li class="nav-item">
+                            <a href="/admin/message/list" class="nav-link">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>Inbox</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="/admin/message/compose" class="nav-link">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>Compose</p>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <i class="nav-icon fas fa-fw fa-map-marker-alt"></i>
+                        <p>
+                            Location Manager
+                            <i class="fas fa-angle-left right"></i>
+                        </p>
+                    </a>
+                    <ul class="nav nav-treeview">
+                        <li class="nav-item">
+                            <a href="/admin/city/list" class="nav-link">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>City List</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="/admin/district/list" class="nav-link">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>District List</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="/admin/ward/list" class="nav-link">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>Ward List</p>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+                <li class="nav-header">STATISTICS</li>
+                <li class="nav-item">
+                    <a href="/admin/statistics" class="nav-link">
+                        <i class="nav-icon fas fa-fw fa-chart-line"></i>
+                        <p>
+                            Statistics
+                        </p>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+        <!-- /.sidebar-menu -->
+    </div>
+    <!-- /.sidebar -->
+</aside>

@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<%- include('partial/head'); -%>
+<body>
+<%- include('partial/header'); -%>
+
+<!-- Banner -->
+<section class="banner top-banner light-purple-bg">
+    <div class="h-100 d-flex align-items-center">
+        <div class="banner-text greeting">
+            <div class="banner-text-subtitle">Welcome to</div>
+            <div class="banner-text-title emphasis">Safe Carz</div>
+            <div class="banner-text-content">
+                The best car insurance plans, together with many attractive benefits and competitive premium
+                rates.
+            </div>
+            <a type="button" href="/quote" class="btn btn-primary px-4 py-3 mt-3">Get your quote now
+                <i class="ml-2 fa fa-chevron-right"></i></a>
+        </div>
+        <div class="banner-img-container">
+            <div class="banner-img">
+                <img class="banner-img-photo" src="images/car-insurance-germany-cropped.jpg">
+                <video muted autoplay loop playsinline class="videos d-none d-md-block">
+                    <source src="images/video-home-cropped.mp4" type="video/mp4" class="videos-mp4">
+                </video>
+                <img class="logo-z" src="images/logo-z.svg">
+            </div>
+            <div class="half-circle"></div>
+        </div>
+    </div>
+</section>
+
+<!-- About auto insurance-->
+<section>
+    <div class="container d-flex align-items-center flex-column flex-md-row">
+        <div class="component-img img-circle-2-container ">
+            <img src="../images/woman-driving.jpg">
+            <div class="img-circle-2-decoration">
+                <span class="img-circle-2-decoration-circle"></span>
+                <span class="img-circle-2-decoration-circle-half"></span>
+                <span class="img-circle-2-decoration-circle-mini"></span>
+            </div>
+        </div>
+        <div class="component-content">
+            <h2 class="mb-3">Today, enjoy a hassle-free driving</h2>
+            <p>Auto insurance is a contract between you and the insurance company that protects
+                you against
+                financial loss in the event of an accident or theft. In exchange for your paying a premium, the
+                insurance company agrees to pay your losses as outlined in your policy.</p>
+            <a type="button" href="/insurance" class="btn btn-primary px-4 py-3">Learn more <span
+                        class="button-extra-text">about auto insurance</span>
+                <i class="ml-2 fa fa-chevron-right"></i>
+            </a>
+        </div>
+    </div>
+    </div>
+</section>
+
+<!-- Facts-->
+<section id="facts">
+    <div class="container text-center">
+        <h2 class="section-title text-left">Did you know?</h2>
+        <div class="row mt-5 slide-card-section">
+            <div class="col-4 d-flex justify-content-between">
+                <div class="slide-card-container">
+                    <div class="slide-card">
+                        <div class="slide-card-img-container">
+                            <img class="slide-card-img" src="../images/did-you-know-1.jpg"
+                                 style="object-position: right">
+                        </div>
+                        <div class="slide-card-content">When you give permission to a friend or relative to
+                            borrow your
+                            car and they get in a fender bender, your auto policy could provide coverage.
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-4 d-flex justify-content-between">
+                <div class="slide-card-container">
+                    <div class="slide-card">
+                        <div class="slide-card-img-container">
+                            <img class="slide-card-img" src="../images/did-you-know-2.png">
+                        </div>
+                        <div class="slide-card-content">An umbrella policy gives you an extra layer of protection
+                            over
+                            and above the limits in case you're sued or responsible for an accident.
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-4 d-flex justify-content-between">
+                <div class="slide-card-container">
+                    <div class="slide-card">
+                        <div class="slide-card-img-container">
+                            <img class="slide-card-img" src="../images/did-you-know-3.jpg" style="object-position: 15%">
+                        </div>
+                        <div class="slide-card-content">Auto policy covers windshield and glass repairs as part of our
+                            comprehensive coverage.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <a type="button" href="/insurance#benefits" class="btn btn-secondary px-4 py-3 mt-5">More on benefits
+            <i class="ml-2 fa fa-chevron-right"></i>
+        </a>
+    </div>
+</section>
+
+<!-- Why us -->
+<section class="banner why-us light-blue-bg">
+    <div class="h-100 d-flex align-items-center">
+        <div class="banner-text why-safe-carz">
+            <div class="banner-text-title">Why Safe Carz</div>
+            <div class="banner-text-content">
+                <ul>
+                    <li>Immediate guidance on accident management and claim lodgment is offered via hotline (24/24)
+                        nationwide
+                    </li>
+                    <li>Free rescue service is delivered within a radius of 70km from rescue center in big provinces
+                    </li>
+                    <li>Fast and convenient claim service</li>
+                </ul>
+            </div>
+            <!--            <button type="button" class="btn btn-primary px-4 py-3 mt-2">More about Safe Carz-->
+            <!--                <i class="ml-2 fa fa-chevron-right text-white"></i>-->
+            <!--            </button>-->
+            <a type="button" href="/about-us/benefits" class="btn btn-primary px-4 py-3 mt-2">More about Safe Carz
+                <i class="ml-2 fa fa-chevron-right"></i>
+            </a>
+        </div>
+        <div class="banner-img-container">
+            <div class="banner-img">
+                <img class="banner-img-photo" src="../images/why-safe-carz.jpg" style="object-position: 90%">
+                <img class="logo-z" src="../images/logo-z.svg">
+            </div>
+            <div class="half-circle"></div>
+        </div>
+    </div>
+</section>
+
+<!-- Companies -->
+<section class="logo-list text-center">
+    <h3 class="mt-5">The best value, from <%= countInsurer %> different companies</h3>
+    <div class="container">
+        <div class="row">
+            <% for (var i = 0; i < listInsurer.length ; i++) { %>
+                <div class="col-6 col-sm-4 col-md-3 col-xl-2">
+                    <a href="/insurer/<%= listInsurer[i].slug %>">
+                        <img src="<%= listInsurer[i].logo %>"></a>
+                </div>
+            <% } %>
+        </div>
+        <a type="button" href="/insurer" class="btn btn-secondary px-4 py-3 mt-5">All insurers
+            <i class="ml-2 fa fa-chevron-right"></i>
+        </a>
+    </div>
+</section>
+
+<!-- Car insurance -->
+<section class="banner light-green-bg">
+    <div class="h-100 d-flex align-items-center">
+        <div class="banner-text car-insurance">
+            <div class="banner-text-title">Car insurance</div>
+            <div class="banner-text-content mb-4">
+                Discover car insurance that fits the way you want to live. We're here to protect the car you love.
+            </div>
+            <!--                <div class="col-6 col-sm-4 col-md-3 col-xl-2">-->
+            <!--                    <a href="/car-insurance/"></a>-->
+            <!--                </div>-->
+            <a type="button" href="/insurance/car" class="btn btn-primary px-4 py-3">More details
+                <i class="ml-2 fa fa-chevron-right"></i>
+            </a>
+            <!--            <button type="button" class="btn btn-primary px-4 py-3">More details-->
+            <!--                <i class="ml-2 fa fa-chevron-right text-white"></i>-->
+            <!--            </button>-->
+        </div>
+        <div class="banner-img-container">
+            <div class="banner-img">
+                <img class="banner-img-photo" src="../images/car-insurance.jpg" style="object-position: 69%">
+                <img class="logo-z" src="../images/logo-z.svg">
+            </div>
+            <div class="half-circle"></div>
+        </div>
+    </div>
+</section>
+
+<!-- Car packages -->
+<section>
+    <div class="container">
+        <h2 class="section-title text-left">Coverages</h2>
+        <div class="row mt-5 slide-card-section">
+            <div class="col-4 d-flex">
+                <div class="slide-card-container">
+                    <div class="slide-card">
+                        <div class="slide-card-img-container">
+                            <img class="slide-card-img" src="images/protect-white-car.jpg"
+                                 style="object-position: center">
+                        </div>
+                        <div class="slide-card-content">
+                            <strong>Car physical damage insurance</strong>
+                            <br>
+                            Covers your car when it's in an accident with another vehicle.
+                            It also covers you when you hit an object like a tree or a pole that’s not covered
+                            under car comprehensive insurance.
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-4 d-flex">
+                <div class="slide-card-container">
+                    <div class="slide-card">
+                        <div class="slide-card-img-container">
+                            <img class="slide-card-img" src="../images/car-package-2.jpg" style="object-position: 79%">
+                        </div>
+                        <div class="slide-card-content">
+                            <strong>Personal accident insurance for driver and passengers</strong>
+                            <br>
+                            Compensation for losses or injuries inflicted upon driver and passengers when
+                            automobile is in transportation.
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-4 d-flex">
+                <div class="slide-card-container">
+                    <div class="slide-card">
+                        <div class="slide-card-img-container">
+                            <img class="slide-card-img" src="../images/car-package-3.jpg" style="object-position: 57%">
+                        </div>
+                        <div class="slide-card-content">
+                            <strong>Compulsory third party's liability insurance</strong>
+                            <br>
+                            Helps protect drivers when they’re responsible for an accident that injures other
+                            people or damages other people’s property. Drivers are required to have this
+                            coverage.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Motorcycle insurance -->
+<section class="warm-grey-bg">
+    <div class="container py-5 d-flex align-items-center flex-column flex-md-row">
+        <div class="component-img img-circle-2-container">
+            <img src="../images/motorcycle-insurance.jpg">
+            <div class="img-circle-2-decoration">
+                <span class="img-circle-2-decoration-circle"></span>
+                <span class="img-circle-2-decoration-circle-half"></span>
+                <span class="img-circle-2-decoration-circle-mini"></span>
+            </div>
+        </div>
+        <div class="component-content">
+            <h2 class="mb-3">Motorcycle insurance</h2>
+            <p>And if you have a motorcycle, we can cover that, too.</p>
+            <a type="button" href="/insurance/motorcycle" class="btn btn-primary px-4 py-3 mt-2">More details
+                <i class="ml-2 fa fa-chevron-right"></i>
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- Testimonials -->
+<section>
+    <div class="container">
+        <div class="info-three-column">
+            <h2 class="section-title text-left">From our customers</h2>
+            <div class="mt-4 row three-column-container">
+                <div class="col-4 column-4-fix">
+                    <div class="img-container">
+                        <img src="../images/portrait-1.jpg">
+                        <div class="half-circle"></div>
+                    </div>
+                    <div class="text-container">
+                        <h6>Mr. Bui Tho Hoang</h6>
+                        <h6>EVP and Head Finance, Cleartrip Pvt.Ltd</h6>
+                        <div>Safe Carz's online booking experience is very seamless, especially if one
+                            is renewing the motor policy, it is the most hassle-free process and gets done in
+                            few clicks and few minutes. Would recommend to everyone.
+                        </div>
+                    </div>
+                </div>
+                <div class="col-4 column-4-fix">
+                    <div class="img-container">
+                        <img src="../images/portrait-2.jpg">
+                        <div class="half-circle"></div>
+                    </div>
+                    <div class="text-container">
+                        <h6>Ms. Duong Thi Chinh</h6>
+                        <h6>Editor & Publisher, Vedamataram</h6>
+                        <div>Quick service from staff. Polite and patient in communications. Good guidance.
+                            As a senior citizen what else would I require. My small settlement was clearly hassle
+                            free. I wish to continue with Safe Carz.
+                        </div>
+                    </div>
+                </div>
+                <div class="col-4 column-4-fix">
+                    <div class="img-container">
+                        <img src="../images/portrait-3.jpg">
+                        <div class="half-circle"></div>
+                    </div>
+                    <div class="text-container">
+                        <h6>Mr. Ha Duy Nhat</h6>
+                        <h6>IT Professional, DMX</h6>
+                        <div>I wanted to know about car insurance and found all
+                            their information on this very neat website that is easy to navigate around. I was convinced
+                            enough and went
+                            ahead and bought a policy for my car.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Get a quote -->
+<section class="peach-bg one-line-section">
+    <div class="container text-center">
+        <h3>
+            Find out which plan fits you the most<br>
+            and get an insurance quote now.
+        </h3>
+        <!--        <button type="button" class="btn btn-primary px-4 py-3 mt-4">Get a quote-->
+        <!--            <i class="ml-2 fa fa-chevron-right text-white"></i>-->
+        <!--        </button>-->
+        <!--        <div class="row">-->
+        <a type="button" href="/quote" class="btn btn-primary px-4 py-3 mt-4">Get a quote
+            <i class="ml-2 fa fa-chevron-right"></i>
+        </a>
+    </div>
+</section>
+
+<!-- FAQ -->
+<section id="faq">
+    <div class="container text-center">
+        <h2 class="p-4 text-left">FAQ</h2>
+        <div class="faq-list text-left">
+            <div class="p-4"><a href="/faq">How much auto insurance do I need?</a></div>
+            <div class="p-4"><a href="/faq">How can I compare auto insurance quotes?</a></div>
+            <div class="p-4"><a href="/faq">What can I do to lower my auto insurance costs?</a></div>
+        </div>
+        <!--        <button type="button" class="btn btn-secondary px-4 py-3 mt-5">See more questions-->
+        <!--            <i class="ml-2 fa fa-chevron-right"></i>-->
+
+        <!--        </button>-->
+        <a type="button" href="/faq" class="btn btn-secondary px-4 py-3 mt-5">See more questions
+            <!--            <i class="ml-2 fa fa-chevron-right"></i>-->
+            <i class="ml-2 fa fa-chevron-right"></i>
+        </a>
+    </div>
+</section>
+
+<%- include('partial/footer'); -%>
+</body>
+</html>

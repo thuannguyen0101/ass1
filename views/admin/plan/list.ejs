@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include('../partial/head') -%>
+</head>
+<body class="hold-transition sidebar-mini layout-fixed layout-navbar-fixed layout-footer-fixed">
+<div class="wrapper">
+    <%- include('../partial/topbar'); -%>
+    <%- include('../partial/sidebar'); -%>
+
+    <!-- Content Wrapper. Contains page content -->
+    <div class="content-wrapper">
+        <!-- Content Header (Page header) -->
+        <section class="content-header">
+            <div class="container-fluid">
+                <% if (message) { %>
+                    <div class="alert alert-success alert-dismissible fade show">
+                        <button type="button" class="close" data-dismiss="alert">&times;</button>
+                        <strong>Success!</strong> <%- (message) %>
+                    </div>
+                <% } %>
+                <div class="row mb-2">
+                    <div class="col-sm-6 d-flex align-items-center">
+                        <h1 class="mr-2"><%= title %></h1>
+                        <a href="/admin/plan/create" class="btn btn-primary mt-1">Create New Plan</a>
+                    </div>
+                    <div class="col-sm-6">
+                        <ol class="breadcrumb float-sm-right">
+                            <li class="breadcrumb-item"><a href="#">Home</a></li>
+                            <li class="breadcrumb-item active"><%= title %></li>
+                        </ol>
+                    </div>
+                </div>
+            </div><!-- /.container-fluid -->
+        </section>
+
+        <section class="content">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-header">
+                                <form name="filterForm">
+                                    <div class="form-inline float-left align-items-end">
+                                        <div class="form-group mx-1">
+                                            <label class="small font-weight-normal">Entries per page&nbsp;&nbsp;</label>
+                                            <select class="form-control form-control-sm" id="limit" name="limit">
+                                                <option selected hidden disabled>Show entries</option>
+                                                <option value="5" <%= limit === 5 ? 'selected' : '' %>>5</option>
+                                                <option value="10" <%= limit === 10 ? 'selected' : '' %>>10</option>
+                                                <option value="25" <%= limit === 25 ? 'selected' : '' %>>25</option>
+                                                <option value="50" <%= limit === 50 ? 'selected' : '' %>>50</option>
+                                                <option value="100" <%= limit === 100 ? 'selected' : '' %>>100</option>
+                                            </select>
+                                        </div>
+                                        <div class="form-group mx-1">
+                                            <select id="selectInsurerOption" class="form-control-sm form-control" name="insurer">
+                                                <option value="0">All Insurers</option>
+                                                <% for (var i = 0; i < listInsurer.length; i++) { %>
+
+                                                <option value="<%=listInsurer[i]._id%>" <%= listInsurer[i]._id.toString() === Insurer ? 'selected' : '' %>><%=listInsurer[i].name%></option>
+                                                <% } %>
+                                            </select>
+                                        </div>
+                                        <div class="form-group mx-1">
+                                            <select id="selectKindOption" class="form-control-sm form-control" name="kind">
+                                                <option value="0">All</option>
+                                                <option value="Car" <%= selectKind == 'Car' ? 'selected' : '' %>>Car
+                                                </option>
+                                                <option value="Motorcycle" <%= selectKind == 'Motorcycle' ? 'selected' : '' %>>
+                                                    Motorcycle
+                                                </option>
+                                            </select>
+                                        </div>
+                                        <div class="form-group mx-2">
+                                            <a href="/admin/plan/list" class="btn btn-sm btn-secondary">&times; Clear
+                                                Filter</a>
+                                        </div>
+                                    </div>
+                                    <div class="form-inline float-right">
+                                        <div class="form-group input-group input-group-sm ml-md-2">
+                                            <input type="text" name="keyword" class="form-control form-control-sm"
+                                                   placeholder="Search" value="<%= keyword %>">
+                                            <div class="input-group-append">
+                                                <button type="submit" class="btn btn-default">
+                                                    <i class="fas fa-search"></i>
+                                                </button>
+                                            </div>
+                                            <input type="hidden" name="page" value="<%= page %>">
+                                        </div>
+                                    </div>
+                                </form>
+<!--                                <div class="card-tools">-->
+<!--                                    <div class="input-group input-group-sm" style="width: 150px;">-->
+<!--                                        <input type="text" name="table_search" class="form-control float-right" placeholder="Search">-->
+
+<!--                                        <div class="input-group-append">-->
+<!--                                            <button type="submit" class="btn btn-default">-->
+<!--                                                <i class="fas fa-search"></i>-->
+<!--                                            </button>-->
+<!--                                        </div>-->
+<!--                                    </div>-->
+<!--                                </div>-->
+                            </div>
+                            <div class="card-body table-responsive p-0">
+                                <table class="table table-hover text-nowrap">
+                                    <thead>
+                                    <tr>
+                                        <th>Insurer</th>
+                                        <th>Vehicle Kind</th>
+                                        <th>Name</th>
+                                        <th>Action</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <% for (var i = 0; i < listPlan.length; i++) { %>
+                                        <tr>
+                                            <td><%= listPlan[i].insurerId.name %></td>
+                                            <td><%= listPlan[i].kind[0].toUpperCase() + listPlan[i].kind.slice(1) %></td>
+                                            <td><h4 class="badge" style="background-color: <%= listPlan[i].color %>; font-size: 16px"><%= listPlan[i].name %></h4></td>
+                                            <td>
+                                                <a href="/admin/plan/update/<%= listPlan[i].id %>" class="btn btn-sm btn-primary">Update</a>
+                                                <a type="button" class="btn btn-sm btn-danger" data-toggle="modal" data-target="#delete<%= listPlan[i].id %>">Delete</a>
+                                            </td>
+                                        </tr>
+                                        <div class="modal fade" id="delete<%= listPlan[i].id %>" tabindex="-1" role="dialog" aria-labelledby="deleteUser"
+                                             aria-hidden="true">
+                                            <div class="modal-dialog" role="document">
+                                                <div class="modal-content">
+                                                    <div class="modal-body">
+                                                        <p>Are you sure you want to delete <b><%= listPlan[i].name %></b> </p>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-outline-primary" data-dismiss="modal">Cancel</button>
+                                                        <a href="/admin/plan/delete/<%= listPlan[i].id %>" class="btn btn-primary">Delete</a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    <% } %>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row <%= listPlan.length != 0 ? '' : 'd-none' %>">
+                    <div class="col-12 col-md-6 ">
+                        <div class="mt-2 <%= page > totalPages ? 'd-none' : '' %>">Showing <%= pagingCounter %>
+                            to <%= Math.min((pagingCounter + limit) - 1, userCount) %> of <%= userCount %> entries
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-6">
+                        <nav aria-label="Page navigation example ">
+                            <ul class="pagination float-right">
+                                <li class="paginate_button page-item  <%= page === 1 ? 'd-none' : '' %>"
+                                    id="first"><a class="page-link"><i class="fa fa-angle-double-left"
+                                                                       aria-hidden="true"></i></a></li>
+                                <li class="paginate_button page-item  <%= page === 1 ? 'd-none' : '' %>"
+                                    id="prev"><a class="page-link">Prev</a></li>
+                                <li class="paginate_button page-item  disabled"><a
+                                            class="page-link"><%= page %></a></li>
+                                <li class="paginate_button page-item  <%= page === totalPages ? 'd-none' : '' %>"
+                                    id="next"><a class="page-link">Next</a></li>
+                                <li class="paginate_button page-item  <%= page === totalPages ? 'd-none' : '' %>"
+                                    id="last"><a class="page-link page-item "><i class="fa fa-angle-double-right"
+                                                                                 aria-hidden="true"></i></a></li>
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+    <%- include('../partial/footer'); -%>
+</div>
+
+<%- include('../partial/scripts'); -%>
+<script>
+    let kind = document.getElementById('selectKindOption');
+    if ('kind') {
+        kind.onchange = function () {
+            location.href = `${window.location.href.split('?')[0]}?kind=${this.value}`;
+        }
+    }
+</script>
+<script>
+    const formSearch = document.forms['filterForm'];
+    const Keyword = document.querySelector('input[name="keyword"]');
+    const pageInput = document.querySelector('input[name="page"]');
+    const Limit = document.querySelector('select[name="limit"]');
+    const selectSort = document.querySelector('select[name="sort"]');
+    const insurer = document.querySelector('select[name="insurer"]');
+    if (selectSort) {
+        selectSort.onchange = function () {
+            formSearch.submit();
+        }
+    }
+    if (insurer) {
+        insurer.onchange = function () {
+            formSearch.submit();
+        }
+    }
+    if (Limit) {
+        Limit.onchange = function () {
+            formSearch.submit();
+        }
+    }
+    Keyword.onkeypress = function (event) {
+        if (event.key == 'Enter') {
+            formSearch.submit();
+        }
+    }
+
+    $('#first').click(() => {
+        pageInput.value = 1;
+        formSearch.submit();
+    })
+    $('#prev').click(() => {
+        pageInput.value = parseInt(pageInput.value) - 1;
+        formSearch.submit();
+    })
+    $('#next').click(() => {
+        pageInput.value = parseInt(pageInput.value) + 1;
+        formSearch.submit();
+    })
+    $('#last').click(() => {
+        pageInput.value = parseInt( <%= totalPages %> );
+        formSearch.submit();
+    })
+</script>
+</body>
+</html>

@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<%- include('partial/head'); -%>
+<script src="/javascripts/tinycolor.js"></script>
+<body>
+<%- include('partial/header'); -%>
+
+<!-- Banner -->
+<section class="banner insurer-color" style="background-color: <%= dataInsurer.color %>">
+    <div class="h-100 d-flex align-items-center">
+        <div class="banner-text text-center">
+            <img style="width:300px;" src="<%= dataInsurer.logo %>">
+            <div class="banner-text-content mt-5 mb-4">
+                <%= dataInsurer.slogan %>
+            </div>
+            <button type="button" class="btn btn-primary px-4 py-3">Get a quote
+                <i class="ml-2 fa fa-chevron-right text-white"></i>
+            </button>
+        </div>
+        <div class="banner-img-container">
+            <div class="banner-img">
+                <img class="banner-img-photo" src="<%= dataInsurer.photo %>">
+                <img class="logo-z" src="../images/logo-z.svg">
+            </div>
+            <div class="half-circle"></div>
+        </div>
+    </div>
+</section>
+
+<!-- Insurer info -->
+<section>
+    <div class="container">
+        <div class="col-10 col-lg-8 mx-auto">
+            <p class="insurer-info">
+                <%- dataInsurer.description %>
+            </p>
+            <div class="insurer-stats">
+                <div>Founded: <%= dataInsurer.foundedAt.toLocaleDateString('en-GB', { year: 'numeric', month: 'long', day: 'numeric' }) %></div>
+                <div>Headquarters: <%= dataInsurer.headquarter %></div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="py-5 insurer-color" style="background-color: <%= dataInsurer.color %>">
+    <div class="container text-center">
+        <h3>
+            Get a quote now.
+        </h3>
+        <a href="/quote" type="button" class="btn btn-primary px-4 py-3 mt-4 mx-1">Get a quote
+            <i class="ml-2 fa fa-chevron-right text-white"></i>
+        </a>
+    </div>
+</section>
+
+<!-- Plans details -->
+<section>
+    <% if ((listCarPlan.length) !== 0 || (listMotorcyclePlan.length) !== 0 ) { %>
+        <div class="container ">
+            <h2 class="section-title">
+                Plans
+            </h2>
+            <ul class="nav nav-tabs">
+                <% if ((listCarPlan.length) !== 0) { %>
+                    <li class="nav-item ">
+                        <a class="nav-link active" data-toggle="tab" href="#cars-plans"><i
+                                    class="fas fa-fw mr-2 fa-car"></i>Cars</a>
+                    </li>
+                <% } %>
+                <% if ((listMotorcyclePlan.length) !== 0) { %>
+                    <li class="nav-item ">
+                        <a class="nav-link <%= (listCarPlan.length) === 0 ? 'active' : '' %>" data-toggle="tab" href="#motorcycles-plans"><i
+                                    class="fas fa-fw mr-2 fa-motorcycle "></i>Motorcycle</a>
+                    </li>
+                <% } %>
+            </ul>
+            <!-- Tab panes -->
+            <div class="tab-content">
+                <div class="tab-pane <%= (listCarPlan.length) === 0 ? 'fade' : 'active' %>" id="cars-plans">
+                    <table class="table">
+                        <thead>
+                        <tr>
+                            <td style="width: 25%;">&nbsp;</td>
+                            <% for (var i = 0; i < listCarPlan.length; i++) { %>
+                                <th width="15%"><span class="badge  p-2"><%= listCarPlan[i].name %></span></th>
+                            <% } %>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr class="divider">
+                            <td colspan="4"><strong>Compulsory third party's liability insurance</strong></td>
+                        </tr>
+                        <tr>
+                            <td>Bodily Injury Liability</td>
+                            <% for (var b = 0; b < listCarPlan.length; b++) { %>
+                                <td> <%= (listCarPlan[b].mainCoverages) ? listCarPlan[b].mainCoverages.liabilityBody.claimLimitValue.toLocaleString('en-US', {
+                                        style: 'currency',
+                                        currency: 'USD',
+                                        minimumFractionDigits: 0
+                                    }) : '' %> </td>
+                            <% } %>
+                        </tr>
+                        <tr>
+                            <td>Property Damage Liability</td>
+                            <% for (var c = 0; c < listCarPlan.length; c++) { %>
+                                <td> <%= (listCarPlan[c].mainCoverages) ? listCarPlan[c].mainCoverages.liabilityProperty.claimLimitValue.toLocaleString('en-US', {
+                                        style: 'currency',
+                                        currency: 'USD',
+                                        minimumFractionDigits: 0
+                                    }) :'' %></td>
+                            <% } %>
+                        </tr>
+                        <tr class="divider">
+                            <td colspan="4"><strong>Personal accident insurance for driver and passengers</strong></td>
+                        </tr>
+                        <tr>
+                            <td>Medical Payments</td>
+                            <% for (var d = 0; d < listCarPlan.length; d++) { %>
+                                <td><%= (listCarPlan[d].mainCoverages) ? listCarPlan[d].mainCoverages.personalMedical.claimLimitValue.toLocaleString('en-US', {
+                                        style: 'currency',
+                                        currency: 'USD',
+                                        minimumFractionDigits: 0
+                                    }) : 'Not Desired' %></td>
+                            <% } %>
+                        </tr>
+                        <tr>
+                            <td>Uninsured Motorist Bodily Injury</td>
+                            <% for (var e = 0; e < listCarPlan.length; e++) { %>
+                                <td><%= (listCarPlan[e].mainCoverages) ? listCarPlan[e].mainCoverages.personalBody.claimLimitValue.toLocaleString('en-US', {
+                                        style: 'currency',
+                                        currency: 'USD',
+                                        minimumFractionDigits: 0
+                                    }) : 'Not Desired' %></td>
+                            <% } %>
+                        </tr>
+                        <tr>
+                            <td>Uninsured Motorist Property Damage</td>
+                            <% for (var a = 0; a < listCarPlan.length; a++) { %>
+                                <td><%= (listCarPlan[a].mainCoverages) ? listCarPlan[a].mainCoverages.personalProperty.claimLimitValue.toLocaleString('en-US', {
+                                        style: 'currency',
+                                        currency: 'USD',
+                                        minimumFractionDigits: 0
+                                    }) : 'Not Desired' %></td>
+                            <% } %>
+                        </tr>
+                        <tr>
+                            <td>Identity Theft</td>
+                            <% for (var f = 0; f < listCarPlan.length; f++) { %>
+                                <td><%= (listCarPlan[f].carCoverages) ? listCarPlan[f].carCoverages.personalIdentityTheft.claimLimitValue.toLocaleString('en-US', {
+                                        style: 'currency',
+                                        currency: 'USD',
+                                        minimumFractionDigits: 0
+                                    }) : 'Not Desired' %></td>
+                            <% } %>
+                        </tr>
+                        <tr class="divider">
+                            <td colspan="4"><strong>Car physical damage insurance</strong></td>
+                        </tr>
+                        <tr>
+                            <td>Collision</td>
+                            <% for (var g = 0; g < listCarPlan.length; g++) { %>
+                                <td><%= (listCarPlan[g].mainCoverages) ? listCarPlan[g].mainCoverages.vehicleCollision.deductible.toLocaleString('en-US', {
+                                        style: 'currency',
+                                        currency: 'USD',
+                                        minimumFractionDigits: 0
+                                    }) : 'Not Desired' %></td>
+                            <% } %>
+                        </tr>
+                        <tr>
+                            <td>Comprehensive</td>
+                            <% for (var h = 0; h < listCarPlan.length; h++) { %>
+                                <td><%= (listCarPlan[h].mainCoverages) ? listCarPlan[h].mainCoverages.vehicleComprehensive.deductible.toLocaleString('en-US', {
+                                        style: 'currency',
+                                        currency: 'USD',
+                                        minimumFractionDigits: 0
+                                    }) : 'Not Desired' %></td>
+                            <% } %>
+                        </tr>
+                        <tr>
+                            <td>Rental Reimbursement</td>
+                            <% for (var j = 0; j < listCarPlan.length; j++) { %>
+                                <td><%= (listCarPlan[j].mainCoverages) ? listCarPlan[j].mainCoverages.vehicleRentalReimbursement.claimLimitValue.toLocaleString('en-US', {
+                                        style: 'currency',
+                                        currency: 'USD',
+                                        minimumFractionDigits: 0
+                                    }) : 'Not Desired' %></td>
+                            <% } %>
+                        </tr>
+                        <tr>
+                            <td>Enhanced Towing Coverage</td>
+                            <% for (var k = 0; k < listCarPlan.length; k++) { %>
+                                <td><%= (listCarPlan[k].mainCoverages) ? listCarPlan[k].mainCoverages.vehicleTowing.claimLimitValue.toLocaleString('en-US', {
+                                        style: 'currency',
+                                        currency: 'USD',
+                                        minimumFractionDigits: 0
+                                    }) : 'Not Desired' %></td>
+                            <% } %>
+                        </tr>
+                        <tr>
+                            <td>Sound System</td>
+                            <% for (var l = 0; l < listCarPlan.length; l++) { %>
+                                <td><%= (listCarPlan[l].carCoverages) ? listCarPlan[l].carCoverages.vehicleSoundSystem.claimLimitValue.toLocaleString('en-US', {
+                                        style: 'currency',
+                                        currency: 'USD',
+                                        minimumFractionDigits: 0
+                                    }) : 'Not Desired' %></td>
+                            <% } %>
+                        </tr>
+                        </tbody>
+                    </table>
+
+                </div>
+                <div class="tab-pane <%= (listCarPlan.length) === 0 ? 'active' : 'fade' %> " id="motorcycles-plans">
+                    <table class="table">
+                        <thead>
+                        <tr>
+                            <td style="width: 25%;">&nbsp;</td>
+                            <% for (var i = 0; i < listMotorcyclePlan.length; i++) { %>
+                                <th width="15%"><span class="badge  p-2"><%= listMotorcyclePlan[i].name %></span></th>
+                            <% } %>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr class="divider">
+                            <td colspan="4"><strong>Compulsory third party's liability insurance</strong></td>
+                        </tr>
+                        <tr>
+                            <td>Bodily Injury Liability</td>
+                            <% for (var b = 0; b < listMotorcyclePlan.length; b++) { %>
+                                <td> <%= (listMotorcyclePlan[b].mainCoverages) ? listMotorcyclePlan[b].mainCoverages.liabilityBody.claimLimitValue.toLocaleString('en-US', {
+                                        style: 'currency',
+                                        currency: 'USD',
+                                        minimumFractionDigits: 0
+                                    }) :'' %> </td>
+                            <% } %>
+                        </tr>
+                        <tr>
+                            <td>Property Damage Liability</td>
+                            <% for (var c = 0; c < listMotorcyclePlan.length; c++) { %>
+                                <td> <%= (listMotorcyclePlan[c].mainCoverages) ? listMotorcyclePlan[c].mainCoverages.liabilityProperty.claimLimitValue.toLocaleString('en-US', {
+                                        style: 'currency',
+                                        currency: 'USD',
+                                        minimumFractionDigits: 0
+                                    }) :'' %></td>
+                            <% } %>
+                        </tr>
+                        <tr class="divider">
+                            <td colspan="4"><strong>Personal accident insurance for driver and passengers</strong></td>
+                        </tr>
+                        <tr>
+                            <td>Medical Payments</td>
+                            <% for (var d = 0; d < listMotorcyclePlan.length; d++) { %>
+                                <td><%= (listMotorcyclePlan[d].mainCoverages) ? listMotorcyclePlan[d].mainCoverages.personalMedical.claimLimitValue.toLocaleString('en-US', {
+                                        style: 'currency',
+                                        currency: 'USD',
+                                        minimumFractionDigits: 0
+                                    }) : 'Not Desired' %></td>
+                            <% } %>
+                        </tr>
+                        <tr>
+                            <td>Uninsured Motorist Bodily Injury</td>
+                            <% for (var e = 0; e < listMotorcyclePlan.length; e++) { %>
+                                <td><%= (listMotorcyclePlan[e].mainCoverages) ? listMotorcyclePlan[e].mainCoverages.personalBody.claimLimitValue.toLocaleString('en-US', {
+                                        style: 'currency',
+                                        currency: 'USD',
+                                        minimumFractionDigits: 0
+                                    }) : 'Not Desired' %></td>
+                            <% } %>
+                        </tr>
+                        <tr>
+                            <td>Uninsured Motorist Property Damage</td>
+                            <% for (var a = 0; a < listMotorcyclePlan.length; a++) { %>
+                                <td><%= (listMotorcyclePlan[a].mainCoverages) ? listMotorcyclePlan[a].mainCoverages.personalProperty.claimLimitValue.toLocaleString('en-US', {
+                                        style: 'currency',
+                                        currency: 'USD',
+                                        minimumFractionDigits: 0
+                                    }) : 'Not Desired' %></td>
+                            <% } %>
+                        </tr>
+
+                        <tr class="divider">
+                            <td colspan="4"><strong>Car physical damage insurance</strong></td>
+                        </tr>
+                        <tr>
+                            <td>Collision</td>
+                            <% for (var g = 0; g < listMotorcyclePlan.length; g++) { %>
+                                <td><%= (listMotorcyclePlan[g].mainCoverages) ? listMotorcyclePlan[g].mainCoverages.vehicleCollision.deductible.toLocaleString('en-US', {
+                                        style: 'currency',
+                                        currency: 'USD',
+                                        minimumFractionDigits: 0
+                                    }) : 'Not Desired' %></td>
+                            <% } %>
+                        </tr>
+
+                        <tr>
+                            <td>Comprehensive</td>
+                            <% for (var h = 0; h < listMotorcyclePlan.length; h++) { %>
+                                <td><%= (listMotorcyclePlan[h].mainCoverages) ? listMotorcyclePlan[h].mainCoverages.vehicleComprehensive.deductible.toLocaleString('en-US', {
+                                        style: 'currency',
+                                        currency: 'USD',
+                                        minimumFractionDigits: 0
+                                    }) : 'Not Desired' %></td>
+                            <% } %>
+                        </tr>
+                        <tr>
+                            <td>Rental Reimbursement</td>
+                            <% for (var j = 0; j < listMotorcyclePlan.length; j++) { %>
+                                <td><%= (listMotorcyclePlan[j].mainCoverages) ? listMotorcyclePlan[j].mainCoverages.vehicleRentalReimbursement.claimLimitValue.toLocaleString('en-US', {
+                                        style: 'currency',
+                                        currency: 'USD',
+                                        minimumFractionDigits: 0
+                                    }) : 'Not Desired' %></td>
+                            <% } %>
+                        </tr>
+                        <tr>
+                            <td>Enhanced Towing Coverage</td>
+                            <% for (var k = 0; k < listMotorcyclePlan.length; k++) { %>
+                                <td><%= (listMotorcyclePlan[k].mainCoverages) ? listMotorcyclePlan[k].mainCoverages.vehicleTowing.claimLimitValue.toLocaleString('en-US', {
+                                        style: 'currency',
+                                        currency: 'USD',
+                                        minimumFractionDigits: 0
+                                    }) : 'Not Desired' %></td>
+                            <% } %>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div></div>
+    <% }else { %>
+        <div class="container">
+            <h2 class="section-title">
+                Plan
+            </h2>
+            <h4>There is no plan available at the moment.</h4>
+        </div>
+    <% } %>
+</section>
+
+
+<%- include('partial/footer'); -%>
+<script src="/javascripts/set-logo-color.js"></script>
+<script>
+    var bannerColor = tinycolor($('.banner').css('background-color'));
+    if (bannerColor.getBrightness() < 128) {
+        $('.insurer-color').css('color', 'white');
+    }
+</script>
+</body>
+</html>
